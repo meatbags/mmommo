@@ -4,13 +4,13 @@ var Uglify = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: {
-    'client/main': './src/client/main.js',
-    'server/main': './src/server/main.js'
+    'app': './client/src/main.js',
+    'app.min': './client/src/main.js'
   },
   output: {
     library: 'mmommo',
     libraryTarget: 'var',
-    path: path.resolve(__dirname, 'app'),
+    path: path.resolve(__dirname, 'client/build/'),
     filename: '[name].js'
   },
   module: {
