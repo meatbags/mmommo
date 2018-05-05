@@ -1,11 +1,36 @@
 {
   "name": "mmommo",
-  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
   "scripts": {
-    "start": "meteor run"
+    "webpack": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meatbags/mmommo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meatbags/mmommo/issues"
+  },
+  "homepage": "https://github.com/meatbags/mmommo#readme",
+  "devDependencies": {
+    "webpack-cli": "^2.0.13"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.42",
-    "meteor-node-stubs": "^0.3.2"
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-clean-css": "^3.9.3",
+    "gulp-sass": "^3.2.1",
+    "uglifyjs-webpack-plugin": "^1.2.4",
+    "webpack": "^4.4.1",
+    "webpack-preset": "^0.2.0",
+    "webpack-preset-babel": "^0.2.0"
   }
 }
