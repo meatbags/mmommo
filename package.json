@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/meatbags/mmommo#readme",
   "devDependencies": {
+    "node-normalize-scss": "^3.0.0",
     "webpack-cli": "^2.0.13"
   },
   "dependencies": {

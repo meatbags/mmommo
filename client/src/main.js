@@ -1,9 +1,12 @@
 import * as Module from './modules';
 
-class App() {
+class App {
   constructor() {
-    this.client = new Module.Client();
+    this.master = new Module.Master();
+    window.onresize = () => { this.master.resize(); };
   }
 }
 
-var app = new App();
+window.onload = () => {
+  var app = new App();
+};

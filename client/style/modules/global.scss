@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+body, html {
+  padding: 0;
+  margin: 0;
+}
+
 body {
   font-family: $fontStack;
   font-size: $fontSize;
