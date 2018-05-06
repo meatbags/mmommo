@@ -4,10 +4,6 @@ class Timer {
     this.delta = 0;
   }
 
-  getDelta() {
-    return this.delta;
-  }
-
   update() {
     var t = (new Date()).getTime();
     this.delta = (t - this.now) / 1000.;
