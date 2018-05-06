@@ -79,7 +79,7 @@ var mmommo =
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("class Client {\n  constructor() {\n    this.socket = new WebSocket('ws://localhost:1337');\n    this.socket.onopen = () => {\n      this.start();\n    };\n    this.socket.onmessage = e => {\n      console.log('Res:', e);\n    };\n    this.socket.onclose = () => {\n      console.log('Connection closed.');\n    };\n  }\n\n  start() {\n    setTimeout(() => {\n      this.send(`${Math.random()}`);\n      this.start();\n    }, 1000);\n  }\n\n  send(msg) {\n    this.socket.send(msg);\n  }\n}\n\nvar client = new Client();\n\n//# sourceURL=webpack://mmommo/./client/src/main.js?");
+eval("class Client {\n  constructor() {\n    this.socket = new WebSocket('ws://localhost:1337');\n    this.socket.onopen = () => {\n      this.onOpen();\n    };\n    this.socket.onmessage = e => {\n      this.onMessage(e);\n    };\n    this.socket.onclose = () => {\n      this.onClose();\n    };\n  }\n\n  onOpen() {\n    var obj = { x: 0 };\n    this.socket.send(JSON.stringify(obj));\n  }\n\n  onMessage(e) {\n    console.log(e);\n  }\n\n  onClose() {\n    console.log('Connection closed.');\n  }\n}\n\nvar client = new Client();\n\n//# sourceURL=webpack://mmommo/./client/src/main.js?");
 
 /***/ })
 
