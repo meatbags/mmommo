@@ -19,6 +19,34 @@ class Chat {
     };
   }
 
+  printMessage(from, message) {
+    this.el.list.appendChild(
+      div({
+        className: 'chat-list__item',
+        innerHTML: `<span class='bold'>${from}</span> ${message}`
+      })
+    );
+    this.limitChat();
+  }
+
+  printNotice(message) {
+    this.el.list.appendChild(
+      div({
+        className: 'chat-list__item',
+        innerHTML: `<span class='error'>${message}</span>`
+      })
+    );
+    this.limitChat();
+  }
+
+  submit() {
+    // send input to server
+    if (this.el.input.value.length) {
+      this.client.sendMessage(this.el.input.value);
+      this.el.input.value = '';
+    }
+  }
+
   limitChat() {
     // remove excess item
     if (this.el.list.children.length >= this.limit) {
@@ -30,39 +58,8 @@ class Chat {
     var range = (this.limit + 1) - this.fadeFrom;
     for (var i=this.el.list.children.length, end=-1; i>end; --i) {
       if (++j > this.fadeFrom) {
-        const alpha = 1.0 - (j - this.fadeFrom) / range;
-        console.log(alpha);
-        this.el.list.children[i].style.opacity = alpha;
+        this.el.list.children[i].style.opacity = 1 - (j - this.fadeFrom) / range;
       }
-    }
-  }
-
-  receive(from, message) {
-    this.el.list.appendChild(
-      div({
-        className: 'chat-list__item',
-        innerHTML: `<span class='bold'>${from}</span> ${message}`
-      })
-    );
-    this.limitChat();
-  }
-
-  error(message) {
-    this.el.list.appendChild(
-      div({
-        className: 'chat-list__item',
-        innerHTML: `<span class='error'>${message}</span>`
-      })
-    );
-    this.limitChat();
-  }
-
-  submit() {
-    const text = this.el.input.value;
-
-    if (text.length) {
-      this.client.sendMessage(text);
-      this.el.input.value = '';
     }
   }
 }

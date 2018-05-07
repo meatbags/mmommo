@@ -1,5 +1,6 @@
 $fontStack: sans-serif;
 $fontSize: 12px;
+$fontSizeSmall: 10px;
 
 .bold {
   font-weight: bold;
@@ -7,4 +8,5 @@ $fontSize: 12px;
 
 .error {
   color: $blue;
+  font-size: $fontSizeSmall;
 }

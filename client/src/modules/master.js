@@ -6,7 +6,7 @@ import { Timer } from './utils';
 class Master {
   constructor() {
     // connect
-    this.client = new Client();
+    this.client = new Client('ws://localhost:1337');
     this.player = new Player();
 
     // game

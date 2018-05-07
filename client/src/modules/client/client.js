@@ -1,52 +1,74 @@
 import { Chat } from './chat';
 
 class Client {
-  constructor() {
-    this.socket = new WebSocket('ws://localhost:1337');
-    this.socket.onopen = () => { this.sendMessage('Hello server!'); };
-    this.socket.onmessage = (e) => { this.onMessage(e); };
-    this.socket.onclose = () => { this.onClose(); };
-    this.socket.onerror = (e) => { this.onError(e); };
-
-    console.log(this.socket);
+  constructor(url) {
+    this.url = url;
+    this.reconnectCount = 0;
+    this.reconnectMaxTries = 3;
+    this.reconnectTimeout = 3000;
+    this.connect();
 
     // hook up chat
     this.chat = new Chat(this);
   }
 
-  onMessage(e) {
-    const res = JSON.parse(e.data);
-
-    if (res.type == 'message') {
-      this.chat.receive(res.data.from, res.data.message);
+  connect() {
+    if (!this.closed) {
+      this.socket = new WebSocket(this.url);
+      this.socket.onopen = () => { this.onConnected(); };
+      this.socket.onmessage = (e) => { this.onMessage(e); };
+      this.socket.onerror = (e) => { console.warn(e); };
+      this.socket.onclose = () => { this.onDisconnected(); };
     }
   }
 
-  onError(e) {
-    this.chat.error(e.type);
+  onMessage(e) {
+    // process message
+    const res = JSON.parse(e.data);
+
+    switch (res.type) {
+      case 'message':
+        this.chat.printMessage(res.data.from, res.data.message);
+        break;
+      default:
+        break;
+    }
   }
 
   sendMessage(msg) {
-    if (this.connectionOK()) {
-      this.sendPacket('message', msg);
-    } else {
-      this.chat.error('Not connected.');
-    }
+    this.sendPacket('message', msg);
   }
 
   sendPacket(type, data) {
-    console.log(this.socket);
-    // server will only accept json
-    const msg = JSON.stringify({type: type, data: data});
-    this.socket.send(msg);
+    if (this.socket.readyState === this.socket.OPEN) {
+      const msg = JSON.stringify({type: type, data: data});
+      this.socket.send(msg);
+    } else {
+      this.chat.printNotice('Not connected.');
+    }
   }
 
-  connectionOK() {
-    return (this.socket.readyState === this.socket.OPEN);
+  onConnected() {
+    this.reconnectCount = 0;
+    this.chat.printNotice('Connected.');
   }
 
-  onClose() {
-    this.chat.error('Connection closed.');
+  onDisconnected() {
+    // try to re-establish connection
+    if (!this.reconnectLock) {
+      this.reconnectLock = true;
+
+      if (++this.reconnectCount <= this.reconnectMaxTries) {
+        this.chat.printNotice(`No connection. Retrying ${this.reconnectCount}/${this.reconnectMaxTries}`);
+
+        setTimeout(() => {
+          this.reconnectLock = false;
+          this.connect();
+        }, this.reconnectTimeout);
+      } else {
+        this.chat.printNotice('Connection failed.')
+      }
+    }
   }
 }
 
