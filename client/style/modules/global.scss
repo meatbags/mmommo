@@ -1,5 +1,6 @@
 *, div {
   box-sizing: border-box;
+  outline: 1px solid rgba(0,0,0,0.2);
 }
 
 body, html {
@@ -10,4 +11,16 @@ body, html {
 body {
   font-family: $fontStack;
   font-size: $fontSize;
+}
+
+.wrapper {
+  position: absolute;
+  width: 100vw;
+  height: 100%;
+  z-index: $zWrapper;
+
+  .wrapper__inner {
+    width: 100%;
+    height: 100%;
+  }
 }

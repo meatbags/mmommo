@@ -7,8 +7,11 @@ class Client {
   }
 
   onOpen() {
-    var obj = {x: 0};
-    this.socket.send(JSON.stringify(obj));
+    const hello = {
+      type: 'message',
+      data: 'Hello!'
+    };
+    this.socket.send(JSON.stringify(hello));
   }
 
   onMessage(e) {

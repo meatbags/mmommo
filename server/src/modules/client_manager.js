@@ -1,52 +1,47 @@
-import * as crypto from 'crypto';
 import { Client } from './client';
+import { SessionToken } from './session_token';
+import * as Action from './actions';
 
 class ClientManager {
   constructor() {
+    this.token = new SessionToken();
     this.clients = {};
-    this.sessions = [];
+    this.rate = 10;
   }
 
   add(client) {
-    const token = this.getSessionToken();
-    this.sessions.push(token);
-    this.clients[token] = new Client(client, token);
-    this.clients[token].on('message', (msg) => { this.onUserMessage(msg); });
-    this.clients[token].on('close', (conn) => { this.onUserClosed(conn); });
-
-    // ping new client
-    this.ping(this.clients[token]);
-  }
-
-  ping(client) {
-    const packet = JSON.stringify({type: 'ping', data: {}});
-    client.send(packet);
-  }
-
-  onUserMessage(msg) {
-    if (msg.type === 'utf8') {
-      const data = JSON.parse(msg.utf8Data);
-      console.log(data);
+    if (this.validate(client)) {
+      const token = this.token.getUnique();
+      const onAction = (action, token, data) => { this.onUserAction(action, token, data); };
+      this.clients[token] = new Client(client, token, this.rate, onAction);
+      this.clients[token].ping();
     }
   }
 
-  onUserClosed(conn) {
-    console.log(conn);
+  onUserAction(action, token, data) {
+    switch (action) {
+      case Action.ACTION_MESSAGE:
+        this.broadcast(data);
+        break;
+      case Action.ACTION_CLOSED:
+        this.token.unregister(token);
+        console.log('User disconnected', token);
+        break;
+      default:
+        break;
+    }
   }
 
-  getSessionToken() {
-    // get new session token
-    const hash = crypto.createHash('sha256');
-    hash.update(Math.random().toString());
-    let hex = hash.digest('hex');
-
-    // prevent collision
-    while (this.clients[hex]) {
-      hash.update(Math.random().toString());
-      hex = hash.digest('hex');
+  broadcast(msg) {
+    for (var client in this.clients) {
+      if (this.clients.hasOwnProperty(client)) {
+        this.clients[client].sendMessage('message', msg);
+      }
     }
+  }
 
-    return hex;
+  validate(client) {
+    return true;
   }
 }
 

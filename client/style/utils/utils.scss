@@ -1,0 +1,12 @@
+.nojs {
+  position: absolute;
+  z-index: $zWrapper + 1;
+  padding: $space;
+}
+
+@mixin pad($x, $y) {
+  padding-left: $x * $space;
+  padding-right: $x * $space;
+  padding-top: $y * $space;
+  padding-bottom: $y * $space;
+}

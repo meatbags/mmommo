@@ -9,11 +9,11 @@ class Scene {
     this.size = 20;
     const w = this.size * this.ratio;
     const h = this.size;
-    this.camera = new THREE.OrthographicCamera(w / -2, w / 2, h / 2, h / -2, 1, 1000);
+    this.camera = new THREE.OrthographicCamera(-w/2, w/2, h/2, -h/2, 1, 1000);
     this.target = player;
     this.offset = new THREE.Vector3(-10, 10, -10);
     this.adjust = 8;
-
+    
     // initial position
     this.camera.position.copy(this.offset);
     this.camera.lookAt(this.target.position);
