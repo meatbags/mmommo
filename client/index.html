@@ -6,7 +6,14 @@
     <link rel='stylesheet' type='text/css' href='./build/main.css'>
   </head>
   <body>
-
+    <div class='window name-picker'>
+      Choose a name:<br /><br />
+      <form id='name-form'>
+        <input class='name-form__input' type='text' placeholder='name'>
+        <input class='name-form__send' type='submit' value='send'>
+      </form>
+      <div class='name-picker__notice error'></div>
+    </div>
     <div class='wrapper'>
       <div class='wrapper__inner'>
         <div class='chat'>

@@ -24,3 +24,11 @@ body {
     height: 100%;
   }
 }
+
+input {
+  @include pad(1, 0.5);
+  border: none;
+  outline: none;
+  background: none;
+  border: $border;
+}

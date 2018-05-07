@@ -5,17 +5,36 @@ class Chat {
     this.client = client;
     this.limit = 12;
     this.fadeFrom = 9;
+    this.active = false;
+    this.name = '';
 
     // doc elements
     this.el = {};
     this.el.list = document.querySelector('.chat-list');
     this.el.form = document.querySelector('#chat-form');
     this.el.input = document.querySelector('.chat-input__input');
+    this.el.name = {
+      input: document.querySelector('.name-form__input'),
+      form: document.querySelector('#name-form'),
+      notice: document.querySelector('.name-picker__notice')
+    };
 
     // events
     this.el.form.onsubmit = (e) => {
       e.preventDefault();
       this.submit();
+    };
+    this.el.name.form.onsubmit = (e) => {
+      e.preventDefault();
+
+      if (this.el.name.input.value.length == 0) {
+        this.el.name.notice.innerHTML = '<br />Input is empty.'
+      } else if (!this.client.connectionOK()) {
+        this.el.name.notice.innerHTML = '<br />Awaiting connection.'
+      } else {
+        this.setName(this.el.name.input.value);
+        document.body.removeChild(document.querySelector('.name-picker'));
+      }
     };
   }
 
@@ -37,6 +56,20 @@ class Chat {
       })
     );
     this.limitChat();
+  }
+
+  setName(name) {
+    this.active = true;
+    this.name = name;
+    this.client.sendPacket('set_name', name);
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  isActive() {
+    return this.active;
   }
 
   submit() {

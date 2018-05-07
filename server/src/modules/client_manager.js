@@ -14,11 +14,13 @@ class ClientManager {
       const token = this.token.getUnique();
       const onAction = (action, token, data) => { this.onUserAction(action, token, data); };
       this.clients[token] = new Client(client, token, this.rate, onAction);
-      this.clients[token].ping();
+      this.clients[token].sendPing();
     }
   }
 
   onUserAction(action, token, data) {
+    console.log(action, data);
+
     switch (action) {
       case Action.ACTION_MESSAGE:
         this.broadcast(data);
@@ -26,6 +28,12 @@ class ClientManager {
       case Action.ACTION_CLOSED:
         this.token.unregister(token);
         console.log('User disconnected', token);
+        break;
+      case Action.ACTION_SET_NAME:
+        this.clients[token].setName(data);
+        var name = this.clients[token].getName();
+        var welcome = {from: 'server', message: `Welcome ${name}!`};
+        this.clients[token].sendMessage('message', welcome);
         break;
       default:
         break;

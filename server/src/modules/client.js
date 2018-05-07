@@ -9,18 +9,19 @@ class Client {
     // logs
     this.setRate(rate);
     this.timestamps = [];
+    this.ping = {
+      last: 0,
+      timestamp: (new Date())
+    };
 
     // events
     this.client = client;
-    this.client.on('message', (msg) => {
-      this.onMessage(msg);
-    });
-    this.client.on('close', (conn) => {
-      this.onAction(Action.ACTION_CLOSED, this.sessionToken, null);
-    });
+    this.client.on('message', (msg) => { this.onMessage(msg); });
+    this.client.on('close', (conn) => { this.onAction(Action.ACTION_CLOSED, this.sessionToken, null); });
   }
 
   onMessage(msg) {
+    // handle message from client
     if (this.rateLimit() && msg.type === 'utf8') {
       try {
         const res = JSON.parse(msg.utf8Data);
@@ -32,17 +33,33 @@ class Client {
             this.onAction(Action.ACTION_MESSAGE, this.sessionToken, data);
             break;
           }
+          case 'set_name': {
+            const text = this.sanitise(res.data);
+            this.onAction(Action.ACTION_SET_NAME, this.sessionToken, text);
+            break;
+          }
+          case 'ping': {
+            this.ping.last = (new Date()) - this.ping.timestamp;
+            const data = res.data;
+            if (res.data.name) {
+              const text = this.sanitise(res.data.name);
+              this.onAction(Action.ACTION_SET_NAME, this.sessionToken, text);
+            }
+            console.log('Ping', this.ping.last);
+            break;
+          }
           default:
             break;
         }
       } catch(e) {
-        // invalid JSON
+        // invalid JSON, command, or bad values
         this.onError();
       }
     }
   }
 
-  ping() {
+  sendPing() {
+    this.ping.timestamp = (new Date());
     this.sendMessage('ping', {rate: this.rate});
   }
 
@@ -51,7 +68,7 @@ class Client {
   }
 
   sanitise(input) {
-    return input; // TODO: .replace(/[^\w\s]/gi, '')
+    return input.toString(); // TODO: .replace(/[^\w\s]/gi, '')
   }
 
   sendMessage(type, data) {
@@ -66,6 +83,17 @@ class Client {
 
   setRate(rate) {
     this.rate = rate;
+  }
+
+  setName(name) {
+    if (!this.nameLock) {
+      this.nameLock = true;
+      this.name = name;
+    }
+  }
+
+  getName(name) {
+    return this.name;
   }
 
   rateLimit() {
