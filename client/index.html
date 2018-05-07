@@ -13,8 +13,10 @@
           <div class='chat__inner'>
             <div class='chat-list'></div>
             <div class='chat-input'>
-              <input placeholder="message" type='text'></input>
-              <div class='chat-input__send'>SEND</div>
+              <form id='chat-form'>
+                <input class='chat-input__input' type='text' placeholder='message'>
+                <input class='chat-input__send' type='submit' value='send'>
+              </form>
             </div>
           </div>
         </div>
@@ -22,7 +24,7 @@
     </div>
     <noscript>
       <div class="nojs">
-        Enable Javascript to run this page.
+        This page requires Javascript. Please enable it.
       </div>
     </noscript>
   </body>

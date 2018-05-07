@@ -9,37 +9,47 @@
     flex-direction: column;
 
     .chat-list {
+      @include pad(1, 1);
       width: 100%;
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
 
       .chat-list__item {
-        
+        @include pad(1, 0.5);
       }
     }
 
     .chat-input {
       width: 100%;
-      display: flex;
-      padding: $space;
 
-      input {
-        @include pad(1, 0.5);
-        flex: 1;
-        border: $border;
-        outline: none !important;
-        background: none;
-      }
-
-      .chat-input__send {
-        border: $border;
-        @include pad(1, 0.5);
-        user-select: none;
-        width: 100px;
+      #chat-form {
+        width: 100%;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        margin-left: $space;
+        padding: $space;
+
+        .chat-input__input {
+          @include pad(1, 0.5);
+          flex: 1;
+          border: $border;
+          outline: none !important;
+          background: none;
+        }
+
+        .chat-input__send {
+          border: $border;
+          outline: none !important;
+          background: none;
+          @include pad(1, 0.5);
+          user-select: none;
+          width: 80px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          margin-left: $space;
+        }
       }
     }
   }

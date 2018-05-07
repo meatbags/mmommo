@@ -51,7 +51,7 @@ class Client {
   }
 
   sanitise(input) {
-    return 
+    return input; // TODO: .replace(/[^\w\s]/gi, '')
   }
 
   sendMessage(type, data) {

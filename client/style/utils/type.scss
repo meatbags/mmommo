@@ -1,2 +1,10 @@
 $fontStack: sans-serif;
 $fontSize: 12px;
+
+.bold {
+  font-weight: bold;
+}
+
+.error {
+  color: $blue;
+}

@@ -1,4 +1,4 @@
-function div(target, props) {
+function div(props) {
   const d = document.createElement('div');
 
   for (var prop in props) {
@@ -7,7 +7,7 @@ function div(target, props) {
     }
   }
 
-  target.appendChild(d);
+  return d;
 }
 
 export { div };

@@ -2,6 +2,12 @@
   position: absolute;
   z-index: $zWrapper + 1;
   padding: $space;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255,255,255,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @mixin pad($x, $y) {

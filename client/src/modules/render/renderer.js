@@ -10,7 +10,7 @@ class Renderer {
     this.size = new THREE.Vector2(this.width, this.height);
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(this.width, this.height);
-    this.renderer.setClearColor(0x444444, 1);
+    this.renderer.setClearColor(0xaaaaaa, 1);
     this.postProcessing();
 
     // add to doc

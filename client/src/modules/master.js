@@ -5,13 +5,14 @@ import { Timer } from './utils';
 
 class Master {
   constructor() {
-    // start game and connect to server
+    // connect
     this.client = new Client();
     this.player = new Player();
+
+    // game
     this.scene = new Scene(this.player);
     this.renderer = new Renderer(this.scene.getScene(), this.scene.getCamera());
     this.timer = new Timer();
-
 
     // run the main loop
     this.loop();
