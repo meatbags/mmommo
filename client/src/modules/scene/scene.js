@@ -1,6 +1,7 @@
 class Scene {
   constructor(player) {
     // scene
+    this.player = player;
     this.scene = new THREE.Scene();
     this.init();
 
@@ -10,10 +11,10 @@ class Scene {
     const w = this.size * this.ratio;
     const h = this.size;
     this.camera = new THREE.OrthographicCamera(-w/2, w/2, h/2, -h/2, 1, 1000);
-    this.target = player;
+    this.target = this.player;
     this.offset = new THREE.Vector3(-10, 10, -10);
     this.adjust = 8;
-    
+
     // initial position
     this.camera.position.copy(this.offset);
     this.camera.lookAt(this.target.position);
@@ -35,7 +36,8 @@ class Scene {
   }
 
   update(delta) {
-    // move camera to player
+    // move player & camera
+    this.player.update(delta);
     const f = this.adjust * delta;
     this.camera.position.set(
       this.camera.position.x + ((this.target.position.x + this.offset.x) - this.camera.position.x) * f,

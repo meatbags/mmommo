@@ -14,23 +14,24 @@ class Chat {
     this.el.list = document.querySelector('.chat-list');
     this.el.form = document.querySelector('#chat-form');
     this.el.input = document.querySelector('.chat-input__input');
-    this.el.name = {
-      input: document.querySelector('.name-form__input'),
-      form: document.querySelector('#name-form'),
-      notice: document.querySelector('.name-picker__notice')
-    };
+
+    // create name picker window
+    this.el.nameForm = formWindow('Choose a display name:', (e) => {
+      e.preventDefault();
+      this.submitName();
+    });
+    this.el.nameFormInput = this.el.nameForm.querySelector('input');
+    this.el.nameFormInput.onblur = () => { this.enableInput(); };
+    this.el.nameFormInput.onfocus = () => { this.disableInput(); };
+    document.body.appendChild(this.el.nameForm);
 
     // events
     this.el.form.onsubmit = (e) => {
       e.preventDefault();
       this.submit();
     };
-
-    this.el.nameForm = formWindow('Choose a display name:', (e) => {
-      e.preventDefault();
-      this.submitName();
-    });
-    document.body.appendChild(this.el.nameForm);
+    this.el.input.onblur = () => { this.enableInput(); }
+    this.el.input.onfocus = () => { this.disableInput(); }
   }
 
   printMessage(from, message) {
@@ -68,6 +69,14 @@ class Chat {
     this.active = true;
     this.name = name;
     document.body.removeChild(this.el.nameForm);
+  }
+
+  disableInput() {
+    this.onEvent(ACTION.DISABLE_INPUT, null);
+  }
+
+  enableInput() {
+    this.onEvent(ACTION.ENABLE_INPUT, null);
   }
 
   submit() {

@@ -26,6 +26,21 @@ class Player {
     this.position.x += ((this.keys['KeyA'] || this.keys['ArrowLeft'] ? this.speed : 0) - (this.keys['KeyD'] || this.keys['ArrowRight'] ? this.speed : 0)) * delta;
   }
 
+  enableInput() {
+    this.disabled = false;
+  }
+
+  disableInput() {
+    this.disabled = true;
+
+    // disable any pressed keys
+    for (var prop in this.keys) {
+      if (this.keys.hasOwnProperty(prop)) {
+        this.keys[prop] = false;
+      }
+    }
+  }
+
   update(delta) {
     this.move(delta);
   }

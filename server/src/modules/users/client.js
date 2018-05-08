@@ -43,8 +43,12 @@ class Client {
           case ACTION.MESSAGE: {
             if (!this.isMuted()) {
               if (this.rate.spam.inLimit()) {
-                const data = {from: this.name, message: this.sanitise(res.data)};
-                this.onAction(ACTION.MESSAGE, this.id, data);
+                const clean = this.sanitise(res.data);
+
+                if (clean.length) {
+                  const data = {from: this.name, message: clean};
+                  this.onAction(ACTION.MESSAGE, this.id, data);
+                }
               } else {
                 this.onAction(ACTION.MUTE, this.id, this.muted.timeout);
                 this.mute();
@@ -109,7 +113,7 @@ class Client {
   }
 
   sanitise(input) {
-    return input.toString();
+    return input.toString().replace(/[^a-zA-Z0-9 .,?'"!@#$%^&*()_\-+]/gi, '');
   }
 }
 

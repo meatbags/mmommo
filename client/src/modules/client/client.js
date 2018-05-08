@@ -1,5 +1,6 @@
 import { ACTION } from '../../../../shared';
 import { Chat, Peers, PacketUtils } from './modules';
+import { Player } from './player';
 
 class Client {
   constructor(url) {
@@ -14,6 +15,9 @@ class Client {
     this.connect();
     this.chat = new Chat((action, data) => { this.onChat(action, data); });
     this.packet = new PacketUtils(this.socket);
+
+    // create player input object
+    this.player = new Player();
   }
 
   connect() {
@@ -75,6 +79,14 @@ class Client {
           var target = this.chat.el.nameForm.querySelector('.form-window__notice');
           target.innerHTML = '<br />Awaiting connection.';
         }
+        break;
+      }
+      case ACTION.DISABLE_INPUT: {
+        this.player.disableInput();
+        break;
+      }
+      case ACTION.ENABLE_INPUT: {
+        this.player.enableInput();
         break;
       }
       default: {
