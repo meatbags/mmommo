@@ -54,18 +54,3 @@
     }
   }
 }
-
-.name-picker {
-  #name-form {
-    width: 100%;
-    display: flex;
-
-    .name-form__input {
-      flex: 1;
-    }
-
-    .name-form__send {
-      margin-left: $space;
-    }
-  }
-}

@@ -72,7 +72,8 @@ class Client {
         if (this.packet.sendSetName(data)) {
           this.chat.setName(data);
         } else {
-          this.chat.el.name.notice.innerHTML = '<br />Awaiting connection.';
+          var target = this.chat.el.nameForm.querySelector('.form-window__notice');
+          target.innerHTML = '<br />Awaiting connection.';
         }
         break;
       }

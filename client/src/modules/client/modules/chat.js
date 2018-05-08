@@ -1,4 +1,4 @@
-import { div } from '../../dom';
+import { div, formWindow } from '../../dom';
 import { ACTION } from '../../../../../shared';
 
 class Chat {
@@ -25,10 +25,12 @@ class Chat {
       e.preventDefault();
       this.submit();
     };
-    this.el.name.form.onsubmit = (e) => {
+
+    this.el.nameForm = formWindow('Choose a display name:', (e) => {
       e.preventDefault();
       this.submitName();
-    };
+    });
+    document.body.appendChild(this.el.nameForm);
   }
 
   printMessage(from, message) {
@@ -52,17 +54,20 @@ class Chat {
   }
 
   submitName() {
-    if (this.el.name.input.value.length == 0) {
-      this.el.name.notice.innerHTML = '<br />Input is empty.'
+    var name = this.el.nameForm.getElementsByTagName('input')[0].value;
+
+    if (name.length == 0) {
+      var target = this.el.nameForm.querySelector('.form-window__notice');
+      target.innerHTML = '<br />Input is empty.'
     } else {
-      this.onEvent(ACTION.SET_NAME, this.el.name.input.value);
+      this.onEvent(ACTION.SET_NAME, name);
     }
   }
 
   setName(name) {
     this.active = true;
     this.name = name;
-    document.body.removeChild(document.querySelector('.name-picker'));
+    document.body.removeChild(this.el.nameForm);
   }
 
   submit() {
