@@ -6,7 +6,7 @@ class Client {
     this.sessionToken = token;
     this.onAction = onAction;
     this.name = token.substr(0, 10);
-
+    
     // logs
     this.muted = {
       state: false,

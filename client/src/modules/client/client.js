@@ -1,7 +1,5 @@
 import { ACTION } from '../../../../shared';
-import { Chat } from './chat';
-import { Peers } from './peers';
-import { PacketUtils } from './packet_utils';
+import { Chat, Peers, PacketUtils } from './modules';
 
 class Client {
   constructor(url) {

@@ -1,5 +1,5 @@
-import { div } from '../dom';
-import { ACTION } from '../../../../shared';
+import { div } from '../../dom';
+import { ACTION } from '../../../../../shared';
 
 class Chat {
   constructor(onEvent) {
