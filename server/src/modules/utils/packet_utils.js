@@ -1,4 +1,4 @@
-import { ACTION } from '../../../shared';
+import { ACTION } from '../../../../shared';
 
 class PacketUtils {
   constructor(clients) {

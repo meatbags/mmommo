@@ -1,7 +1,6 @@
 import { Client } from './client';
-import { SessionToken } from './session_token';
-import { PacketUtils } from './packet_utils';
-import { ACTION } from '../../../shared';
+import { SessionToken, PacketUtils } from '../utils';
+import { ACTION } from '../../../../shared';
 
 class ClientManager {
   constructor() {
@@ -11,12 +10,10 @@ class ClientManager {
   }
 
   add(client) {
-    if (this.validate(client)) {
-      const id = this.token.getUnique();
-      const onAction = (action, id, data) => { this.onUserAction(action, id, data); };
-      this.clients[id] = new Client(client, id, onAction);
-      this.packet.ping(id, {rate: this.clients[id].getRate()});
-    }
+    const id = this.token.getUnique();
+    const onAction = (action, id, data) => { this.onUserAction(action, id, data); };
+    this.clients[id] = new Client(client, id, onAction);
+    this.packet.ping(id, {rate: this.clients[id].getRate()});
   }
 
   onUserAction(action, id, data) {
@@ -46,10 +43,6 @@ class ClientManager {
         break;
       }
     }
-  }
-
-  validate(client) {
-    return true;
   }
 }
 

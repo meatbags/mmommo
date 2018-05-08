@@ -1,12 +1,12 @@
-import { ACTION } from '../../../shared';
-import { RateLimiter } from './rate_limiter';
+import { ACTION } from '../../../../shared';
+import { RateLimiter } from '../utils';
 
 class Client {
-  constructor(client, token, onAction) {
-    this.sessionToken = token;
+  constructor(client, id, onAction) {
+    this.id = id;
     this.onAction = onAction;
-    this.name = token.substr(0, 10);
-    
+    this.name = 'User_' + id.substr(0, 10);
+
     // logs
     this.muted = {
       state: false,
@@ -21,7 +21,7 @@ class Client {
     // events
     this.client = client;
     this.client.on('message', (msg) => { this.onMessage(msg); });
-    this.client.on('close', (conn) => { this.onAction(ACTION.CONNECTION_CLOSED, this.sessionToken, null); });
+    this.client.on('close', (conn) => { this.onAction(ACTION.CONNECTION_CLOSED, this.id, null); });
   }
 
   sendMessage(type, data) {
@@ -44,21 +44,21 @@ class Client {
             if (!this.isMuted()) {
               if (this.rate.spam.inLimit()) {
                 const data = {from: this.name, message: this.sanitise(res.data)};
-                this.onAction(ACTION.MESSAGE, this.sessionToken, data);
+                this.onAction(ACTION.MESSAGE, this.id, data);
               } else {
-                this.onAction(ACTION.MUTE, this.sessionToken, this.muted.timeout);
+                this.onAction(ACTION.MUTE, this.id, this.muted.timeout);
                 this.mute();
               }
             }
             break;
           }
           case ACTION.SET_NAME: {
-            this.onAction(ACTION.SET_NAME, this.sessionToken, this.sanitise(res.data));
+            this.onAction(ACTION.SET_NAME, this.id, this.sanitise(res.data));
             break;
           }
           case ACTION.PING: {
             if (res.data.name) {
-              this.onAction(ACTION.SET_NAME, this.sessionToken, this.sanitise(res.data.name));
+              this.onAction(ACTION.SET_NAME, this.id, this.sanitise(res.data.name));
             }
             break;
           }
