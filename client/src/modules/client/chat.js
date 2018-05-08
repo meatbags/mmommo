@@ -1,8 +1,9 @@
 import { div } from '../dom';
+import { ACTION } from '../../../../shared';
 
 class Chat {
-  constructor(client) {
-    this.client = client;
+  constructor(onEvent) {
+    this.onEvent = onEvent;
     this.limit = 12;
     this.fadeFrom = 9;
     this.active = false;
@@ -26,15 +27,7 @@ class Chat {
     };
     this.el.name.form.onsubmit = (e) => {
       e.preventDefault();
-
-      if (this.el.name.input.value.length == 0) {
-        this.el.name.notice.innerHTML = '<br />Input is empty.'
-      } else if (!this.client.connectionOK()) {
-        this.el.name.notice.innerHTML = '<br />Awaiting connection.'
-      } else {
-        this.setName(this.el.name.input.value);
-        document.body.removeChild(document.querySelector('.name-picker'));
-      }
+      this.submitName();
     };
   }
 
@@ -58,10 +51,26 @@ class Chat {
     this.limitChat();
   }
 
+  submitName() {
+    if (this.el.name.input.value.length == 0) {
+      this.el.name.notice.innerHTML = '<br />Input is empty.'
+    } else {
+      this.onEvent(ACTION.SET_NAME, this.el.name.input.value);
+    }
+  }
+
   setName(name) {
     this.active = true;
     this.name = name;
-    this.client.sendPacket('set_name', name);
+    document.body.removeChild(document.querySelector('.name-picker'));
+  }
+
+  submit() {
+    // send input to server
+    if (this.el.input.value.length) {
+      this.onEvent(ACTION.MESSAGE, this.el.input.value);
+      this.el.input.value = '';
+    }
   }
 
   getName() {
@@ -70,14 +79,6 @@ class Chat {
 
   isActive() {
     return this.active;
-  }
-
-  submit() {
-    // send input to server
-    if (this.el.input.value.length) {
-      this.client.sendMessage(this.el.input.value);
-      this.el.input.value = '';
-    }
   }
 
   limitChat() {

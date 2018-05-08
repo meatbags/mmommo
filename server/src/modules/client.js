@@ -1,4 +1,4 @@
-import * as Action from './actions';
+import { ACTION } from '../../../shared';
 
 class Client {
   constructor(client, token, rate, onAction) {
@@ -7,17 +7,22 @@ class Client {
     this.name = token.substr(0, 10);
 
     // logs
-    this.setRate(rate);
+    this.rate = rate;
     this.timestamps = [];
-    this.ping = {
-      last: 0,
-      timestamp: (new Date())
-    };
 
     // events
     this.client = client;
     this.client.on('message', (msg) => { this.onMessage(msg); });
-    this.client.on('close', (conn) => { this.onAction(Action.ACTION_CLOSED, this.sessionToken, null); });
+    this.client.on('close', (conn) => { this.onAction(ACTION.CONNECTION_CLOSED, this.sessionToken, null); });
+  }
+
+  sendMessage(type, data) {
+    this.client.sendUTF(
+      JSON.stringify({
+        type: type,
+        data: data
+      })
+    );
   }
 
   onMessage(msg) {
@@ -27,65 +32,38 @@ class Client {
         const res = JSON.parse(msg.utf8Data);
 
         switch (res.type) {
-          case 'message': {
-            const text = this.sanitise(res.data);
-            const data = {from: this.name, message: text};
-            this.onAction(Action.ACTION_MESSAGE, this.sessionToken, data);
+          case ACTION.MESSAGE: {
+            const data = {from: this.name, message: this.sanitise(res.data)};
+            this.onAction(ACTION.MESSAGE, this.sessionToken, data);
             break;
           }
-          case 'set_name': {
-            const text = this.sanitise(res.data);
-            this.onAction(Action.ACTION_SET_NAME, this.sessionToken, text);
+          case ACTION.SET_NAME: {
+            this.onAction(ACTION.SET_NAME, this.sessionToken, this.sanitise(res.data));
             break;
           }
-          case 'ping': {
-            this.ping.last = (new Date()) - this.ping.timestamp;
-            const data = res.data;
+          case ACTION.PING: {
             if (res.data.name) {
-              const text = this.sanitise(res.data.name);
-              this.onAction(Action.ACTION_SET_NAME, this.sessionToken, text);
+              this.onAction(ACTION.SET_NAME, this.sessionToken, this.sanitise(res.data.name));
             }
-            console.log('Ping', this.ping.last);
             break;
           }
-          default:
+          default: {
             break;
+          }
         }
       } catch(e) {
-        // invalid JSON, command, or bad values
+        // invalid JSON
         this.onError();
       }
     }
   }
 
-  sendPing() {
-    this.ping.timestamp = (new Date());
-    this.sendMessage('ping', {rate: this.rate});
-  }
-
   onError() {
-    this.sendMessage('error', null);
-  }
-
-  sanitise(input) {
-    return input.toString(); // TODO: .replace(/[^\w\s]/gi, '')
-  }
-
-  sendMessage(type, data) {
-    const msg = JSON.stringify({
-      type: type,
-      data: data
-    });
-
-    // send
-    this.client.sendUTF(msg);
-  }
-
-  setRate(rate) {
-    this.rate = rate;
+    this.sendMessage(ACTION.ERROR, null);
   }
 
   setName(name) {
+    // set name (once)
     if (!this.nameLock) {
       this.nameLock = true;
       this.name = name;
@@ -94,6 +72,10 @@ class Client {
 
   getName(name) {
     return this.name;
+  }
+
+  sanitise(input) {
+    return input.toString();
   }
 
   rateLimit() {

@@ -1,33 +1,37 @@
+import { ACTION } from '../../../../shared';
 import { Chat } from './chat';
 import { Peers } from './peers';
+import { PacketUtils } from './packet_utils';
 
 class Client {
   constructor(url) {
     this.url = url;
+
+    // settings
     this.reconnectCount = 0;
     this.reconnectMaxTries = 3;
     this.reconnectTimeout = 3000;
-    this.connect();
 
-    // hook up chat
-    this.chat = new Chat(this);
+    // hook up
+    this.connect();
+    this.chat = new Chat((action, data) => { this.onChat(action, data); });
+    this.packet = new PacketUtils(this.socket);
   }
 
   connect() {
-    if (!this.closed) {
-      this.socket = new WebSocket(this.url);
-      this.socket.onopen = () => { this.onConnected(); };
-      this.socket.onmessage = (e) => { this.onMessage(e); };
-      this.socket.onerror = (e) => { console.warn(e); };
-      this.socket.onclose = () => { this.onDisconnected(); };
-    }
+    this.socket = new WebSocket(this.url);
+    this.socket.onopen = () => { this.onConnect(); };
+    this.socket.onmessage = (e) => { this.onMessage(e); };
+    this.socket.onerror = (e) => { console.warn(e); };
+    this.socket.onclose = () => { this.onDisconnected(); };
   }
 
-  onConnected() {
+  onConnect() {
     // reset data
     this.reconnectCount = 0;
     this.chat.printNotice('Connected.');
     this.peers = new Peers();
+    this.packet.setSocket(this.socket);
   }
 
   onMessage(e) {
@@ -35,47 +39,48 @@ class Client {
     const res = JSON.parse(e.data);
 
     switch (res.type) {
-      case 'message':
+      case ACTION.MESSAGE: {
         this.chat.printMessage(res.data.from, res.data.message);
         break;
-      case 'ping':
-        // ping back some info
-        this.setRate(res.data.rate);
-        this.sendPing();
+      }
+      case ACTION.NOTICE: {
+        this.chat.printNotice(res.data.message);
         break;
-      default:
+      }
+      case ACTION.PING: {
+        const data = this.chat.isActive() ? {name: this.chat.getName()} : {};
+        this.packet.sendPing(data);
+
+        // set internal rate
+        if (!isNaN(res.data.rate) && res.data.rate > 0) {
+          this.rate = res.data.rate;
+          this.rateInterval = 1 / res.data.rate;
+        }
         break;
+      }
+      default: {
+        break;
+      }
     }
   }
 
-  setRate(rate) {
-    if (!isNaN(rate) && rate > 0) {
-      this.rate = rate;
-      this.rateInterval = 1 / rate;
-    }
-  }
-
-  sendMessage(msg) {
-    this.sendPacket('message', msg);
-  }
-
-  sendPing() {
-    // send ping back to server
-    const data = {};
-
-    if (this.chat.isActive()) {
-      data.name = this.chat.getName();
-    }
-
-    this.sendPacket('ping', data);
-  }
-
-  sendPacket(type, data) {
-    if (this.connectionOK()) {
-      const msg = JSON.stringify({type: type, data: data});
-      this.socket.send(msg);
-    } else {
-      this.chat.printNotice('Not connected.');
+  onChat(action, data) {
+    switch (action) {
+      case ACTION.MESSAGE: {
+        this.packet.sendMessage(data);
+        break;
+      }
+      case ACTION.SET_NAME: {
+        if (this.packet.sendSetName(data)) {
+          this.chat.setName(data);
+        } else {
+          this.chat.el.name.notice.innerHTML = '<br />Awaiting connection.';
+        }
+        break;
+      }
+      default: {
+        break;
+      }
     }
   }
 
@@ -95,10 +100,6 @@ class Client {
         this.chat.printNotice('Connection failed.')
       }
     }
-  }
-
-  connectionOK() {
-    return (this.socket.readyState === this.socket.OPEN);
   }
 }
 
