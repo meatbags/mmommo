@@ -51,7 +51,7 @@ class Client {
       }
       case ACTION.PING: {
         const data = this.chat.isActive() ? {name: this.chat.getName()} : {};
-        this.packet.sendPing(data);
+        this.packet.sendPong(data);
 
         // set internal rate
         if (!isNaN(res.data.rate) && res.data.rate > 0) {

@@ -1,5 +1,5 @@
 import { Renderer } from './render';
-import { Client } from './client';
+import { Client, HUD } from './client';
 import { Scene } from './scene';
 import { Timer } from './utils';
 
@@ -7,6 +7,7 @@ class Master {
   constructor() {
     // connect
     this.client = new Client('ws://localhost:1337');
+    this.hud = new HUD();
 
     // game
     this.scene = new Scene(this.client.player);
@@ -18,7 +19,7 @@ class Master {
   }
 
   loop() {
-    requestAnimationFrame(() => { this.loop(); });
+    // requestAnimationFrame(() => { this.loop(); });
 
     // update and draw
     this.timer.update();

@@ -8,6 +8,7 @@ class Client {
     this.name = 'User_' + id.substr(0, 10);
 
     // logs
+    this.maxMessageSize = 250;
     this.muted = {
       state: false,
       time: -1,
@@ -45,7 +46,7 @@ class Client {
               if (this.rate.spam.inLimit()) {
                 const clean = this.sanitise(res.data);
 
-                if (clean.length) {
+                if (this.isValidString(clean)) {
                   const data = {from: this.name, message: clean};
                   this.onAction(ACTION.MESSAGE, this.id, data);
                 }
@@ -57,12 +58,18 @@ class Client {
             break;
           }
           case ACTION.SET_NAME: {
-            this.onAction(ACTION.SET_NAME, this.id, this.sanitise(res.data));
+            const clean = this.sanitise(res.data);
+            if (this.isValidString(clean)) {
+              this.onAction(ACTION.SET_NAME, this.id, clean);
+            }
             break;
           }
-          case ACTION.PING: {
+          case ACTION.PONG: {
             if (res.data.name) {
-              this.onAction(ACTION.SET_NAME, this.id, this.sanitise(res.data.name));
+              const clean = this.sanitise(res.data.name);
+              if (this.isValidString(clean)) {
+                this.onAction(ACTION.SET_NAME, this.id, clean);
+              }
             }
             break;
           }
@@ -114,6 +121,10 @@ class Client {
 
   sanitise(input) {
     return input.toString().replace(/[^a-zA-Z0-9 .,?'"!@#$%^&*()_\-+]/gi, '');
+  }
+
+  isValidString(str) {
+    return (str.length && str.length < this.maxMessageSize);
   }
 }
 

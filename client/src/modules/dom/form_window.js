@@ -13,6 +13,7 @@ function formWindow(title, onSubmit) {
   form.onsubmit = onSubmit;
   input.setAttribute('type', 'text');
   input.setAttribute('placeholder', 'input');
+  input.setAttribute('maxlength', 25);
   send.setAttribute('type', 'submit');
   send.setAttribute('value', 'send');
 

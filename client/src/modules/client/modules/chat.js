@@ -11,7 +11,7 @@ class Chat {
 
     // doc elements
     this.el = {};
-    this.el.list = document.querySelector('.chat-list');
+    this.el.list = document.querySelector('.chat-list__inner');
     this.el.form = document.querySelector('#chat-form');
     this.el.input = document.querySelector('.chat-input__input');
 
@@ -71,6 +71,10 @@ class Chat {
     document.body.removeChild(this.el.nameForm);
   }
 
+  getName() {
+    return this.name;
+  }
+
   disableInput() {
     this.onEvent(ACTION.DISABLE_INPUT, null);
   }
@@ -85,10 +89,6 @@ class Chat {
       this.onEvent(ACTION.MESSAGE, this.el.input.value);
       this.el.input.value = '';
     }
-  }
-
-  getName() {
-    return this.name;
   }
 
   isActive() {

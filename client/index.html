@@ -10,17 +10,45 @@
     <!-- user interface -->
     <div class='wrapper'>
       <div class='wrapper__inner'>
-        <div class='chat'>
-          <div class='chat__inner'>
-            <div class='chat-list'>
+        <div class='hud'>
+          <div class='hud__inner'>
+            <div class='info'>
+              <div class='info__inner'>
+                Info here...
+              </div>
             </div>
-            <div class='chat-input'>
-              <form id='chat-form'>
-                <input class='chat-input__input' type='text' placeholder='message'>
-                <input class='chat-input__send' type='submit' value='send'>
-              </form>
+            <div class='chat'>
+              <div class='chat__inner'>
+                <div class='chat-list'>
+                  <div class='chat-list__inner'>
+                    <div class='chat-list__ul'></div>
+                  </div>
+                </div>
+                <div class='chat-input'>
+                  <form id='chat-form'>
+                    <input class='chat-input__input' type='text' maxlength='250' placeholder='message'>
+                    <input class='chat-input__send' type='submit' value='send'>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class='users'>
+              <div class='users__inner'>
+                Users here...
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div id='help-button' class='overlay-button'>? help</div>
+
+    <div class='overlay' id='help-overlay'>
+      <div class='overlay__inner'>
+        <div class='box'>
+          Use WSAD to move.
+          <div class='close'>Close</div>
         </div>
       </div>
     </div>

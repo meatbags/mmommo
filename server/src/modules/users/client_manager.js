@@ -10,10 +10,14 @@ class ClientManager {
   }
 
   add(client) {
+    // add new client
     const id = this.token.getUnique();
     const onAction = (action, id, data) => { this.onUserAction(action, id, data); };
     this.clients[id] = new Client(client, id, onAction);
-    this.packet.ping(id, {rate: this.clients[id].getRate()});
+
+    // ping client
+    const data = {id: id, rate: this.clients[id].getRate()};
+    this.packet.ping(id, data);
   }
 
   onUserAction(action, id, data) {

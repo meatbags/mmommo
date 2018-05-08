@@ -13,8 +13,8 @@ class PacketUtils {
     return this.send(ACTION.SET_NAME, name);
   }
 
-  sendPing(data) {
-    return this.send(ACTION.PING, data);
+  sendPong(data) {
+    return this.send(ACTION.PONG, data);
   }
 
   sendMessage(message) {
