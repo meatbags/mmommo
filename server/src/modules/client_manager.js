@@ -7,7 +7,6 @@ class ClientManager {
   constructor() {
     this.token = new SessionToken();
     this.clients = {};
-    this.rate = 10;
     this.packet = new PacketUtils(this.clients);
   }
 
@@ -15,8 +14,8 @@ class ClientManager {
     if (this.validate(client)) {
       const id = this.token.getUnique();
       const onAction = (action, id, data) => { this.onUserAction(action, id, data); };
-      this.clients[id] = new Client(client, id, this.rate, onAction);
-      this.packet.ping(id, {rate: this.rate});
+      this.clients[id] = new Client(client, id, onAction);
+      this.packet.ping(id, {rate: this.clients[id].getRate()});
     }
   }
 
@@ -31,6 +30,10 @@ class ClientManager {
       case ACTION.CONNECTION_CLOSED: {
         this.token.unregister(id);
         console.log('User DC', id);
+        break;
+      }
+      case ACTION.MUTE: {
+        this.packet.notify(id, `Don't spam. Muted ${data} seconds.`);
         break;
       }
       case ACTION.SET_NAME: {

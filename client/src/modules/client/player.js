@@ -22,8 +22,8 @@ class Player {
   }
 
   move(delta) {
-    this.position.z += ((this.keys['KeyW'] ? this.speed : 0) - (this.keys['KeyS'] ? this.speed : 0)) * delta;
-    this.position.x += ((this.keys['KeyA'] ? this.speed : 0) - (this.keys['KeyD'] ? this.speed : 0)) * delta;
+    this.position.z += ((this.keys['KeyW'] || this.keys['ArrowUp'] ? this.speed : 0) - (this.keys['KeyS'] || this.keys['ArrowDown'] ? this.speed : 0)) * delta;
+    this.position.x += ((this.keys['KeyA'] || this.keys['ArrowLeft'] ? this.speed : 0) - (this.keys['KeyD'] || this.keys['ArrowRight'] ? this.speed : 0)) * delta;
   }
 
   update(delta) {

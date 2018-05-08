@@ -1,14 +1,22 @@
 import { ACTION } from '../../../shared';
+import { RateLimiter } from './rate_limiter';
 
 class Client {
-  constructor(client, token, rate, onAction) {
+  constructor(client, token, onAction) {
     this.sessionToken = token;
     this.onAction = onAction;
     this.name = token.substr(0, 10);
 
     // logs
-    this.rate = rate;
-    this.timestamps = [];
+    this.muted = {
+      state: false,
+      time: -1,
+      timeout: 10
+    };
+    this.rate = {
+      request: new RateLimiter(10, 1),
+      spam: new RateLimiter(5, 5)
+    };
 
     // events
     this.client = client;
@@ -27,14 +35,21 @@ class Client {
 
   onMessage(msg) {
     // handle message from client
-    if (this.rateLimit() && msg.type === 'utf8') {
+    if (this.rate.request.inLimit() && msg.type === 'utf8') {
       try {
         const res = JSON.parse(msg.utf8Data);
 
         switch (res.type) {
           case ACTION.MESSAGE: {
-            const data = {from: this.name, message: this.sanitise(res.data)};
-            this.onAction(ACTION.MESSAGE, this.sessionToken, data);
+            if (!this.isMuted()) {
+              if (this.rate.spam.inLimit()) {
+                const data = {from: this.name, message: this.sanitise(res.data)};
+                this.onAction(ACTION.MESSAGE, this.sessionToken, data);
+              } else {
+                this.onAction(ACTION.MUTE, this.sessionToken, this.muted.timeout);
+                this.mute();
+              }
+            }
             break;
           }
           case ACTION.SET_NAME: {
@@ -74,28 +89,27 @@ class Client {
     return this.name;
   }
 
-  sanitise(input) {
-    return input.toString();
+  getRate() {
+    return this.rate.request.getRate();
   }
 
-  rateLimit() {
-    const t = new Date();
+  mute() {
+    this.muted.state = true;
+    this.muted.time = (new Date()).getTime() + this.muted.timeout * 1000;
+    this.muted.timeout += 5;
+  }
 
-    // get requests within last second
-    for (var i=this.timestamps.length-1, end=-1; i>end; --i) {
-      if (t - this.timestamps[i] > 1000) {
-        this.timestamps.splice(0, i + 1);
-        break;
-      }
+  isMuted() {
+    // check if muted period is over
+    if (this.muted.state) {
+      this.muted.state = (new Date()).getTime() <= this.muted.time;
     }
 
-    // keep or discard
-    if (this.timestamps.length <= this.rate) {
-      this.timestamps.push(t);
-      return true;
-    } else {
-      return false;
-    }
+    return this.muted.state;
+  }
+
+  sanitise(input) {
+    return input.toString();
   }
 }
 
