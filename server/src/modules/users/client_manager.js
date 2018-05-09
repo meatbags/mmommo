@@ -16,21 +16,30 @@ class ClientManager {
     this.clients[id] = new Client(client, id, onAction);
 
     // ping client
-    const data = {id: id, rate: this.clients[id].getRate()};
-    this.packet.ping(id, data);
+    this.packet.ping(id);
+  }
+
+  remove(id) {
+    delete this.clients[id];
+    console.log('DC: Removed user', id);
   }
 
   onUserAction(action, id, data) {
     console.log(action, data);
 
     switch (action) {
+      case ACTION.MOVE: {
+        
+        this.packet.broadcastPlayerPositions(id);
+        break;
+      }
       case ACTION.MESSAGE: {
         this.packet.broadcastMessage(data.from, data.message);
         break;
       }
       case ACTION.CONNECTION_CLOSED: {
         this.token.unregister(id);
-        console.log('User DC', id);
+        this.remove(id);
         break;
       }
       case ACTION.MUTE: {
@@ -41,6 +50,7 @@ class ClientManager {
         this.clients[id].setName(data);
         var name = this.clients[id].getName();
         this.packet.notify(id, `Welcome ${name}!`);
+        this.packet.broadcastPlayerName(id, name);
         break;
       }
       default: {

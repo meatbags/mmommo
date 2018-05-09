@@ -21,6 +21,13 @@ class PacketUtils {
     return this.send(ACTION.MESSAGE, message);
   }
 
+  sendMove(player) {
+    return this.send(ACTION.MOVE, {
+      p: this.jsonVector(player.position),
+      v: this.jsonVector(player.motion)
+    });
+  }
+
   send(type, data) {
     if (this.connectionOK()) {
       const msg = JSON.stringify({type: type, data: data});
@@ -29,6 +36,10 @@ class PacketUtils {
     } else {
       return false;
     }
+  }
+
+  jsonVector(v) {
+    return {x: v.x, y: v.y, z: v.z};
   }
 
   connectionOK() {

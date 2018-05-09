@@ -6,7 +6,7 @@ class App {
     this.client = new Module.Client(`ws://${window.location.host}:1337`);
 
     // game
-    this.scene = new Module.Scene(this.client.player);
+    this.scene = new Module.Scene(this.client.player, this.client.peerManager);
     this.renderer = new Module.Renderer(this.scene.getScene(), this.scene.getCamera());
     this.timer = new Module.Timer();
 
@@ -16,10 +16,11 @@ class App {
   }
 
   loop() {
-    // requestAnimationFrame(() => { this.loop(); });
-
-    // update and draw
+    requestAnimationFrame(() => { this.loop(); });
     this.timer.update();
+
+    // update game logic
+    this.client.update(this.timer.delta);
     this.scene.update(this.timer.delta);
     this.renderer.render(this.timer.delta);
   }

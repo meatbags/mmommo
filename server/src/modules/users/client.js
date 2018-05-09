@@ -5,9 +5,13 @@ class Client {
   constructor(client, id, onAction) {
     this.id = id;
     this.onAction = onAction;
-    this.name = 'User_' + id.substr(0, 10);
 
-    // logs
+    // player attr
+    this.name = 'User_' + id.substr(0, 10);
+    this.position = {x: 0, y: 0, z: 0};
+    this.motion = {x: 0, y: 0, z: 0};
+
+    // limiters
     this.maxMessageSize = 250;
     this.muted = {
       state: false,
@@ -15,7 +19,7 @@ class Client {
       timeout: 10
     };
     this.rate = {
-      request: new RateLimiter(10, 1),
+      request: new RateLimiter(4, 1),
       spam: new RateLimiter(5, 5)
     };
 
@@ -25,15 +29,6 @@ class Client {
     this.client.on('close', (conn) => { this.onAction(ACTION.CONNECTION_CLOSED, this.id, null); });
   }
 
-  sendMessage(type, data) {
-    this.client.sendUTF(
-      JSON.stringify({
-        type: type,
-        data: data
-      })
-    );
-  }
-
   onMessage(msg) {
     // handle message from client
     if (this.rate.request.inLimit() && msg.type === 'utf8') {
@@ -41,6 +36,17 @@ class Client {
         const res = JSON.parse(msg.utf8Data);
 
         switch (res.type) {
+          case ACTION.MOVE: {
+            const p = this.verifyVector(res.data.p);
+            const v = this.verifyVector(res.data.v);
+
+            if (p && v) {
+              this.setPosition(p, v);
+              this.onAction(ACTION.MOVE, this.id, {p: p, v: v});
+            }
+
+            break;
+          }
           case ACTION.MESSAGE: {
             if (!this.isMuted()) {
               if (this.rate.spam.inLimit()) {
@@ -84,6 +90,15 @@ class Client {
     }
   }
 
+  sendMessage(type, data) {
+    this.client.sendUTF(
+      JSON.stringify({
+        type: type,
+        data: data
+      })
+    );
+  }
+
   onError() {
     this.sendMessage(ACTION.ERROR, null);
   }
@@ -94,6 +109,11 @@ class Client {
       this.nameLock = true;
       this.name = name;
     }
+  }
+
+  setPosition(p, v) {
+    this.position = p;
+    this.motion = v;
   }
 
   getName(name) {
@@ -121,6 +141,14 @@ class Client {
 
   sanitise(input) {
     return input.toString().replace(/[^a-zA-Z0-9 .,?'"!@#$%^&*()_\-+]/gi, '');
+  }
+
+  verifyVector(v) {
+    if (isNaN(v.x) || isNaN(v.y) || isNaN(v.z)) {
+      return false;
+    } else {
+      return {x: v.x, y: v.y, z: v.z};
+    }
   }
 
   isValidString(str) {

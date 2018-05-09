@@ -1,5 +1,5 @@
 import { ACTION } from '../../../../shared';
-import { Socket, PacketUtils } from './connexion';
+import { Socket, PacketUtils, EventEmitter } from './connexion';
 import { Player, PeerManager } from './players';
 import { Chat, HUD } from './interface';
 
@@ -15,13 +15,21 @@ class Client {
     this.packet = new PacketUtils(this.socket.getSocket());
     this.hud = new HUD();
 
-    // create player input object
+    // input
+    this.rate = 1;
+    this.rateInterval = 1;
     this.player = new Player();
+    this.peerManager = new PeerManager();
+    this.movementEmitter = new EventEmitter(this.rateInterval, () => {
+      if (this.player.changed()) {
+        this.packet.sendMove(this.player);
+      }
+    });
   }
 
   onConnect() {
     // reset connection
-    this.peerManager = new PeerManager();
+    this.peerManager.purge();
     this.packet.setSocket(this.socket.getSocket());
   }
 
@@ -30,6 +38,10 @@ class Client {
     const res = JSON.parse(e.data);
 
     switch (res.type) {
+      case ACTION.PEERS: {
+        this.peerManager.handlePositionData(res.data);
+        break;
+      }
       case ACTION.MESSAGE: {
         this.chat.printMessage(res.data.from, res.data.message);
         break;
@@ -38,14 +50,25 @@ class Client {
         this.chat.printNotice(res.data.message);
         break;
       }
+      case ACTION.PEER_SET_NAME: {
+        this.peerManager.handleNameData(res.data);
+        break;
+      }
       case ACTION.PING: {
+        console.log('PING', res.data);
+        this.id = res.data.id;
         this.rate = res.data.rate;
         this.rateInterval = 1 / this.rate;
-        this.id = res.data.id;
-        console.log('Session', this.id);
+        this.movementEmitter.setInterval(this.rateInterval);
+        this.peerManager.setMyId(this.id);
+        this.peerManager.handleNameData(res.data.peers);
+        console.log('Session', this.id, 'Rate', this.rate, this.rateInterval);
 
         // send pong back
-        const data = this.chat.isActive() ? {name: this.chat.getName()} : {};
+        const data = {};
+        if (this.chat.isActive()) {
+          data.name = this.chat.getName();
+        }
         this.packet.sendPong(data);
         break;
       }
@@ -83,6 +106,12 @@ class Client {
         break;
       }
     }
+  }
+
+  update(delta) {
+    this.player.update(delta);
+    this.movementEmitter.update(delta);
+    this.peerManager.update(delta);
   }
 }
 
