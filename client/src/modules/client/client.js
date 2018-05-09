@@ -14,7 +14,7 @@ class Client {
     this.socket = new Socket(this.url, this.chat, () => { this.onConnect(); }, (e) => { this.onMessage(e); });
     this.packet = new PacketUtils(this.socket.getSocket());
     this.hud = new HUD();
-
+    
     // input
     this.rate = 1;
     this.rateInterval = 1;
@@ -68,11 +68,7 @@ class Client {
         this.peerManager.handleStateData(res.data.peers);
 
         // send pong back
-        const data = {};
-        if (this.chat.isActive()) {
-          data.name = this.chat.getName();
-        }
-        this.packet.sendPong(data);
+        this.packet.sendPong(this);
         break;
       }
       default: {

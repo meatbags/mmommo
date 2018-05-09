@@ -20,11 +20,15 @@ class ClientManager {
   }
 
   remove(id) {
+    // remove client and broadcast
     delete this.clients[id];
-    console.log('DC: Removed user', id);
+    this.token.unregister(id);
+    this.packet.broadcastRemovePlayer(id);
+    console.log('Disconnected', id);
   }
 
   onUserAction(action, id, data) {
+    // handle client actions
     if (action != ACTION.MOVE) {
       console.log(action, data);
     }
@@ -48,9 +52,7 @@ class ClientManager {
         break;
       }
       case ACTION.CONNECTION_CLOSED: {
-        this.token.unregister(id);
         this.remove(id);
-        this.packet.broadcastRemovePlayer(id);
         break;
       }
       default: {

@@ -78,11 +78,27 @@ class Client {
             break;
           }
           case ACTION.PONG: {
+            // accept pong packet
             if (res.data.name) {
               const clean = this.sanitise(res.data.name);
+
               if (this.isValidString(clean)) {
-                this.onAction(ACTION.SET_NAME, this.id, clean);
+                this.nameLock = true; // lock name
+                this.name = clean;
+                this.onAction(ACTION.SET_NAME, this.id, this.name);
               }
+            }
+            if (res.data.p && res.data.v) {
+              const p = this.verifyVector(res.data.p);
+              const v = this.verifyVector(res.data.v);
+
+              if (p && v) {
+                this.position.set(p);
+                this.motion.set(v);
+                this.onAction(ACTION.MOVE, this.id, null);
+              }
+
+              break;
             }
             break;
           }
@@ -135,7 +151,7 @@ class Client {
   }
 
   sanitise(input) {
-    return input.toString().replace(/[^a-zA-Z0-9 .,?'"!@#$%^&*()_\-+]/gi, '');
+    return input.toString().replace(/[^a-zA-Z0-9 .,?'"!@#$%^&*()_\-+=]/gi, '');
   }
 
   verifyVector(v) {

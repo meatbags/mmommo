@@ -4,10 +4,19 @@ import { RateLimiter } from './rate_limiter';
 class PacketUtils {
   constructor(clients) {
     this.clients = clients;
-    this.state = {
-      needUpdate: [],
-      rate: new RateLimiter(10, 1)
-    };
+    this.queue = [];
+    this.broadcastRate = new RateLimiter(8, 1);
+  }
+
+  ping(id) {
+    // ping player, give info
+    this.clients[id].sendMessage(ACTION.PING, {
+      id: id,
+      rate: this.clients[id].getRate(),
+      peers: Object.keys(this.clients).map(id => {
+        return this.clients[id].getStateJSON();
+      })
+    });
   }
 
   message(id, from, message) {
@@ -18,46 +27,11 @@ class PacketUtils {
     this.clients[id].sendMessage(ACTION.NOTICE, {message: message});
   }
 
-  ping(id) {
-    // ping player, give info
-    const data = {
-      id: id,
-      rate: this.clients[id].getRate(),
-      peers: Object.keys(this.clients).map((id) => {
-        return this.clients[id].getStateJSON();
-      })
-    };
-
-    this.clients[id].sendMessage(ACTION.PING, data);
-  }
-
   broadcast(action, data) {
     for (var id in this.clients) {
       if (this.clients.hasOwnProperty(id)) {
         this.clients[id].sendMessage(action, data);
       }
-    }
-  }
-
-  broadcastExclusive(action, data, exclude) {
-    for (var id in this.clients) {
-      if (this.clients.hasOwnProperty(id) && id != exclude) {
-        this.clients[id].sendMessage(action, data);
-      }
-    }
-  }
-
-  broadcastPlayerStates(id) {
-    // broadcast positions/ state of moved players
-    if (this.state.needUpdate.indexOf(id) == -1) {
-      this.state.needUpdate.push(id);
-    }
-
-    // apply rate limit
-    if (this.state.rate.inLimit()) {
-      const data = this.state.needUpdate.map((id) => { return this.clients[id].getStateJSON(); });
-      this.broadcast(ACTION.PEERS, data);
-      this.state.needUpdate = [];
     }
   }
 
@@ -75,6 +49,29 @@ class PacketUtils {
 
   broadcastRemovePlayer(id) {
     this.broadcast(ACTION.PEER_DISCONNECT, {id: id});
+  }
+
+  broadcastExclusive(action, data, exclude) {
+    for (var id in this.clients) {
+      if (this.clients.hasOwnProperty(id) && id != exclude) {
+        this.clients[id].sendMessage(action, data);
+      }
+    }
+  }
+
+  broadcastPlayerStates(id) {
+    // broadcast positions/ state of moved players
+    if (this.queue.indexOf(id) == -1) {
+      this.queue.push(id);
+    }
+
+    // rate limit
+    if (this.broadcastRate.inLimit()) {
+      this.broadcast(ACTION.PEERS, this.queue.map(id => {
+        return this.clients[id].getStateJSON();
+      }));
+      this.queue = [];
+    }
   }
 }
 
