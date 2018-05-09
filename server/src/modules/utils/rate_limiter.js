@@ -12,7 +12,7 @@ class RateLimiter {
   }
 
   inLimit() {
-    // check n requests in period
+    // count number of requests in period
     const t = new Date();
 
     for (var i=this.stamps.length-1, end=-1; i>end; --i) {

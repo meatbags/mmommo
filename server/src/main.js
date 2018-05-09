@@ -7,11 +7,13 @@ class Server {
     this.port = 1337;
     this.manager = new Module.ClientManager();
 
-    // create ws server
+    // http server
     this.server = http.createServer((req, res) => {});
     this.server.listen(this.port, () => {
       console.log((new Date()), `Listening on port: ${this.port}`);
     });
+
+    // ws server
     this.ws = new WebSocketServer({httpServer: this.server, autoAcceptConnections: false});
     this.ws.on('request', (req) => {
       if (this.verify(req)) {

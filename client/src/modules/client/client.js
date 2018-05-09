@@ -1,15 +1,20 @@
 import { ACTION } from '../../../../shared';
 import { Chat, Peers, PacketUtils } from './modules';
 import { Player } from './player';
+import { HUD } from './hud';
 
 class Client {
   constructor(url) {
+    // handle server connection and player input
     this.url = url;
 
     // settings
     this.reconnectCount = 0;
     this.reconnectMaxTries = 3;
     this.reconnectTimeout = 3000;
+
+
+    this.hud = new HUD();
 
     // hook up
     this.connect();
