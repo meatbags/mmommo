@@ -8,6 +8,7 @@ class App {
     // game
     this.scene = new Module.Scene(this.client.player, this.client.peerManager);
     this.renderer = new Module.Renderer(this.scene.getScene(), this.scene.getCamera());
+    this.renderer2d = new Module.Renderer2D(this.scene.getScene(), this.scene.getCamera());
     this.timer = new Module.Timer();
 
     // events
@@ -23,12 +24,14 @@ class App {
     this.client.update(this.timer.delta);
     this.scene.update(this.timer.delta);
     this.renderer.render(this.timer.delta);
+    this.renderer2d.render(this.timer.delta);
   }
 
   events() {
     window.onresize = () => {
       this.scene.resize();
       this.renderer.resize();
+      this.renderer2d.resize();
     };
   }
 }

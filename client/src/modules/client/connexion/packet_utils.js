@@ -21,10 +21,10 @@ class PacketUtils {
     return this.send(ACTION.MESSAGE, message);
   }
 
-  sendMove(player) {
+  sendMove(position, motion) {
     return this.send(ACTION.MOVE, {
-      p: this.jsonVector(player.position),
-      v: this.jsonVector(player.motion)
+      p: this.jsonVector(position),
+      v: this.jsonVector(motion)
     });
   }
 

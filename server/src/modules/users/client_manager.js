@@ -25,21 +25,17 @@ class ClientManager {
   }
 
   onUserAction(action, id, data) {
-    console.log(action, data);
+    if (action != ACTION.MOVE) {
+      console.log(action, data);
+    }
 
     switch (action) {
       case ACTION.MOVE: {
-        
-        this.packet.broadcastPlayerPositions(id);
+        this.packet.broadcastPlayerStates(id);
         break;
       }
       case ACTION.MESSAGE: {
         this.packet.broadcastMessage(data.from, data.message);
-        break;
-      }
-      case ACTION.CONNECTION_CLOSED: {
-        this.token.unregister(id);
-        this.remove(id);
         break;
       }
       case ACTION.MUTE: {
@@ -47,10 +43,14 @@ class ClientManager {
         break;
       }
       case ACTION.SET_NAME: {
-        this.clients[id].setName(data);
-        var name = this.clients[id].getName();
-        this.packet.notify(id, `Welcome ${name}!`);
-        this.packet.broadcastPlayerName(id, name);
+        this.packet.notify(id, `Welcome ${data}!`);
+        this.packet.broadcastPlayerName(id, data);
+        break;
+      }
+      case ACTION.CONNECTION_CLOSED: {
+        this.token.unregister(id);
+        this.remove(id);
+        this.packet.broadcastRemovePlayer(id);
         break;
       }
       default: {

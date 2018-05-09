@@ -1,5 +1,5 @@
 import { ACTION } from '../../../../shared';
-import { RateLimiter } from '../utils';
+import { RateLimiter, Vector } from '../utils';
 
 class Client {
   constructor(client, id, onAction) {
@@ -8,8 +8,8 @@ class Client {
 
     // player attr
     this.name = 'User_' + id.substr(0, 10);
-    this.position = {x: 0, y: 0, z: 0};
-    this.motion = {x: 0, y: 0, z: 0};
+    this.position = new Vector(0, 0, 0);
+    this.motion = new Vector(0, 0, 0);
 
     // limiters
     this.maxMessageSize = 250;
@@ -41,8 +41,9 @@ class Client {
             const v = this.verifyVector(res.data.v);
 
             if (p && v) {
-              this.setPosition(p, v);
-              this.onAction(ACTION.MOVE, this.id, {p: p, v: v});
+              this.position.set(p);
+              this.motion.set(v);
+              this.onAction(ACTION.MOVE, this.id, null);
             }
 
             break;
@@ -64,10 +65,16 @@ class Client {
             break;
           }
           case ACTION.SET_NAME: {
-            const clean = this.sanitise(res.data);
-            if (this.isValidString(clean)) {
-              this.onAction(ACTION.SET_NAME, this.id, clean);
+            if (!this.nameLock) {
+              const clean = this.sanitise(res.data);
+
+              if (this.isValidString(clean)) {
+                this.nameLock = true; // lock name
+                this.name = clean;
+                this.onAction(ACTION.SET_NAME, this.id, this.name);
+              }
             }
+
             break;
           }
           case ACTION.PONG: {
@@ -85,7 +92,7 @@ class Client {
         }
       } catch(e) {
         // invalid JSON
-        this.onError();
+        this.sendMessage(ACTION.ERROR, null);
       }
     }
   }
@@ -99,25 +106,13 @@ class Client {
     );
   }
 
-  onError() {
-    this.sendMessage(ACTION.ERROR, null);
-  }
-
-  setName(name) {
-    // set name (once)
-    if (!this.nameLock) {
-      this.nameLock = true;
-      this.name = name;
-    }
-  }
-
-  setPosition(p, v) {
-    this.position = p;
-    this.motion = v;
-  }
-
-  getName(name) {
-    return this.name;
+  getStateJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      p: this.position.getJSON(),
+      v: this.motion.getJSON()
+    };
   }
 
   getRate() {

@@ -4,9 +4,9 @@ import { RateLimiter } from './rate_limiter';
 class PacketUtils {
   constructor(clients) {
     this.clients = clients;
-    this.position = {
-      needsUpdate: [],
-      rate: new RateLimiter(5, 1)
+    this.state = {
+      needUpdate: [],
+      rate: new RateLimiter(10, 1)
     };
   }
 
@@ -19,11 +19,12 @@ class PacketUtils {
   }
 
   ping(id) {
+    // ping player, give info
     const data = {
       id: id,
       rate: this.clients[id].getRate(),
       peers: Object.keys(this.clients).map((id) => {
-        return {id: id, name: this.clients[id].name};
+        return this.clients[id].getStateJSON();
       })
     };
 
@@ -46,23 +47,17 @@ class PacketUtils {
     }
   }
 
-  broadcastPlayerPositions(id) {
-    // broadcast positions of moved players
-    if (this.position.needsUpdate.indexOf(id) == -1) {
-      this.position.needsUpdate.push(id);
+  broadcastPlayerStates(id) {
+    // broadcast positions/ state of moved players
+    if (this.state.needUpdate.indexOf(id) == -1) {
+      this.state.needUpdate.push(id);
     }
 
     // apply rate limit
-    if (this.position.rate.inLimit()) {
-      const data = this.position.needsUpdate.map((id) => {
-        return {
-          id: id,
-          p: this.clients[id].position,
-          v: this.clients[id].motion
-        };
-      });
+    if (this.state.rate.inLimit()) {
+      const data = this.state.needUpdate.map((id) => { return this.clients[id].getStateJSON(); });
       this.broadcast(ACTION.PEERS, data);
-      this.position.needsUpdate = [];
+      this.state.needUpdate = [];
     }
   }
 
@@ -76,6 +71,10 @@ class PacketUtils {
 
   broadcastPlayerName(id, name) {
     this.broadcastExclusive(ACTION.PEER_SET_NAME, [{id: id, name: name}], id);
+  }
+
+  broadcastRemovePlayer(id) {
+    this.broadcast(ACTION.PEER_DISCONNECT, {id: id});
   }
 }
 

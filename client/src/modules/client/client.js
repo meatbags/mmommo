@@ -22,7 +22,7 @@ class Client {
     this.peerManager = new PeerManager();
     this.movementEmitter = new EventEmitter(this.rateInterval, () => {
       if (this.player.changed()) {
-        this.packet.sendMove(this.player);
+        this.packet.sendMove(this.player.position, this.player.motion);
       }
     });
   }
@@ -54,15 +54,18 @@ class Client {
         this.peerManager.handleNameData(res.data);
         break;
       }
+      case ACTION.PEER_DISCONNECT: {
+        this.peerManager.handlePeerDisconnect(res.data);
+        break;
+      }
       case ACTION.PING: {
-        console.log('PING', res.data);
+        console.log('Ping', res.data);
         this.id = res.data.id;
         this.rate = res.data.rate;
         this.rateInterval = 1 / this.rate;
         this.movementEmitter.setInterval(this.rateInterval);
         this.peerManager.setMyId(this.id);
-        this.peerManager.handleNameData(res.data.peers);
-        console.log('Session', this.id, 'Rate', this.rate, this.rateInterval);
+        this.peerManager.handleStateData(res.data.peers);
 
         // send pong back
         const data = {};

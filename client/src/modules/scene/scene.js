@@ -22,11 +22,13 @@ class Scene {
 
   init() {
     // set up scene
-    const geo = new THREE.BoxBufferGeometry(20, 1, 20);
     const mat = new THREE.MeshPhongMaterial({});
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.y = -1;
-    this.scene.add(mesh);
+    const floor = new THREE.Mesh(new THREE.BoxBufferGeometry(20, 1, 20), mat);
+    const block = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 2, 1), mat);
+    floor.position.y = -1;
+    block.position.x = 10;
+    block.position.z = 10;
+    this.scene.add(floor, block);
 
     // players
     this.playerMesh = new THREE.Mesh(new THREE.SphereBufferGeometry(0.25, 16, 16), new THREE.MeshPhongMaterial({emissive: 0xffffff}));
@@ -50,7 +52,7 @@ class Scene {
     );
 
     // conform peer mesh array
-    const peers = Object.keys(this.peerManager.peers).map((id) => { return this.peerManager.peers[id]; });
+    const peers = Object.keys(this.peerManager.peers);
 
     if (peers.length > this.peerMeshes.length) {
       for (var i=0, len=peers.length - this.peerMeshes.length; i<len; ++i) {
@@ -60,17 +62,18 @@ class Scene {
       }
     } else if (peers.length < this.peerMeshes.length) {
       for (var i=0, len=this.peerMeshes.length - peers.length; i<len; ++i) {
-        const obj = this.peerMeshes.splice(i, 1);
-        this.scene.remove(obj);
+        this.scene.remove(this.peerMeshes[i]);
+        this.peerMeshes.splice(i, 1);
       }
     }
 
     // move peer meshes
     for (var i=0, len=peers.length; i<len; i++) {
+      const p = this.peerManager.peers[peers[i]];
       this.peerMeshes[i].position.set(
-        peers[i].position.x,
-        peers[i].position.y,
-        peers[i].position.z
+        p.target.position.x,
+        p.target.position.y,
+        p.target.position.z
       )
     }
   }

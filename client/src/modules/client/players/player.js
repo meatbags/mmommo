@@ -46,10 +46,10 @@ class Player {
   }
 
   move(delta) {
-    this.motion.x = (this.keys['KeyW'] || this.keys['ArrowUp'] ? this.speed : 0) - (this.keys['KeyS'] || this.keys['ArrowDown'] ? this.speed : 0);
-    this.motion.z = (this.keys['KeyA'] || this.keys['ArrowLeft'] ? this.speed : 0) - (this.keys['KeyD'] || this.keys['ArrowRight'] ? this.speed : 0);
-    this.position.z += this.motion.x * delta;
-    this.position.x += this.motion.z * delta;
+    this.motion.x = (this.keys['KeyA'] || this.keys['ArrowLeft'] ? this.speed : 0) - (this.keys['KeyD'] || this.keys['ArrowRight'] ? this.speed : 0);
+    this.motion.z = (this.keys['KeyW'] || this.keys['ArrowUp'] ? this.speed : 0) - (this.keys['KeyS'] || this.keys['ArrowDown'] ? this.speed : 0);
+    this.position.x += this.motion.x * delta;
+    this.position.z += this.motion.z * delta;
   }
 
   enableInput() {

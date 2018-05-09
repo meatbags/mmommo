@@ -40,6 +40,32 @@ class PeerManager {
     }
   }
 
+  handlePeerDisconnect(data) {
+    // remove peer
+    console.log('RIP', data);
+    if (this.peers[data.id]) {
+      this.remove(data.id);
+    }
+    console.log(this.peerCount, Object.keys(this.peers).length);
+  }
+
+  handleStateData(data) {
+    // handle server state packet
+    for (var i=0, len=data.length; i<len; ++i) {
+      const id = data[i].id;
+
+      if (id != this.id) {
+        if (!this.peers[id]) {
+          this.add(id);
+        }
+
+        // set name and position
+        this.peers[id].setName(data[i].name);
+        this.peers[id].setPosition(data[i]);
+      }
+    }
+  }
+
   handleNameData(data) {
     // handle server name packet
     for (var i=0, len=data.length; i<len; ++i) {
@@ -65,7 +91,7 @@ class PeerManager {
           this.add(id);
         }
 
-        this.peers[id].setPosition(data[i]);
+        this.peers[id].updatePosition(data[i]);
       }
     }
   }
