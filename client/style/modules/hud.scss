@@ -10,5 +10,18 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    .hud-box {
+      width: 100%;
+
+      .hud-box__inner {
+        width: 100%;
+        height: 180px;
+      }
+    }
+
+    .hud-flex {
+      flex: 1;
+    }
   }
 }

@@ -1,48 +1,32 @@
 import { ACTION } from '../../../../shared';
-import { Chat, Peers, PacketUtils } from './modules';
-import { Player } from './player';
-import { HUD } from './hud';
+import { Socket, PacketUtils } from './connexion';
+import { Player, PeerManager } from './players';
+import { Chat, HUD } from './interface';
 
 class Client {
   constructor(url) {
     // handle server connection and player input
     this.url = url;
-
-    // settings
-    this.reconnectCount = 0;
-    this.reconnectMaxTries = 3;
-    this.reconnectTimeout = 3000;
-
-
-    this.hud = new HUD();
+    this.id = null;
 
     // hook up
-    this.connect();
     this.chat = new Chat((action, data) => { this.onChat(action, data); });
-    this.packet = new PacketUtils(this.socket);
+    this.socket = new Socket(this.url, this.chat, () => { this.onConnect(); }, (e) => { this.onMessage(e); });
+    this.packet = new PacketUtils(this.socket.getSocket());
+    this.hud = new HUD();
 
     // create player input object
     this.player = new Player();
   }
 
-  connect() {
-    this.socket = new WebSocket(this.url);
-    this.socket.onopen = () => { this.onConnect(); };
-    this.socket.onmessage = (e) => { this.onMessage(e); };
-    this.socket.onerror = (e) => { console.warn(e); };
-    this.socket.onclose = () => { this.onDisconnected(); };
-  }
-
   onConnect() {
-    // reset data
-    this.reconnectCount = 0;
-    this.chat.printNotice('Connected.');
-    this.peers = new Peers();
-    this.packet.setSocket(this.socket);
+    // reset connection
+    this.peerManager = new PeerManager();
+    this.packet.setSocket(this.socket.getSocket());
   }
 
   onMessage(e) {
-    // process message
+    // process message from server
     const res = JSON.parse(e.data);
 
     switch (res.type) {
@@ -55,14 +39,14 @@ class Client {
         break;
       }
       case ACTION.PING: {
+        this.rate = res.data.rate;
+        this.rateInterval = 1 / this.rate;
+        this.id = res.data.id;
+        console.log('Session', this.id);
+
+        // send pong back
         const data = this.chat.isActive() ? {name: this.chat.getName()} : {};
         this.packet.sendPong(data);
-
-        // set internal rate
-        if (!isNaN(res.data.rate) && res.data.rate > 0) {
-          this.rate = res.data.rate;
-          this.rateInterval = 1 / res.data.rate;
-        }
         break;
       }
       default: {
@@ -72,6 +56,7 @@ class Client {
   }
 
   onChat(action, data) {
+    // process chat action
     switch (action) {
       case ACTION.MESSAGE: {
         this.packet.sendMessage(data);
@@ -96,24 +81,6 @@ class Client {
       }
       default: {
         break;
-      }
-    }
-  }
-
-  onDisconnected() {
-    // try to re-establish connection
-    if (!this.reconnectLock) {
-      this.reconnectLock = true;
-
-      if (++this.reconnectCount <= this.reconnectMaxTries) {
-        this.chat.printNotice(`No connection. Retrying ${this.reconnectCount}/${this.reconnectMaxTries}`);
-
-        setTimeout(() => {
-          this.reconnectLock = false;
-          this.connect();
-        }, this.reconnectTimeout);
-      } else {
-        this.chat.printNotice('Connection failed.')
       }
     }
   }

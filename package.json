@@ -4,9 +4,9 @@
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "webpack": "webpack --mode production",
+    "ship": "webpack --mode production",
     "watch": "webpack --mode development --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch-prod": "webpack --mode production --watch"
   },
   "repository": {
     "type": "git",

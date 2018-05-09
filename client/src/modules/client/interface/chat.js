@@ -3,6 +3,7 @@ import { ACTION } from '../../../../../shared';
 
 class Chat {
   constructor(onEvent) {
+    // manage the chat window
     this.onEvent = onEvent;
     this.limit = 12;
     this.fadeFrom = 9;

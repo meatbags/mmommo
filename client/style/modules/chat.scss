@@ -1,6 +1,5 @@
 .chat {
   width: 100%;
-  flex: 1;
   display: flex;
 
   .chat__inner {
@@ -10,6 +9,7 @@
     flex-direction: column;
 
     .chat-list {
+      border-top: $border;
       border-bottom: $border;
       padding-bottom: $space * 0.75;
       width: 100%;
