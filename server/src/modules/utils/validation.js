@@ -10,4 +10,4 @@ function validStringLength(str, max) {
   return (str.length > 0 && str.length < max);
 }
 
-export { validVector, sanitiseString, validStringLength };
+export { validVector, sanitise, validStringLength };

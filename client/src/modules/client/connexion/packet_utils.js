@@ -19,7 +19,7 @@ class PacketUtils {
     const data = client.getState();
     data.p = this.vectorToJSON(client.player.position);
     data.v = this.vectorToJSON(client.player.motion);
-    
+
     return this.send(ACTION.PONG, data);
   }
 

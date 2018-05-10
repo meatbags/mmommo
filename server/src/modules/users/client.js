@@ -1,5 +1,6 @@
 import { ACTION } from '../../../../shared';
 import { RateLimiter, Vector } from '../utils';
+import { validVector, sanitise, validStringLength } from '../utils';
 
 class Client {
   constructor(client, id, onAction) {
@@ -22,6 +23,7 @@ class Client {
       request: new RateLimiter(4, 1),
       spam: new RateLimiter(5, 5)
     };
+    this.nameLock = false;
 
     // events
     this.client = client;
@@ -58,11 +60,14 @@ class Client {
             break;
           }
           case ACTION.PONG: {
+            console.log("PONG");
             // process pong packet
             if (res.data.name && !this.nameLock) {
+              console.log(res.data.name);
               this.setName(res.data.name);
             }
             if (res.data.p && res.data.v) {
+              console.log(res.data.p, res.data.v);
               this.setPosition(res.data);
             }
             break;
@@ -107,9 +112,9 @@ class Client {
   }
 
   setPosition(data) {
-    if (validVector(res.data.p) && validVector(res.data.v)) {
-      this.position.set(p);
-      this.motion.set(v);
+    if (validVector(data.p) && validVector(data.v)) {
+      this.position.set(data.p);
+      this.motion.set(data.v);
       this.onAction(ACTION.MOVE, this.id, null);
     }
   }
@@ -140,7 +145,7 @@ class Client {
     if (this.muted.state) {
       this.muted.state = (new Date()).getTime() <= this.muted.time;
     }
-    
+
     return this.muted.state;
   }
 }

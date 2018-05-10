@@ -28,7 +28,7 @@ class ClientManager {
   onUserAction(action, id, data) {
     // handle valid client actions
     if (action != ACTION.MOVE) {
-      //console.log(action, data);
+      console.log(action, data);
     }
 
     switch (action) {

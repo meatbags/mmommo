@@ -33,7 +33,7 @@ class Client {
     });
 
     // dev mode
-    this.namePicker.force('Test');
+    //setTimeout(() => { this.namePicker.force('Test'); }, 250);
   }
 
   onConnect() {
@@ -103,7 +103,7 @@ class Client {
     const keys = Object.keys(this.state);
 
     for (var i=0, len=keys.length; i<len; ++i) {
-      state[keys[i]] = state[keys[i]];
+      state[keys[i]] = this.state[keys[i]];
     }
 
     return state;
