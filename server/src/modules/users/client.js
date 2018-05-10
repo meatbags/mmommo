@@ -3,10 +3,10 @@ import { RateLimiter, Vector } from '../utils';
 
 class Client {
   constructor(client, id, onAction) {
-    this.id = id;
     this.onAction = onAction;
 
-    // player attr
+    // player props
+    this.id = id;
     this.name = 'User_' + id.substr(0, 10);
     this.position = new Vector(0, 0, 0);
     this.motion = new Vector(0, 0, 0);
@@ -29,76 +29,41 @@ class Client {
     this.client.on('close', (conn) => { this.onAction(ACTION.CONNECTION_CLOSED, this.id, null); });
   }
 
+  sendMessage(type, data) {
+    this.client.sendUTF(
+      JSON.stringify({
+        type: type,
+        data: data
+      })
+    );
+  }
+
   onMessage(msg) {
-    // handle message from client
+    // validate client messages
     if (this.rate.request.inLimit() && msg.type === 'utf8') {
       try {
         const res = JSON.parse(msg.utf8Data);
 
         switch (res.type) {
           case ACTION.MOVE: {
-            const p = this.verifyVector(res.data.p);
-            const v = this.verifyVector(res.data.v);
-
-            if (p && v) {
-              this.position.set(p);
-              this.motion.set(v);
-              this.onAction(ACTION.MOVE, this.id, null);
-            }
-
+            this.setPosition(res.data);
             break;
           }
           case ACTION.MESSAGE: {
-            if (!this.isMuted()) {
-              if (this.rate.spam.inLimit()) {
-                const clean = this.sanitise(res.data);
-
-                if (this.isValidString(clean)) {
-                  const data = {from: this.name, message: clean};
-                  this.onAction(ACTION.MESSAGE, this.id, data);
-                }
-              } else {
-                this.onAction(ACTION.MUTE, this.id, this.muted.timeout);
-                this.mute();
-              }
-            }
+            this.setChatMessage(res.data);
             break;
           }
           case ACTION.SET_NAME: {
-            if (!this.nameLock) {
-              const clean = this.sanitise(res.data);
-
-              if (this.isValidString(clean)) {
-                this.nameLock = true; // lock name
-                this.name = clean;
-                this.onAction(ACTION.SET_NAME, this.id, this.name);
-              }
-            }
-
+            this.setName(res.data);
             break;
           }
           case ACTION.PONG: {
-            // accept pong packet
-            if (res.data.name) {
-              const clean = this.sanitise(res.data.name);
-
-              if (this.isValidString(clean)) {
-                this.nameLock = true; // lock name
-                this.name = clean;
-                this.onAction(ACTION.SET_NAME, this.id, this.name);
-              }
+            // process pong packet
+            if (res.data.name && !this.nameLock) {
+              this.setName(res.data.name);
             }
             if (res.data.p && res.data.v) {
-              const p = this.verifyVector(res.data.p);
-              const v = this.verifyVector(res.data.v);
-
-              if (p && v) {
-                this.position.set(p);
-                this.motion.set(v);
-                this.onAction(ACTION.MOVE, this.id, null);
-              }
-
-              break;
+              this.setPosition(res.data);
             }
             break;
           }
@@ -113,13 +78,45 @@ class Client {
     }
   }
 
-  sendMessage(type, data) {
-    this.client.sendUTF(
-      JSON.stringify({
-        type: type,
-        data: data
-      })
-    );
+  setChatMessage(msg) {
+    if (!this.isMuted()) {
+      if (this.rate.spam.inLimit()) {
+        const clean = sanitise(msg);
+
+        if (validStringLength(clean, this.maxMessageSize)) {
+          const data = {from: this.name, message: clean};
+          this.onAction(ACTION.MESSAGE, this.id, data);
+        }
+      } else {
+        this.onAction(ACTION.MUTE, this.id, this.muted.timeout);
+        this.mute();
+      }
+    }
+  }
+
+  setName(name) {
+    if (!this.nameLock) {
+      const clean = sanitise(name);
+
+      if (validStringLength(clean, this.maxMessageSize)) {
+        this.nameLock = true; // lock name
+        this.name = clean;
+        this.onAction(ACTION.SET_NAME, this.id, this.name);
+      }
+    }
+  }
+
+  setPosition(data) {
+    if (validVector(res.data.p) && validVector(res.data.v)) {
+      this.position.set(p);
+      this.motion.set(v);
+      this.onAction(ACTION.MOVE, this.id, null);
+    }
+  }
+
+  getRate() {
+    // get rate limit
+    return this.rate.request.getRate();
   }
 
   getStateJSON() {
@@ -131,39 +128,20 @@ class Client {
     };
   }
 
-  getRate() {
-    return this.rate.request.getRate();
-  }
-
   mute() {
+    // mute player for spamming
     this.muted.state = true;
     this.muted.time = (new Date()).getTime() + this.muted.timeout * 1000;
     this.muted.timeout += 5;
   }
 
   isMuted() {
-    // check if muted period is over
+    // check if still muted
     if (this.muted.state) {
       this.muted.state = (new Date()).getTime() <= this.muted.time;
     }
-
+    
     return this.muted.state;
-  }
-
-  sanitise(input) {
-    return input.toString().replace(/[^a-zA-Z0-9 .,?'"!@#$%^&*()_\-+=]/gi, '');
-  }
-
-  verifyVector(v) {
-    if (isNaN(v.x) || isNaN(v.y) || isNaN(v.z)) {
-      return false;
-    } else {
-      return {x: v.x, y: v.y, z: v.z};
-    }
-  }
-
-  isValidString(str) {
-    return (str.length && str.length < this.maxMessageSize);
   }
 }
 

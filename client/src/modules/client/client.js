@@ -31,6 +31,9 @@ class Client {
         this.packet.sendMove(this.player.position, this.player.motion);
       }
     });
+
+    // dev mode
+    this.namePicker.force('Test');
   }
 
   onConnect() {
@@ -72,7 +75,7 @@ class Client {
           id: res.data.id,
           rate: res.data.rate,
           rateInterval: 1 / res.data.rate
-        })
+        });
         this.movementEmitter.setInterval(this.state.rateInterval);
         this.peerManager.setMyId(this.state.id);
         this.peerManager.handleStateData(res.data.peers);

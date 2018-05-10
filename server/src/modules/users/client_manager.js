@@ -10,17 +10,15 @@ class ClientManager {
   }
 
   add(client) {
-    // add new client
+    // add new client, ping client
     const id = this.token.getUnique();
     const onAction = (action, id, data) => { this.onUserAction(action, id, data); };
     this.clients[id] = new Client(client, id, onAction);
-
-    // ping client
     this.packet.ping(id);
   }
 
   remove(id) {
-    // remove client and broadcast
+    // remove client, broadcast removal
     delete this.clients[id];
     this.token.unregister(id);
     this.packet.broadcastRemovePlayer(id);
@@ -28,9 +26,9 @@ class ClientManager {
   }
 
   onUserAction(action, id, data) {
-    // handle client actions
+    // handle valid client actions
     if (action != ACTION.MOVE) {
-      console.log(action, data);
+      //console.log(action, data);
     }
 
     switch (action) {

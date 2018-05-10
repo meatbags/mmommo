@@ -15,6 +15,12 @@ class NamePicker {
     this.form.querySelector('.form-window__notice').innerHTML = msg;
   }
 
+  force(name) {
+    this.client.state.name = name;
+    this.client.packet.sendSetName(name);
+    document.body.removeChild(this.form);
+  }
+
   onForm(e) {
     e.preventDefault();
 
