@@ -1,7 +1,11 @@
+import { Config } from './config';
+
 class Peer {
   constructor(id) {
     this.id = id;
     this.name = 'player';
+    this.accel = 0;
+    this.acceleration = Config.acceleration;
     this.position = new THREE.Vector3();
     this.motion = new THREE.Vector3();
     this.target = {
@@ -25,13 +29,23 @@ class Peer {
     this.motion.set(data.v.x, data.v.y, data.v.z);
   }
 
-  update(delta) {
-    this.position.x += this.motion.x * delta;
-    this.position.y += this.motion.y * delta;
-    this.position.z += this.motion.z * delta;
+  move(delta) {
+    // accelerate
+    if (!(this.motion.x == 0 && this.motion.z == 0)) {
+      this.accel += (1 - this.accel) * this.acceleration;
+    } else {
+      this.accel = 0;
+    }
+
+    // move
+    this.position.x += this.motion.x * delta * this.accel;
+    this.position.z += this.motion.z * delta * this.accel;
     this.target.position.x += (this.position.x - this.target.position.x) * this.adjust;
-    this.target.position.y += (this.position.y - this.target.position.y) * this.adjust;
     this.target.position.z += (this.position.z - this.target.position.z) * this.adjust;
+  }
+
+  update(delta) {
+    this.move(delta);
   }
 }
 

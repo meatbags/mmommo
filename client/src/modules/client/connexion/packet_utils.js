@@ -16,12 +16,10 @@ class PacketUtils {
   }
 
   sendPong(client) {
-    const data = {
-      name: client.chat.name,
-      p: this.vectorToJSON(client.player.position),
-      v: this.vectorToJSON(client.player.motion)
-    };
-
+    const data = client.getState();
+    data.p = this.vectorToJSON(client.player.position);
+    data.v = this.vectorToJSON(client.player.motion);
+    
     return this.send(ACTION.PONG, data);
   }
 

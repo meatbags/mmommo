@@ -1,26 +1,32 @@
 import { ACTION } from '../../../../shared';
 import { Socket, PacketUtils, EventEmitter } from './connexion';
 import { Player, PeerManager } from './players';
-import { Chat, HUD } from './interface';
+import { Console, HUD, NamePicker } from './interface';
 
 class Client {
   constructor(url) {
     // handle server connection and player input
     this.url = url;
-    this.id = null;
+    this.state = {
+      id: null,
+      name: '',
+      rate: 1,
+      rateInterval: 1
+    };
 
-    // hook up
-    this.chat = new Chat((action, data) => { this.onChat(action, data); });
-    this.socket = new Socket(this.url, this.chat, () => { this.onConnect(); }, (e) => { this.onMessage(e); });
-    this.packet = new PacketUtils(this.socket.getSocket());
+    // hook up ui
+    this.namePicker = new NamePicker(this);
+    this.console = new Console(this);
     this.hud = new HUD();
-    
+
+    // sockets
+    this.socket = new Socket(this);
+    this.packet = new PacketUtils(this.socket.getSocket());
+
     // input
-    this.rate = 1;
-    this.rateInterval = 1;
     this.player = new Player();
     this.peerManager = new PeerManager();
-    this.movementEmitter = new EventEmitter(this.rateInterval, () => {
+    this.movementEmitter = new EventEmitter(this.state.rateInterval, () => {
       if (this.player.changed()) {
         this.packet.sendMove(this.player.position, this.player.motion);
       }
@@ -28,12 +34,12 @@ class Client {
   }
 
   onConnect() {
-    // reset connection
+    // on new or reset connection
     this.peerManager.purge();
     this.packet.setSocket(this.socket.getSocket());
   }
 
-  onMessage(e) {
+  handleMessage(e) {
     // process message from server
     const res = JSON.parse(e.data);
 
@@ -43,11 +49,11 @@ class Client {
         break;
       }
       case ACTION.MESSAGE: {
-        this.chat.printMessage(res.data.from, res.data.message);
+        this.console.printMessage(res.data.from, res.data.message);
         break;
       }
       case ACTION.NOTICE: {
-        this.chat.printNotice(res.data.message);
+        this.console.printNotice(res.data.message);
         break;
       }
       case ACTION.PEER_SET_NAME: {
@@ -60,11 +66,15 @@ class Client {
       }
       case ACTION.PING: {
         console.log('Ping', res.data);
-        this.id = res.data.id;
-        this.rate = res.data.rate;
-        this.rateInterval = 1 / this.rate;
-        this.movementEmitter.setInterval(this.rateInterval);
-        this.peerManager.setMyId(this.id);
+
+        // set state
+        this.setState({
+          id: res.data.id,
+          rate: res.data.rate,
+          rateInterval: 1 / res.data.rate
+        })
+        this.movementEmitter.setInterval(this.state.rateInterval);
+        this.peerManager.setMyId(this.state.id);
         this.peerManager.handleStateData(res.data.peers);
 
         // send pong back
@@ -77,34 +87,31 @@ class Client {
     }
   }
 
-  onChat(action, data) {
-    // process chat action
-    switch (action) {
-      case ACTION.MESSAGE: {
-        this.packet.sendMessage(data);
-        break;
-      }
-      case ACTION.SET_NAME: {
-        if (this.packet.sendSetName(data)) {
-          this.chat.setName(data);
-        } else {
-          var target = this.chat.el.nameForm.querySelector('.form-window__notice');
-          target.innerHTML = '<br />Awaiting connection.';
-        }
-        break;
-      }
-      case ACTION.DISABLE_INPUT: {
-        this.player.disableInput();
-        break;
-      }
-      case ACTION.ENABLE_INPUT: {
-        this.player.enableInput();
-        break;
-      }
-      default: {
-        break;
-      }
+  setState(state) {
+    const keys = Object.keys(state);
+
+    for (var i=0, len=keys.length; i<len; ++i) {
+      this.state[keys[i]] = state[keys[i]];
     }
+  }
+
+  getState() {
+    const state = {};
+    const keys = Object.keys(this.state);
+
+    for (var i=0, len=keys.length; i<len; ++i) {
+      state[keys[i]] = state[keys[i]];
+    }
+
+    return state;
+  }
+
+  disableInput() {
+    this.player.disableInput();
+  }
+
+  enableInput() {
+    this.player.enableInput();
   }
 
   update(delta) {
