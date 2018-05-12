@@ -5,7 +5,7 @@ function validVector(v) {
 }
 
 function sanitise(str) {
-  return str.toString().replace(/[^a-zA-Z0-9 .,?'"!@#$%^&*()_\-+=:;]/gi, '');
+  return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/[^a-z0-9 .,?'"!@#$%^&*()_\-\/\\+=:;]/gi, '');
 }
 
 function validStringLength(str) {

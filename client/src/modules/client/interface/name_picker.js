@@ -4,7 +4,7 @@ class NamePicker {
   constructor(client) {
     // create name form and hook to client
     this.client = client;
-    this.form = nameWindow("Choose a display name", e => { this.onForm(e); });
+    this.form = nameWindow("Choose a display name & colour", e => { this.onForm(e); });
     this.input = this.form.querySelector('input');
     document.body.appendChild(this.form);
   }

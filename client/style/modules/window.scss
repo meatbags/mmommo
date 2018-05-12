@@ -26,6 +26,24 @@
       }
     }
 
+    .form-window__options {
+      padding: $space;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      .option {
+        height: $space * 2;
+        width: $space * 2;
+        border-radius: $space;
+        cursor: pointer;
+
+        &.active {
+          border: 2px solid black;
+        }
+      }
+    }
+
     .form-window__notice {
       @extend .error;
     }

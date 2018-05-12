@@ -2,6 +2,11 @@ const Config = {
   global: {
     maxDataSize: 400,
     maxMessageSize: 250,
+    colours: {
+      red: 0xff0000,
+      green: 0x00ff00,
+      blue: 0x0000ff
+    }
   },
   client: {
     emitMovementRate: 4,
