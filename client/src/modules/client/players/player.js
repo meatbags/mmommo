@@ -12,6 +12,7 @@ class Player {
     this.keys = {};
     document.onkeydown = (e) => { this.onKeyDown(e); };
     document.onkeyup = (e) => { this.onKeyUp(e); };
+    document.body.onblur = () => { console.log('body_blurred'); };
   }
 
   onKeyDown(e) {

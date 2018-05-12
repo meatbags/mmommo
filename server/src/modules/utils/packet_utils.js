@@ -1,22 +1,32 @@
-import { ACTION } from '../../../../shared';
+import { ACTION, Config } from '../../../../shared';
 import { RateLimiter } from './rate_limiter';
 
 class PacketUtils {
   constructor(clients) {
     this.clients = clients;
     this.queue = [];
-    this.broadcastRate = new RateLimiter(8, 1);
+    this.limit = Config.limit.server;
+    this.broadcastRate = new RateLimiter(this.limit.broadcast.rate, this.limit.broadcast.period);
+    this.peerDataKeys = ['id', 'name', 'p', 'v'];
+  }
+
+  initialise(id) {
+    // send id and peers
+    this.clients[id].sendMessage(ACTION.STATE, {id: id});
+    this.clients[id].sendMessage(ACTION.PEERS, Object.keys(this.clients).map(id => {
+      return this.clients[id].state.getPartJSON(this.peerDataKeys);
+    }));
+
+    // request state (case server disconnect)
+    this.clients[id].sendMessage(ACTION.STATE_REQUEST, this.peerDataKeys);
   }
 
   ping(id) {
-    // ping player, give info
-    this.clients[id].sendMessage(ACTION.PING, {
-      id: id,
-      rate: this.clients[id].getRate(),
-      peers: Object.keys(this.clients).map(id => {
-        return this.clients[id].getStateJSON();
-      })
-    });
+    this.clients[id].sendMessage(ACTION.PING, null);
+  }
+
+  pong(id, data) {
+    this.clients[id].sendMessage(ACTION.PONG, {timestamp: data});
   }
 
   message(id, from, message) {
@@ -43,10 +53,6 @@ class PacketUtils {
     this.broadcast(ACTION.NOTICE, {message: message});
   }
 
-  broadcastPlayerName(id, name) {
-    this.broadcastExclusive(ACTION.PEER_SET_NAME, [{id: id, name: name}], id);
-  }
-
   broadcastRemovePlayer(id) {
     this.broadcast(ACTION.PEER_DISCONNECT, {id: id});
   }
@@ -60,7 +66,7 @@ class PacketUtils {
   }
 
   broadcastPlayerStates(id) {
-    // broadcast positions/ state of moved players
+    // broadcast player data
     if (this.queue.indexOf(id) == -1) {
       this.queue.push(id);
     }
@@ -68,8 +74,10 @@ class PacketUtils {
     // rate limit
     if (this.broadcastRate.inLimit()) {
       this.broadcast(ACTION.PEERS, this.queue.map(id => {
-        return this.clients[id].getStateJSON();
+        return this.clients[id].state.getPartJSON(this.peerDataKeys);
       }));
+
+      // empty queue
       this.queue = [];
     }
   }

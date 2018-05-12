@@ -16,13 +16,12 @@ class Console {
 
     // events
     this.el.form.onsubmit = (e) => { this.submitMessage(e); };
-    this.el.input.onblur = () => { this.client.enableInput(); };
-    this.el.input.onfocus = () => { this.client.disableInput(); };
   }
 
   submitMessage(e) {
     // send input to server
     e.preventDefault();
+    document.activeElement.blur();
 
     if (this.el.input.value.length) {
       this.client.packet.sendMessage(this.el.input.value)

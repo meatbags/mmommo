@@ -5,7 +5,7 @@ import {server as WebSocketServer} from 'websocket';
 class Server {
   constructor() {
     this.port = 1337;
-    this.manager = new Module.ClientManager();
+    this.manager = new Module.UserManager();
 
     // http server
     this.server = http.createServer((req, res) => {});

@@ -6,8 +6,6 @@ class NamePicker {
     this.client = client;
     this.form = formWindow("Choose a display name", e => { this.onForm(e); });
     this.input = this.form.querySelector('input');
-    this.input.onblur = () => { this.client.enableInput(); };
-    this.input.onfocus = () => { this.client.disableInput(); };
     document.body.appendChild(this.form);
   }
 
@@ -16,7 +14,7 @@ class NamePicker {
   }
 
   force(name) {
-    this.client.state.name = name;
+    this.client.state.set({name: name});
     this.client.packet.sendSetName(name);
     document.body.removeChild(this.form);
   }
@@ -26,7 +24,7 @@ class NamePicker {
 
     if (this.input.value.length) {
       if (this.client.packet.sendSetName(this.input.value)) {
-        this.client.state.name = this.input.value;
+        this.client.state.set({name: this.input.value});
         document.body.removeChild(this.form);
       } else {
         this.error('<br />Awaiting connection.');

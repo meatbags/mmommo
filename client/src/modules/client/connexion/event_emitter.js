@@ -5,10 +5,6 @@ class EventEmitter {
     this.event = event;
   }
 
-  setInterval(s) {
-    this.interval = s;
-  }
-
   update(delta) {
     this.age += delta;
 

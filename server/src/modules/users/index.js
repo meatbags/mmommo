@@ -1,1 +1,1 @@
-export * from './client_manager';
+export * from './user_manager';

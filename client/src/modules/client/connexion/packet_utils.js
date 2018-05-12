@@ -15,35 +15,32 @@ class PacketUtils {
     }
   }
 
-  sendPong(client) {
-    const data = client.getState();
-    data.p = this.vectorToJSON(client.player.position);
-    data.v = this.vectorToJSON(client.player.motion);
+  setSocket(socket) {
+    this.socket = socket;
+  }
 
-    return this.send(ACTION.PONG, data);
+  sendState(state) {
+    return this.send(ACTION.STATE, state);
+  }
+
+  sendPing() {
+    return this.send(ACTION.PING, {timestamp: (new Date()).getTime()});
+  }
+
+  sendPong() {
+    return this.send(ACTION.PONG, {});
   }
 
   sendMessage(message) {
     return this.send(ACTION.MESSAGE, message);
   }
 
-  sendMove(position, motion) {
-    return this.send(ACTION.MOVE, {
-      p: this.vectorToJSON(position),
-      v: this.vectorToJSON(motion)
-    });
+  sendMove(p, v) {
+    return this.send(ACTION.MOVE, {p: p, v: v});
   }
 
   sendSetName(name) {
-    return this.send(ACTION.SET_NAME, name);
-  }
-
-  setSocket(socket) {
-    this.socket = socket;
-  }
-
-  vectorToJSON(v) {
-    return {x: v.x, y: v.y, z: v.z};
+    return this.send(ACTION.SET_NAME, {name: name});
   }
 
   connectionOK() {

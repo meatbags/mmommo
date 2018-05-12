@@ -1,4 +1,4 @@
-import { ACTION } from '../../../../shared';
+import { ACTION, ClientState, Config } from '../../../../shared';
 import { Socket, PacketUtils, EventEmitter } from './connexion';
 import { Player, PeerManager } from './players';
 import { Console, HUD, NamePicker } from './interface';
@@ -7,33 +7,36 @@ class Client {
   constructor(url) {
     // handle server connection and player input
     this.url = url;
-    this.state = {
-      id: null,
-      name: '',
-      rate: 1,
-      rateInterval: 1
-    };
+    this.state = new ClientState();
 
-    // hook up ui
+    // hook ui to socket
     this.namePicker = new NamePicker(this);
     this.console = new Console(this);
     this.hud = new HUD();
-
-    // sockets
     this.socket = new Socket(this);
     this.packet = new PacketUtils(this.socket.getSocket());
 
     // input
     this.player = new Player();
     this.peerManager = new PeerManager();
-    this.movementEmitter = new EventEmitter(this.state.rateInterval, () => {
-      if (this.player.changed()) {
-        this.packet.sendMove(this.player.position, this.player.motion);
-      }
-    });
-
-    // dev mode
-    //setTimeout(() => { this.namePicker.force('Test'); }, 250);
+    this.limit = Config.limit.client;
+    this.emitter = {
+      ping: new EventEmitter(
+        this.limit.ping.period / this.limit.ping.rate,
+        () => {
+          this.packet.sendPing();
+        }
+      ),
+      movement: new EventEmitter(
+        this.limit.movement.period / this.limit.movement.rate,
+        () => {
+          if (this.player.changed()) {
+            this.state.set({p: this.player.position, v: this.player.motion});
+            this.packet.sendMove(this.state.get('p'), this.state.get('v'));
+          }
+        }
+      )
+    };
   }
 
   onConnect() {
@@ -48,7 +51,11 @@ class Client {
 
     switch (res.type) {
       case ACTION.PEERS: {
-        this.peerManager.handlePositionData(res.data);
+        this.peerManager.handleData(res.data);
+        break;
+      }
+      case ACTION.STATE_REQUEST: {
+        this.packet.sendState(this.state.getPartJSON(res.data));
         break;
       }
       case ACTION.MESSAGE: {
@@ -59,29 +66,21 @@ class Client {
         this.console.printNotice(res.data.message);
         break;
       }
-      case ACTION.PEER_SET_NAME: {
-        this.peerManager.handleNameData(res.data);
-        break;
-      }
       case ACTION.PEER_DISCONNECT: {
         this.peerManager.handlePeerDisconnect(res.data);
         break;
       }
+      case ACTION.STATE: {
+        this.state.set(res.data);
+        this.peerManager.setMyId(this.state.get('id'));
+        break;
+      }
       case ACTION.PING: {
-        console.log('Ping', res.data);
-
-        // set state
-        this.setState({
-          id: res.data.id,
-          rate: res.data.rate,
-          rateInterval: 1 / res.data.rate
-        });
-        this.movementEmitter.setInterval(this.state.rateInterval);
-        this.peerManager.setMyId(this.state.id);
-        this.peerManager.handleStateData(res.data.peers);
-
-        // send pong back
-        this.packet.sendPong(this);
+        this.packet.sendPong();
+        break;
+      }
+      case ACTION.PONG: {
+        this.state.set({ping: (new Date()) - (new Date(res.data.timestamp))});
         break;
       }
       default: {
@@ -90,37 +89,11 @@ class Client {
     }
   }
 
-  setState(state) {
-    const keys = Object.keys(state);
-
-    for (var i=0, len=keys.length; i<len; ++i) {
-      this.state[keys[i]] = state[keys[i]];
-    }
-  }
-
-  getState() {
-    const state = {};
-    const keys = Object.keys(this.state);
-
-    for (var i=0, len=keys.length; i<len; ++i) {
-      state[keys[i]] = this.state[keys[i]];
-    }
-
-    return state;
-  }
-
-  disableInput() {
-    this.player.disableInput();
-  }
-
-  enableInput() {
-    this.player.enableInput();
-  }
-
   update(delta) {
     this.player.update(delta);
-    this.movementEmitter.update(delta);
     this.peerManager.update(delta);
+    this.emitter.movement.update(delta);
+    this.emitter.ping.update(delta);
   }
 }
 

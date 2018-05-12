@@ -18,7 +18,7 @@ class Peer {
     this.name = name;
   }
 
-  setPosition(data) {
+  setInitialPosition(data) {
     this.position.set(data.p.x, data.p.y, data.p.z);
     this.motion.set(data.v.x, data.v.y, data.v.z);
     this.target.position.set(data.p.x, data.p.y, data.p.z);
