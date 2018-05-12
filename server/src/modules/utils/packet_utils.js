@@ -5,8 +5,7 @@ class PacketUtils {
   constructor(clients) {
     this.clients = clients;
     this.queue = [];
-    this.limit = Config.limit.server;
-    this.broadcastRate = new RateLimiter(this.limit.broadcast.rate, this.limit.broadcast.period);
+    this.broadcastRate = new RateLimiter(Config.server.limitBroadcastRate, Config.server.limitBroadcastPeriod);
     this.peerDataKeys = ['id', 'name', 'p', 'v'];
   }
 

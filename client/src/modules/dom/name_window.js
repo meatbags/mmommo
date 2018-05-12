@@ -1,6 +1,6 @@
 import { div } from './div';
 
-function formWindow(title, onSubmit) {
+function nameWindow(title, onSubmit) {
   // elements
   const wrapper = div({className: 'window form-window'});
   const upper = div({className: 'form-window__title', innerHTML: title});
@@ -27,4 +27,4 @@ function formWindow(title, onSubmit) {
   return wrapper;
 }
 
-export { formWindow };
+export { nameWindow };

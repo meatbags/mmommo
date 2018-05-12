@@ -1,2 +1,2 @@
 export * from './div';
-export * from './form_window';
+export * from './name_window';

@@ -1,34 +1,24 @@
 const Config = {
-  limit: {
-    client: {
-      movement: {
-        rate: 5,
-        period: 1
-      },
-      ping: {
-        rate: 1,
-        period: 5
-      }
-    },
-    server: {
-      request: {
-        rate: 10,
-        period: 1
-      },
-      broadcast: {
-        rate: 8,
-        period: 1
-      },
-      spam: {
-        rate: 5,
-        period: 5
-      },
-    }
+  global: {
+    maxDataSize: 400,
+    maxMessageSize: 250,
   },
-  maxDataSize: 500,
-  maxMessageSize: 250,
-  muteTimeout: 10,
-  muteTimeoutIncrement: 5
+  client: {
+    emitMovementRate: 4,
+    emitMovementPeriod: 1,
+    emitPingRate: 1,
+    emitPingPeriod: 5,
+  },
+  server: {
+    limitRequestRate: 10,
+    limitRequestPeriod: 1,
+    limitSpamRate: 5,
+    limitSpamPeriod: 5,
+    limitBroadcastRate: 8,
+    limitBroadcastPeriod: 1,
+    userMuteTimeout: 10,
+    userMuteTimeoutIncrement: 5
+  }
 };
 
 export { Config };

@@ -9,11 +9,11 @@ function sanitise(str) {
 }
 
 function validStringLength(str) {
-  return (str.length > 0 && str.length < Config.maxMessageSize);
+  return (str.length > 0 && str.length < Config.global.maxMessageSize);
 }
 
 function validRequest(req, max) {
-  return (req.type === 'utf8' && req.utf8Data && req.utf8Data.length <= Config.maxDataSize);
+  return (req.type === 'utf8' && req.utf8Data && req.utf8Data.length <= Config.global.maxDataSize);
 }
 
 export { validVector, sanitise, validStringLength, validRequest };

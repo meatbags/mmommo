@@ -12,15 +12,14 @@ class User {
     this.state.set({id: id, name: 'User_' + id.substr(0, 10)});
 
     // limits
-    this.limit = Config.limit.server;
     this.rate = {
-      request: new RateLimiter(this.limit.request.rate, this.limit.request.period),
-      spam: new RateLimiter(this.limit.spam.rate, this.limit.spam.period)
+      request: new RateLimiter(Config.server.limitRequestRate, Config.server.limitRequestPeriod),
+      spam: new RateLimiter(Config.server.limitSpamRate, Config.server.limitSpamPeriod)
     };
     this.muted = {
       state: false,
       time: -1,
-      timeout: Config.muteTimeout
+      timeout: Config.server.userMuteTimeout
     };
     this.nameLock = false;
 
@@ -124,7 +123,7 @@ class User {
     // mute player for spamming
     this.muted.state = true;
     this.muted.time = (new Date()).getTime() + this.muted.timeout * 1000;
-    this.muted.timeout += Config.muteTimeoutIncrement;
+    this.muted.timeout += Config.server.userMuteTimeoutIncrement;
   }
 
   isMuted() {

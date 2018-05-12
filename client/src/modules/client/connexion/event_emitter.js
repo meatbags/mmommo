@@ -1,7 +1,9 @@
 class EventEmitter {
-  constructor(interval, event) {
+  constructor(rate, period, event) {
+    this.rate = rate;
+    this.period = period;
+    this.interval = period / rate;
     this.age = 0;
-    this.interval = interval;
     this.event = event;
   }
 

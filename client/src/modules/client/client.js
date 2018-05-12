@@ -19,16 +19,15 @@ class Client {
     // input
     this.player = new Player();
     this.peerManager = new PeerManager();
-    this.limit = Config.limit.client;
     this.emitter = {
       ping: new EventEmitter(
-        this.limit.ping.period / this.limit.ping.rate,
-        () => {
-          this.packet.sendPing();
-        }
+        Config.client.emitPingRate,
+        Config.client.emitPingPeriod,
+        () => { this.packet.sendPing(); }
       ),
       movement: new EventEmitter(
-        this.limit.movement.period / this.limit.movement.rate,
+        Config.client.emitMovementRate,
+        Config.client.emitMovementPeriod,
         () => {
           if (this.player.changed()) {
             this.state.set({p: this.player.position, v: this.player.motion});
