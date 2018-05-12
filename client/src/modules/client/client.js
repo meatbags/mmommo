@@ -42,6 +42,9 @@ class Client {
     // on new or reset connection
     this.peerManager.purge();
     this.packet.setSocket(this.socket.getSocket());
+
+    // dev
+    this.namePicker.force('dev');
   }
 
   handleMessage(e) {
@@ -93,6 +96,19 @@ class Client {
     this.peerManager.update(delta);
     this.emitter.movement.update(delta);
     this.emitter.ping.update(delta);
+  }
+
+  setName(name) {
+    this.state.set({name: name});
+    this.player.name = name;
+  }
+
+  getPlayer() {
+    return this.player;
+  }
+
+  getPeers() {
+    return this.peerManager;
   }
 }
 

@@ -16,7 +16,8 @@ class Scene {
     this.adjust = 8;
 
     // initial position
-    this.camera.position.copy(this.offset);
+    this.camera.position.copy(this.player.position);
+    this.camera.position.add(this.offset);
     this.camera.lookAt(this.player.position);
   }
 
@@ -29,7 +30,7 @@ class Scene {
     block.position.x = 10;
     block.position.z = 10;
     this.scene.add(floor, block);
-
+    
     // players
     this.playerMesh = new THREE.Mesh(new THREE.SphereBufferGeometry(0.25, 16, 16), new THREE.MeshPhongMaterial({emissive: 0xffffff}));
     this.peerMeshes = [];
@@ -86,7 +87,6 @@ class Scene {
       this.camera.position.y + ((this.player.position.y + this.offset.y) - this.camera.position.y) * f,
       this.camera.position.z + ((this.player.position.z + this.offset.z) - this.camera.position.z) * f
     );
-
     this.updatePlayerObjects();
   }
 

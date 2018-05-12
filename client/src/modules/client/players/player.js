@@ -3,7 +3,10 @@ import { Config } from './config';
 class Player {
   constructor() {
     this.position = new THREE.Vector3();
+    this.position.x = Math.random() * 10 - 5;
+    this.position.z = Math.random() * 10 - 5;
     this.motion = new THREE.Vector3();
+    this.name = '';
     this.disabled = false;
     this.accel = 0;
     this.acceleration = Config.acceleration;

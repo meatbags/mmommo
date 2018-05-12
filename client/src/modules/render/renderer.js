@@ -1,10 +1,12 @@
+import { Renderer2D } from './renderer_2d';
 import '../../lib/glsl';
 
 class Renderer {
-  constructor(scene, camera) {
+  constructor(sceneHandler) {
+    this.scene = sceneHandler.getScene();
+    this.camera = sceneHandler.getCamera();
+
     // webgl renderer
-    this.scene = scene;
-    this.camera = camera;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.size = new THREE.Vector2(this.width, this.height);
@@ -16,9 +18,12 @@ class Renderer {
     // add to doc
     this.renderer.domElement.id = 'canvas';
     document.body.appendChild(this.renderer.domElement);
+
+    // 2d renderer (overlays)
+    this.renderer2d = new Renderer2D(sceneHandler, this.camera);
   }
 
-  resize(width, height) {
+  resize() {
     // resize screen and pp render passes
     this.width = window.innerWidth;
     this.height = window.innerHeight;
@@ -28,6 +33,9 @@ class Renderer {
     this.bloomPass.setSize(this.width, this.height);
     this.renderer.setSize(this.width, this.height);
     this.composer.setSize(this.width, this.height);
+
+    // resize overlay
+    this.renderer2d.resize();
   }
 
   postProcessing() {
@@ -55,6 +63,9 @@ class Renderer {
 
   render(delta) {
     this.composer.render(delta);
+
+    // overlay
+    this.renderer2d.render(delta);
   }
 }
 
