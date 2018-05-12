@@ -12,19 +12,16 @@ class Player {
     this.keys = {};
     document.onkeydown = (e) => { this.onKeyDown(e); };
     document.onkeyup = (e) => { this.onKeyUp(e); };
-    document.body.onblur = () => { console.log('body_blurred'); };
   }
 
   onKeyDown(e) {
-    if (!this.disabled) {
+    if (document.body == document.activeElement) {
       this.keys[e.code] = true;
     }
   }
 
   onKeyUp(e) {
-    if (!this.disabled) {
-      this.keys[e.code] = false;
-    }
+    this.keys[e.code] = false;
   }
 
   changed() {
