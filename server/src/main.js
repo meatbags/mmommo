@@ -1,19 +1,17 @@
 import * as Module from './modules';
 import * as http from 'http';
-import {server as WebSocketServer} from 'websocket';
+import { server as WebSocketServer } from 'websocket';
 
 class Server {
   constructor() {
     this.port = 1337;
     this.manager = new Module.UserManager();
 
-    // http server
+    // http & ws server
     this.server = http.createServer((req, res) => {});
     this.server.listen(this.port, () => {
       console.log((new Date()), `Listening on port: ${this.port}`);
     });
-
-    // ws server
     this.ws = new WebSocketServer({httpServer: this.server, autoAcceptConnections: false});
     this.ws.on('request', (req) => {
       if (this.verify(req)) {
@@ -22,10 +20,13 @@ class Server {
         req.reject();
       }
     });
+
+    // db
+    this.db = new Module.DatabaseHandler();
   }
 
   verify(req) {
-    // TODO: prevent spamming from IP with rate limiter
+    // TODO: IP connect rate limit
     console.log('User connected', req.origin, req.remoteAddress);
     return true;
   }
