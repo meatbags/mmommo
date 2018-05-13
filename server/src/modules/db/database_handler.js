@@ -3,12 +3,17 @@ import * as mongodb from 'mongodb';
 class DatabaseHandler {
   constructor() {
     this.server = new mongodb.Server('localhost', 27017);
-    this.dbname = 'rgb';
-
     mongodb.MongoClient.connect(this.server, (err, client) => {
-      console.log('Connected');
-      client.close();
+      if (err) throw err;
+      this.init(client);
     });
+  }
+
+  init(client) {
+    this.dbname = 'rgb';
+    this.db = client.db(this.dbname);
+    const c = this.db.collection('sup');
+    console.log(c);
   }
 }
 
