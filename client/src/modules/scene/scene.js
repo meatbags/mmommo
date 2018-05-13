@@ -1,3 +1,5 @@
+import { Grid } from './grid';
+
 class Scene {
   constructor(player, peerManager) {
     // scene handler
@@ -22,15 +24,9 @@ class Scene {
   }
 
   init() {
-    // set up scene
-    const mat = new THREE.MeshPhongMaterial({});
-    const floor = new THREE.Mesh(new THREE.BoxBufferGeometry(20, 1, 20), mat);
-    const block = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 2, 1), mat);
-    floor.position.y = -1;
-    block.position.x = 10;
-    block.position.z = 10;
-    this.scene.add(floor, block);
-    
+    // art grid
+    this.grid = new Grid(this.scene);
+
     // players
     this.playerMesh = new THREE.Mesh(new THREE.SphereBufferGeometry(0.25, 16, 16), new THREE.MeshPhongMaterial({emissive: 0xffffff}));
     this.peerMeshes = [];
@@ -41,7 +37,7 @@ class Scene {
       a: new THREE.AmbientLight(0xffffff, 0.125),
       d: new THREE.DirectionalLight(0xffffff, 0.125)
     }
-    this.scene.add(this.lights.a, this.lights.d);
+    //this.scene.add(this.lights.a, this.lights.d);
   }
 
   updatePlayerObjects() {
@@ -88,6 +84,8 @@ class Scene {
       this.camera.position.z + ((this.player.position.z + this.offset.z) - this.camera.position.z) * f
     );
     this.updatePlayerObjects();
+
+    this.grid.update();
   }
 
   getScene() {

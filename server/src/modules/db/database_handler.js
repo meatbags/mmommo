@@ -10,10 +10,23 @@ class DatabaseHandler {
   }
 
   init(client) {
-    this.dbname = 'rgb';
-    this.db = client.db(this.dbname);
-    const c = this.db.collection('sup');
-    console.log(c);
+    this.client = client;
+    this.db = client.db('rgb');
+    this.db.listCollections().toArray().then((items) => {
+      this.setCollections(items);
+    });
+  }
+
+  setCollections() {
+    
+  }
+
+  idle() {
+    this.ready = true;
+  }
+
+  close() {
+    this.client.close();
   }
 }
 

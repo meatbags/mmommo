@@ -42,21 +42,21 @@ class Renderer {
     // post processing passes
     const strength = 0.5;
     const radius = 0.5;
-    const threshold = 0.85;
+    const threshold = 0.95;
     this.renderPass = new THREE.RenderPass(this.scene, this.camera);
     this.FXAAPass = new THREE.ShaderPass(THREE.FXAAShader);
 		this.FXAAPass.uniforms['resolution'].value.set(1 / this.width, 1 / this.height);
     this.bloomPass = new THREE.UnrealBloomPass(this.size, strength, radius, threshold);
-    this.posterPass = new THREE.PosterPass(this.size);
-    this.noisePass = new THREE.NoisePass();
-    this.noisePass.renderToScreen = true;
+    //this.posterPass = new THREE.PosterPass(this.size);
+    //this.noisePass = new THREE.NoisePass();
     this.composer = new THREE.EffectComposer(this.renderer);
     this.composer.setSize(this.width, this.height);
     this.composer.addPass(this.renderPass);
     this.composer.addPass(this.FXAAPass);
-    this.composer.addPass(this.posterPass);
+    //this.composer.addPass(this.posterPass);
     this.composer.addPass(this.bloomPass);
-    this.composer.addPass(this.noisePass);
+    //this.composer.addPass(this.noisePass);
+    this.bloomPass.renderToScreen = true;
     this.renderer.gammaInput = true;
     this.renderer.gammaOutput = true;
   }

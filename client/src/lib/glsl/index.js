@@ -9,6 +9,6 @@ import './RenderPass.js';
 import './ShaderPass.js';
 import './UnrealBloomPass';
 import './mechanics';
-import './noise';
+//import './noise';
 import './depth';
-import './poster';
+//import './poster';

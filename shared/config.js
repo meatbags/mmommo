@@ -6,7 +6,11 @@ const Config = {
       red: 0xff2222,
       green: 0x22ff22,
       blue: 0x2222ff
-    }
+    },
+    grid: {
+      size: 20,
+      step: 2
+    },
   },
   client: {
     emitMovementRate: 4,
