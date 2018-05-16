@@ -14,7 +14,7 @@ class Scene {
     const w = this.size * this.ratio;
     const h = this.size;
     this.camera = new THREE.OrthographicCamera(-w/2, w/2, h/2, -h/2, 1, 1000);
-    this.offset = new THREE.Vector3(-10, 10, -10);
+    this.offset = new THREE.Vector3(10, 10, 10);
     this.adjust = 8;
 
     // initial position
