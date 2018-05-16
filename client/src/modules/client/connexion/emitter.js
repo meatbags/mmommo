@@ -3,18 +3,18 @@ import { Config } from '../../../../../shared';
 
 class Emitter {
   constructor(client) {
-    // handle emitters
+    // emit client events at regular intervals
     this.client = client;
     this.config = Config.client;
 
-    // ping
+    // ping server
     this.pingEmitter = new EventEmitter(
       this.config.emitPingRate,
       this.config.emitPingPeriod,
       () => { this.ping(); }
     );
 
-    // position
+    // send movement data
     this.positionEmitter = new EventEmitter(
       Config.client.emitMovementRate,
       Config.client.emitMovementPeriod,
@@ -23,7 +23,6 @@ class Emitter {
   }
 
   ping() {
-    // ping server
     this.client.packet.sendPing();
   }
 
@@ -34,13 +33,14 @@ class Emitter {
       this.client.packet.sendMove(this.client.state.get('p'), this.client.state.get('v'));
     }
 
-    // send new grid-point
+    // send new grid cell colour
     if (this.client.player.inNewGridCell()) {
       const cell = this.client.player.getGridCell();
-      const colour = this.client.grid.getPixel(cell.x, cell.y);
+      const cellColour = this.client.grid.getPixel(cell.x, cell.y);
+      const colour = this.client.state.get('colour');
 
-      if (colour != null && colour != this.client.player.colour) {
-        this.client.packet.sendPaint(cell.x, cell.y, this.client.player.colour);
+      if (cellColour != null && colour != null && cellColour != colour) {
+        this.client.packet.sendPaint(cell.x, cell.y, colour);
       }
     }
   }

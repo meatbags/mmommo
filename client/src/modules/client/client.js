@@ -23,7 +23,6 @@ class Client {
 
     // colour grid target
     this.grid = null;
-    //this.namePicker.force('dev');
   }
 
   onConnect() {
