@@ -1,5 +1,9 @@
 import { Config } from '../../../../shared';
 
+function bounds(x, y) {
+  return (x > -1 && y > -1 && x < Config.global.grid.size && y < Config.global.grid.size);
+}
+
 function colour(colour) {
   return (int(colour) && colour >= 0 && colour <= 0xffffff);
 }
@@ -24,4 +28,4 @@ function vector(v) {
   return (typeof(v.x) === 'number' && typeof(v.y) === 'number' && typeof(v.z) === 'number');
 }
 
-export { colour, int, request, sanitise, stringLength, vector };
+export { bounds, colour, int, request, sanitise, stringLength, vector };

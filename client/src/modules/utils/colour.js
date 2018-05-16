@@ -1,10 +1,17 @@
 // maybe useful one day
 
-toColourString = function(c) {
-  
+function toColourString(n) {
+  var r = n >> 16 & 0xff;
+  var g = n >> 8 & 0xff;
+  var b = n & 0xff;
+  r = ((r < 16) ? '0' : '') + r.toString(16);
+  g = ((g < 16) ? '0' : '') + g.toString(16);
+  b = ((b < 16) ? '0' : '') + b.toString(16);
+
+  return `#${r}${g}${b}`;
 }
 
-HueToRGB(p, q, t) {
+function hueToRGB(p, q, t) {
   // convert hue to RGB
   t += (t < 0) ? 1 : (t > 1) ? -1 : 0;
 
@@ -19,7 +26,7 @@ HueToRGB(p, q, t) {
   }
 };
 
-randomiseColour(c) {
+function randomiseColour(c) {
   const S = 0;
   const L = Math.random();
   const H = 0;
@@ -37,3 +44,5 @@ randomiseColour(c) {
 
   c.setRGB(r, g, b);
 }
+
+export { toColourString };

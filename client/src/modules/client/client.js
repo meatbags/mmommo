@@ -29,14 +29,16 @@ class Client {
         Config.client.emitMovementRate,
         Config.client.emitMovementPeriod,
         () => {
+          // send position
           if (this.player.changed()) {
             this.state.set({p: this.player.position, v: this.player.motion});
             this.packet.sendMove(this.state.get('p'), this.state.get('v'));
           }
+
+          // send grid paint
           if (this.grid && this.player.inNewGridCell()) {
             const cell = this.player.getGridCell();
             const colour = this.grid.getPixel(cell.x, cell.y);
-
             if (colour != null && colour != this.player.colour) {
               this.packet.sendPaint(cell.x, cell.y, this.player.colour);
             }
@@ -45,13 +47,14 @@ class Client {
       )
     };
 
-    this.namePicker.force('dev');
+    //this.namePicker.force('dev');
   }
 
   onConnect() {
     // on new or reset connection
     this.peerManager.purge();
     this.packet.setSocket(this.socket.getSocket());
+    this.namePicker.force('dev');
   }
 
   handleMessage(e) {

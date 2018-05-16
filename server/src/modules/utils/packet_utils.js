@@ -4,9 +4,12 @@ import { RateLimiter } from './rate_limiter';
 class PacketUtils {
   constructor(clients) {
     this.clients = clients;
-    this.queue = [];
     this.broadcastRate = new RateLimiter(Config.server.limitBroadcastRate, Config.server.limitBroadcastPeriod);
+    this.broadcastPaintRate = new RateLimiter(Config.server.limitBroadcastPaintRate, Config.server.limitBroadcastPaintPeriod);
     this.peerDataKeys = ['id', 'name', 'p', 'v'];
+    this.queue = {
+      peers: []
+    };
   }
 
   initialise(id) {
@@ -26,6 +29,10 @@ class PacketUtils {
 
   pong(id, data) {
     this.clients[id].sendMessage(ACTION.PONG, {timestamp: data});
+  }
+
+  sessionImageData(id, data) {
+    this.clients[id].sendMessage(ACTION.PAINT, data);
   }
 
   message(id, from, message) {
@@ -64,20 +71,27 @@ class PacketUtils {
     }
   }
 
+  broadcastPaint(data) {
+    // broadcast paint data
+    if (this.broadcastPaintRate.inLimit()) {
+      this.broadcast(ACTION.PAINT, data);
+    }
+  }
+
   broadcastPlayerStates(id) {
     // broadcast player data
-    if (this.queue.indexOf(id) == -1) {
-      this.queue.push(id);
+    if (this.queue.peers.indexOf(id) == -1) {
+      this.queue.peers.push(id);
     }
 
     // rate limit
     if (this.broadcastRate.inLimit()) {
-      this.broadcast(ACTION.PEERS, this.queue.map(id => {
+      this.broadcast(ACTION.PEERS, this.queue.peers.map(id => {
         return this.clients[id].state.getPartJSON(this.peerDataKeys);
       }));
 
       // empty queue
-      this.queue = [];
+      this.queue.peers = [];
     }
   }
 }

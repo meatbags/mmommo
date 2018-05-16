@@ -1,2 +1,2 @@
 export * from './database_handler';
-export * from './artwork';
+export * from './colour_grid';

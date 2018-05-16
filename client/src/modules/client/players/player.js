@@ -6,7 +6,7 @@ class Player {
     this.position = new THREE.Vector3();
     this.position.x = Math.random() * 10 - 5;
     this.position.z = Math.random() * 10 - 5;
-    this.colour = 0xffffff;
+    this.colour = 0xf00404;
     this.motion = new THREE.Vector3();
     this.previous = {};
     this.name = '';

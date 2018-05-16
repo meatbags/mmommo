@@ -51,7 +51,9 @@ class User {
               break;
             }
             case ACTION.PAINT: {
-              this.setPaint(res.data);
+              if (valid.int(res.data.x) && valid.int(res.data.y) && valid.colour(res.data.colour) && valid.bounds(res.data.x, res.data.y)) {
+                this.onAction(ACTION.PAINT, this.id, {x: res.data.x, y: res.data.y, colour: res.data.colour});
+              }
               break;
             }
             case ACTION.MESSAGE: {
@@ -113,12 +115,6 @@ class User {
         this.state.set({name: clean});
         this.onAction(ACTION.SET_NAME, this.id, clean);
       }
-    }
-  }
-
-  setPaint(data) {
-    if (data.x && data.y && data.colour && valid.int(data.x) && valid.int(data.y) && valid.colour(data.colour)) {
-      this.onAction(ACTION.PAINT, this.id, {x: data.x, y: data.y, colour: data.colour});
     }
   }
 

@@ -8,7 +8,7 @@ const Config = {
       blue: 0x2222ff
     },
     grid: {
-      size: 512,
+      size: 16,
       step: 2
     },
   },
@@ -25,6 +25,8 @@ const Config = {
     limitSpamPeriod: 5,
     limitBroadcastRate: 8,
     limitBroadcastPeriod: 1,
+    limitBroadcastPaintRate: 5,
+    limitBroadcastPaintPeriod: 1,
     userMuteTimeout: 10,
     userMuteTimeoutIncrement: 5
   }

@@ -3,9 +3,11 @@
   width: 320px;
   padding: $space * 2;
   z-index: $zWindow;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  //top: 50%;
+  //left: 50%;
+  //transform: translate(-50%, -50%);
   background: $white;
 
   &.form-window {

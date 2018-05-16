@@ -3,11 +3,11 @@ import { SessionToken, PacketUtils } from '../utils';
 import { ACTION } from '../../../../shared';
 
 class UserManager {
-  constructor(requestWrite) {
+  constructor(grid) {
     this.token = new SessionToken();
     this.clients = {};
     this.packet = new PacketUtils(this.clients);
-    this.requestWrite = requestWrite;
+    this.grid = grid;
   }
 
   add(client) {
@@ -15,12 +15,15 @@ class UserManager {
     const id = this.token.getUnique();
     const onAction = (action, id, data) => { this.onUserAction(action, id, data); };
     this.clients[id] = new User(client, id, onAction);
+
+    // send client info
     this.packet.initialise(id);
+    this.packet.sessionImageData(id, this.grid.getSessionImageData());
   }
 
   onUserAction(action, id, data) {
     // handle valid client actions
-    if (action != ACTION.MOVE && action != ACTION.PING) {
+    if (action != ACTION.MOVE && action != ACTION.PAINT && action != ACTION.PING) {
       console.log(action, data);
     }
 
@@ -30,7 +33,12 @@ class UserManager {
         break;
       }
       case ACTION.PAINT: {
-        // paint, write to DB
+        this.grid.setPixel(data);
+        const changed = this.grid.getChanged();
+        if (changed.length) {
+          this.packet.broadcastPaint(changed);
+          this.grid.flush();
+        }
         break;
       }
       case ACTION.MESSAGE: {

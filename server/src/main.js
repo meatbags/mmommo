@@ -4,10 +4,15 @@ import { server as WebSocketServer } from 'websocket';
 
 class Server {
   constructor() {
-    this.port = 1337;
-    this.manager = new Module.UserManager(() => { this.onManagerWriteRequest(); });
+    // database
+    //this.db = new Module.DatabaseHandler();
+    this.grid = new Module.ColourGrid();
+
+    // user manager
+    this.manager = new Module.UserManager(this.grid);
 
     // http & ws server
+    this.port = 1337;
     this.server = http.createServer((req, res) => {});
     this.server.listen(this.port, () => {
       console.log((new Date()), `Listening on port: ${this.port}`);
@@ -20,9 +25,6 @@ class Server {
         req.reject();
       }
     });
-
-    // database
-    this.db = new Module.DatabaseHandler();
   }
 
   onManagerWriteRequest() {
