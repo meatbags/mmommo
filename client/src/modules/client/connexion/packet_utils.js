@@ -35,6 +35,10 @@ class PacketUtils {
     return this.send(ACTION.MESSAGE, message);
   }
 
+  sendPaint(x, y, colour) {
+    return this.send(ACTION.PAINT, {x: x, y: y, colour: colour});
+  }
+
   sendMove(p, v) {
     return this.send(ACTION.MOVE, {p: p, v: v});
   }

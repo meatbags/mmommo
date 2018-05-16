@@ -3,10 +3,11 @@ import { SessionToken, PacketUtils } from '../utils';
 import { ACTION } from '../../../../shared';
 
 class UserManager {
-  constructor() {
+  constructor(requestWrite) {
     this.token = new SessionToken();
     this.clients = {};
     this.packet = new PacketUtils(this.clients);
+    this.requestWrite = requestWrite;
   }
 
   add(client) {
@@ -26,6 +27,10 @@ class UserManager {
     switch (action) {
       case ACTION.MOVE: {
         this.packet.broadcastPlayerStates(id);
+        break;
+      }
+      case ACTION.PAINT: {
+        // paint, write to DB
         break;
       }
       case ACTION.MESSAGE: {

@@ -8,7 +8,7 @@ const Config = {
       blue: 0x2222ff
     },
     grid: {
-      size: 20,
+      size: 512,
       step: 2
     },
   },

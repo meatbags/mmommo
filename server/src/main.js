@@ -5,7 +5,7 @@ import { server as WebSocketServer } from 'websocket';
 class Server {
   constructor() {
     this.port = 1337;
-    this.manager = new Module.UserManager();
+    this.manager = new Module.UserManager(() => { this.onManagerWriteRequest(); });
 
     // http & ws server
     this.server = http.createServer((req, res) => {});
@@ -21,8 +21,12 @@ class Server {
       }
     });
 
-    // db
+    // database
     this.db = new Module.DatabaseHandler();
+  }
+
+  onManagerWriteRequest() {
+
   }
 
   verify(req) {

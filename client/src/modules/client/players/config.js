@@ -1,5 +1,5 @@
 const Config = {
-  speed: 10,
+  speed: 6,
   acceleration: 0.25
 };
 

@@ -10,6 +10,9 @@ class App {
     this.renderer = new Module.Renderer(this.scene);
     this.timer = new Module.Timer();
 
+    // hook colour grid
+    this.client.setGrid(this.scene.getGrid());
+
     // events
     this.events();
     this.loop();

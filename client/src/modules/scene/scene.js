@@ -40,6 +40,10 @@ class Scene {
     //this.scene.add(this.lights.a, this.lights.d);
   }
 
+  getGrid() {
+    return this.grid;
+  }
+
   updatePlayerObjects() {
     // player
     this.playerMesh.position.set(

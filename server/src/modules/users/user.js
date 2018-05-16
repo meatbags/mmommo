@@ -1,6 +1,6 @@
 import { ACTION, ClientState, Vector, Config } from '../../../../shared';
 import { RateLimiter } from '../utils';
-import { validRequest, validVector, sanitise, validStringLength } from '../utils';
+import * as valid from '../utils/validation';
 
 class User {
   constructor(client, id, onAction) {
@@ -40,7 +40,7 @@ class User {
 
   onMessage(msg) {
     // validate client messages
-    if (this.rate.request.inLimit() && validRequest(msg)) {
+    if (this.rate.request.inLimit() && valid.request(msg)) {
       try {
         const res = JSON.parse(msg.utf8Data);
 
@@ -48,6 +48,10 @@ class User {
           switch (res.type) {
             case ACTION.MOVE: {
               this.setPosition(res.data);
+              break;
+            }
+            case ACTION.PAINT: {
+              this.setPaint(res.data);
               break;
             }
             case ACTION.MESSAGE: {
@@ -90,7 +94,7 @@ class User {
       if (this.rate.spam.inLimit()) {
         const clean = sanitise(data);
 
-        if (validStringLength(clean)) {
+        if (valid.stringLength(clean)) {
           this.onAction(ACTION.MESSAGE, this.id, {from: this.state.get('name'), message: clean});
         }
       } else {
@@ -104,7 +108,7 @@ class User {
     if (data.name && !this.nameLock) {
       const clean = sanitise(data.name);
 
-      if (validStringLength(clean)) {
+      if (valid.stringLength(clean)) {
         this.nameLock = true; // lock name
         this.state.set({name: clean});
         this.onAction(ACTION.SET_NAME, this.id, clean);
@@ -112,8 +116,14 @@ class User {
     }
   }
 
+  setPaint(data) {
+    if (data.x && data.y && data.colour && valid.int(data.x) && valid.int(data.y) && valid.colour(data.colour)) {
+      this.onAction(ACTION.PAINT, this.id, {x: data.x, y: data.y, colour: data.colour});
+    }
+  }
+
   setPosition(data) {
-    if (data.p && data.v && validVector(data.p) && validVector(data.v)) {
+    if (data.p && data.v && valid.vector(data.p) && valid.vector(data.v)) {
       this.state.set({p: data.p, v: data.v});
       this.onAction(ACTION.MOVE, this.id, null);
     }
