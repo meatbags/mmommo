@@ -1,4 +1,5 @@
 import { Config } from '../../../../shared';
+import { FileHandler } from './file_handler';
 
 class ColourGrid {
   constructor() {

@@ -1,3 +1,5 @@
+// deprecated
+
 import * as mongodb from 'mongodb';
 
 class DatabaseHandler {
@@ -18,7 +20,7 @@ class DatabaseHandler {
   }
 
   setCollections() {
-    
+
   }
 
   idle() {

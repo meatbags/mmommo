@@ -94,7 +94,7 @@ class User {
   setChatMessage(data) {
     if (!this.isMuted()) {
       if (this.rate.spam.inLimit()) {
-        const clean = sanitise(data);
+        const clean = valid.sanitise(data);
 
         if (valid.stringLength(clean)) {
           this.onAction(ACTION.MESSAGE, this.id, {from: this.state.get('name'), message: clean});
@@ -107,8 +107,8 @@ class User {
   }
 
   setName(data) {
-    if (data.name && !this.nameLock) {
-      const clean = sanitise(data.name);
+    if (data.name !== undefined && !this.nameLock) {
+      const clean = valid.sanitise(data.name);
 
       if (valid.stringLength(clean)) {
         this.nameLock = true; // lock name

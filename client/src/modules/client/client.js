@@ -1,5 +1,5 @@
 import { ACTION, ClientState, Config } from '../../../../shared';
-import { Socket, PacketUtils, EventEmitter } from './connexion';
+import { Socket, PacketUtils, Emitter } from './connexion';
 import { Player, PeerManager } from './players';
 import { Console, HUD, NamePicker } from './interface';
 
@@ -19,34 +19,10 @@ class Client {
     // input
     this.player = new Player();
     this.peerManager = new PeerManager();
-    this.emitter = {
-      ping: new EventEmitter(
-        Config.client.emitPingRate,
-        Config.client.emitPingPeriod,
-        () => { this.packet.sendPing(); }
-      ),
-      movement: new EventEmitter(
-        Config.client.emitMovementRate,
-        Config.client.emitMovementPeriod,
-        () => {
-          // send position
-          if (this.player.changed()) {
-            this.state.set({p: this.player.position, v: this.player.motion});
-            this.packet.sendMove(this.state.get('p'), this.state.get('v'));
-          }
+    this.emitter = new Emitter(this);
 
-          // send grid paint
-          if (this.grid && this.player.inNewGridCell()) {
-            const cell = this.player.getGridCell();
-            const colour = this.grid.getPixel(cell.x, cell.y);
-            if (colour != null && colour != this.player.colour) {
-              this.packet.sendPaint(cell.x, cell.y, this.player.colour);
-            }
-          }
-        }
-      )
-    };
-
+    // colour grid target
+    this.grid = null;
     //this.namePicker.force('dev');
   }
 
@@ -67,9 +43,7 @@ class Client {
         break;
       }
       case ACTION.PAINT: {
-        if (this.grid) {
-          this.grid.drawPixelArray(res.data);
-        }
+        this.grid.drawPixelArray(res.data);
         break;
       }
       case ACTION.STATE_REQUEST: {
@@ -110,8 +84,7 @@ class Client {
   update(delta) {
     this.player.update(delta);
     this.peerManager.update(delta);
-    this.emitter.movement.update(delta);
-    this.emitter.ping.update(delta);
+    this.emitter.update(delta);
   }
 
   setName(name) {
