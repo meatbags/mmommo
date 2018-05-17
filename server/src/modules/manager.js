@@ -20,9 +20,10 @@ class Manager {
 
     // send client info
     this.packet.initialise(id);
+    this.packet.map(id, this.grid.getMap());
     this.packet.sessionImageData(id, this.grid.getSessionImageData());
   }
-  
+
   initUserActions() {
     this.on = {};
     this.on[ACTION.MOVE] = (id, data) => { this.packet.broadcastPlayerStates(id); };

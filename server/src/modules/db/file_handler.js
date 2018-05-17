@@ -4,32 +4,51 @@ import { PNG as PNG } from 'pngjs';
 
 class FileHandler {
   constructor() {
+    // handle image data
     this.size = Config.global.grid.size;
     this.path = './img/map.png';
+    this.buffer = false;
+    this.saveLock = false;
+
+    // read map from file
     fs.readFile(this.path, (err, data) => {
       if (err) {
-        this.newImage();
+        console.log('Error reading file.');
+        this.createNewImage();
       } else {
+        console.log('File read. Parsing data.');
         this.setImage(data);
       }
     });
   }
 
-  setImage(data) {
-    this.image = new PNG({}).parse(data, (err, data) => {
-      if (err || this.image.width != this.size) {
-        this.newImage();
-      } else {
-        this.putPixel(3, 3, 0xff0000);
-        this.save(() => {});
-      }
-    });
+  parseBuffer() {
+    this.buffer = PNG.sync.write(this.image, {colourType: 2});
   }
 
-  newImage() {
-    // create new RGB image
+  getBuffer() {
+    return this.buffer;
+  }
+
+  createNewImage() {
+    console.log('Creating new image file.');
     this.image = new PNG({width: this.size, height: this.size, colorType: 2});
     this.save(() => {});
+  }
+
+  setImage(data) {
+    if (data.length) {
+      this.image = new PNG({colorType: 2});
+      this.image.parse(data, (err, data) => {
+        if (err || this.image.width != this.size) {
+          this.createNewImage();
+        } else {
+          this.parseBuffer();
+        }
+      });
+    } else {
+      this.createNewImage();
+    }
   }
 
   putPixel(x, y, colour) {
@@ -43,28 +62,45 @@ class FileHandler {
     }
   }
 
-  writePixels(data) {
+  writeData(data, onComplete) {
+    console.log(data);
+    // write data & save
     const xkey = Object.keys(data);
+    console.log(xkey);
 
     for (var i=0, len=xkey.length; i<len; ++i) {
       const x = xkey[i];
       const xint = parseInt(x);
       const ykey = Object.keys(data[x]);
+      console.log(ykey);
 
       for (var j=0, jlen=ykey.length; j<jlen; ++j) {
         const y = ykey[j];
         const yint = parseInt(y);
-        this.putPixel(xint, yint, data[xkey][ykey]);
+        this.putPixel(xint, yint, data[x][y]);
       }
     }
+
+    // save
+    this.save(onComplete);
   }
 
   save(onComplete) {
-    // save file
-    var write = fs.createWriteStream(this.path);
-    this.image.pack().pipe(write);
-    write.on('error', (err) => { console.log(err); });
-    write.on('finish', () => { onComplete(true); });
+    // save to file
+    if (!this.saveLock) {
+      console.log('Saving file.');
+      this.saveLock = true;
+      this.parseBuffer();
+      fs.writeFile(this.path, this.buffer, (err) => {
+        this.saveLock = false;
+        if (err) {
+          console.log('Error savinge.')
+        } else {
+          console.log('Saved.');
+        }
+        onComplete();
+      });
+    }
   }
 }
 

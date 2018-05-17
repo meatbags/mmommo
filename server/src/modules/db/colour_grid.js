@@ -5,7 +5,7 @@ class ColourGrid {
   constructor() {
     this.file = new FileHandler();
     this.changesCount = 0;
-    this.changesPerSave = 100;
+    this.changesPerSave = 10;
     this.size = Config.global.grid.size;
     this.imageData = {};
     this.changed = [];
@@ -25,6 +25,7 @@ class ColourGrid {
 
       // save image to file
       if (++this.changesCount >= this.changesPerSave) {
+        this.changesCount = 0;
         this.save();
       }
 
@@ -57,15 +58,13 @@ class ColourGrid {
   }
 
   save() {
-    this.file.writePixels(this.imageData);
-    this.file.save((err) => {
-      if (!err) {
-        // TODO: check for changes in between
-        this.changes = [];
-        this.imageData = {};
-        this.changesCount = 0;
-      }
+    this.file.writeData(this.imageData, () => {
+      this.imageData = {};
     });
+  }
+
+  getMap() {
+    return this.file.getBuffer();
   }
 
   getChanged() {

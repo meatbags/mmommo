@@ -35,11 +35,21 @@ class Client {
   }
 
   handleMessage(e) {
-    // process message from server
-    const res = JSON.parse(e.data);
+    // process messages from server
+    if (typeof(e.data) == 'string') {
+      const res = JSON.parse(e.data);
 
-    if (this.on[res.type]) {
-      this.on[res.type](res.data);
+      if (this.on[res.type]) {
+        this.on[res.type](res.data);
+      }
+    } else {
+      // binary map data
+      if (e.data instanceof ArrayBuffer) {
+        const uint8 = new Uint8Array(e.data);
+        const b64 = btoa(String.fromCharCode.apply(null, uint8));
+        const src = 'data:image/png;base64,' + b64;
+        this.grid.parseMap(src);
+      }
     }
   }
 

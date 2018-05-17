@@ -34,6 +34,10 @@ class User {
     );
   }
 
+  sendBytes(data) {
+    this.client.sendBytes(data);
+  }
+
   initActions() {
     this.on = {};
     this.on[ACTION.MOVE] = data => { this.setPosition(data); };

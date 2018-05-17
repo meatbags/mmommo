@@ -9,6 +9,7 @@ class Grid {
     this.width = this.height = this.size * this.step;
     this.init2d();
     this.init3d();
+    this.map = null;
 
     // dev
     const x = this.size / 2;
@@ -37,13 +38,12 @@ class Grid {
   }
 
   getIndex(x, y) {
-    return (y * this.size + x) * 4;
+    return (y * this.size + x) << 2;
   }
 
   setPixel(x, y, colour) {
     // draw pixel to canvas
     if (this.inBounds(x, y)) {
-      console.log( toColourString(colour) )
       this.ctx.fillStyle = toColourString(colour);
       this.ctx.fillRect(x, y, 1, 1);
 
@@ -75,11 +75,16 @@ class Grid {
     }
   }
 
-  drawImage(img) {
+  parseMap(src) {
     // draw image, reset image data & history
-    this.ctx.drawImage(img, 0, 0);
-    this.imageData = this.ctx.getImageData(0, 0, this.cvs.width, this.cvs.height);
-    this.history = {};
+    this.map = new Image();
+    this.map.onload = () => {
+      this.ctx.drawImage(this.map, 0, 0);
+      this.imageData = this.ctx.getImageData(0, 0, this.cvs.width, this.cvs.height);
+      this.plane.material.map.needsUpdate = true;
+      this.history = {};
+    }
+    this.map.src = src;
   }
 
   init3d() {

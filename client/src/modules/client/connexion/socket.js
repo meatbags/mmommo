@@ -7,6 +7,7 @@ class Socket {
 
   connect(onConnect, onMessage, onDisconnect) {
     this.socket = new WebSocket(this.client.url);
+    this.socket.binaryType = 'arraybuffer';
     this.socket.onopen = () => {
       this.reconnect.count = 0;
       this.client.console.printNotice('Connected.');

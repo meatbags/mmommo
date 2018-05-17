@@ -31,6 +31,12 @@ class PacketUtils {
     this.clients[id].sendMessage(ACTION.PONG, {timestamp: data});
   }
 
+  map(id, data) {
+    if (data !== false) {
+      this.clients[id].sendBytes(data);
+    }
+  }
+
   sessionImageData(id, data) {
     this.clients[id].sendMessage(ACTION.PAINT, data);
   }
