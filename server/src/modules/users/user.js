@@ -4,9 +4,6 @@ import * as valid from '../utils/validation';
 
 class User {
   constructor(client, id, onAction) {
-    this.onAction = onAction;
-
-    // player props
     this.id = id;
     this.state = new ClientState();
     this.state.set({id: id, name: 'User_' + id.substr(0, 10)});
@@ -24,6 +21,8 @@ class User {
     this.nameLock = false;
 
     // events
+    this.onAction = onAction;
+    this.initActions();
     this.client = client;
     this.client.on('message', (msg) => { this.onMessage(msg); });
     this.client.on('close', (conn) => { this.onAction(ACTION.CONNECTION_CLOSED, this.id, null); });
@@ -31,11 +30,29 @@ class User {
 
   sendMessage(type, data) {
     this.client.sendUTF(
-      JSON.stringify({
-        type: type,
-        data: data
-      })
+      JSON.stringify({type: type, data: data})
     );
+  }
+
+  initActions() {
+    this.on = {};
+    this.on[ACTION.MOVE] = data => { this.setPosition(data); };
+    this.on[ACTION.PAINT] = data => { this.setPaint(data); };
+    this.on[ACTION.MESSAGE] = data => { this.setChatMessage(data); };
+    this.on[ACTION.SET_NAME] = data => { this.setName(data); };
+    this.on[ACTION.STATE] = data => {
+      this.setName(data);
+      this.setPosition(data);
+    };
+    this.on[ACTION.PING] = data => {
+      if (data.timestamp) {
+        this.onAction(ACTION.PING, this.id, data.timestamp);
+      }
+    };
+    this.on[ACTION.PONG] = data => {};
+
+    // valid actions
+    this.actionRegister = Object.keys(this.on);
   }
 
   onMessage(msg) {
@@ -44,48 +61,11 @@ class User {
       try {
         const res = JSON.parse(msg.utf8Data);
 
-        if (res.type && res.data) {
-          switch (res.type) {
-            case ACTION.MOVE: {
-              this.setPosition(res.data);
-              break;
-            }
-            case ACTION.PAINT: {
-              if (valid.int(res.data.x) && valid.int(res.data.y) && valid.colour(res.data.colour) && valid.bounds(res.data.x, res.data.y)) {
-                this.onAction(ACTION.PAINT, this.id, {x: res.data.x, y: res.data.y, colour: res.data.colour});
-              }
-              break;
-            }
-            case ACTION.MESSAGE: {
-              this.setChatMessage(res.data);
-              break;
-            }
-            case ACTION.SET_NAME: {
-              this.setName(res.data);
-              break;
-            }
-            case ACTION.STATE: {
-              this.setName(res.data);
-              this.setPosition(res.data);
-              break;
-            }
-            case ACTION.PING: {
-              if (res.data.timestamp) {
-                this.onAction(ACTION.PING, this.id, res.data.timestamp);
-              }
-              break;
-            }
-            case ACTION.PONG: {
-              // process pong
-              break;
-            }
-            default: {
-              break;
-            }
-          }
+        if (res.type && res.data && this.actionRegister.indexOf(res.type) != -1) {
+          this.on[res.type](res.data);
         }
       } catch(e) {
-        // invalid JSON
+        // invalid req
         this.sendMessage(ACTION.ERROR, null);
       }
     }
@@ -103,6 +83,16 @@ class User {
         this.onAction(ACTION.MUTE, this.id, this.muted.timeout);
         this.mute();
       }
+    }
+  }
+
+  setPaint(data) {
+    if (
+      valid.int(data.x) && valid.int(data.y) &&
+      valid.colour(data.colour) &&
+      valid.bounds(data.x, data.y)
+    ) {
+      this.onAction(ACTION.PAINT, this.id, {x: data.x, y: data.y, colour: data.colour});
     }
   }
 

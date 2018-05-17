@@ -24,7 +24,7 @@ class NamePicker {
     this.client.packet.sendSetName(name);
     this.closeWindow();
   }
-
+  
   onForm(e) {
     e.preventDefault();
 

@@ -38,6 +38,7 @@ class Emitter {
       const cell = this.client.player.getGridCell();
       const cellColour = this.client.grid.getPixel(cell.x, cell.y);
       const colour = this.client.state.get('colour');
+      console.log(cell, cellColour.toString(16), colour.toString(16));
 
       if (cellColour != null && colour != null && cellColour != colour) {
         this.client.packet.sendPaint(cell.x, cell.y, colour);

@@ -1,8 +1,8 @@
-// deprecated
+// DEPRECATED -- keep for future
 
 import * as mongodb from 'mongodb';
 
-class DatabaseHandler {
+class DB {
   constructor() {
     this.server = new mongodb.Server('localhost', 27017);
     mongodb.MongoClient.connect(this.server, (err, client) => {
@@ -14,17 +14,7 @@ class DatabaseHandler {
   init(client) {
     this.client = client;
     this.db = client.db('rgb');
-    this.db.listCollections().toArray().then((items) => {
-      this.setCollections(items);
-    });
-  }
-
-  setCollections() {
-
-  }
-
-  idle() {
-    this.ready = true;
+    this.db.listCollections().toArray().then((items) => {});
   }
 
   close() {
@@ -32,4 +22,4 @@ class DatabaseHandler {
   }
 }
 
-export { DatabaseHandler };
+export { DB };

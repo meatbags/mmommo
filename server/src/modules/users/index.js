@@ -1,1 +1,1 @@
-export * from './user_manager';
+export * from './user';

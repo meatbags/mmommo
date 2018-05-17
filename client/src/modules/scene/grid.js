@@ -27,7 +27,6 @@ class Grid {
 
     // add to doc
     this.target = document.querySelector('#map-target');
-    console.log(this.target);
     this.target.appendChild(this.cvs);
   }
 
@@ -37,9 +36,14 @@ class Grid {
     }
   }
 
+  getIndex(x, y) {
+    return (y * this.size + x) * 4;
+  }
+
   setPixel(x, y, colour) {
     // draw pixel to canvas
     if (this.inBounds(x, y)) {
+      console.log( toColourString(colour) )
       this.ctx.fillStyle = toColourString(colour);
       this.ctx.fillRect(x, y, 1, 1);
 
@@ -47,7 +51,7 @@ class Grid {
       this.plane.material.map.needsUpdate = true;
 
       // update image data
-      const index = y * this.size + x;
+      const index = this.getIndex(x, y);
 
       if (index + 3 < this.imageData.data.length) {
         this.imageData.data[index] = colour >> 16 & 0xff;
@@ -59,7 +63,7 @@ class Grid {
 
   getPixel(x, y) {
     // get pixel value from image data
-    const index = y * this.size + x;
+    const index = this.getIndex(x, y);
 
     if (index > -1 && index + 3 < this.imageData.data.length) {
       const r = this.imageData.data[index];

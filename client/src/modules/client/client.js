@@ -23,6 +23,7 @@ class Client {
 
     // colour grid target
     this.grid = null;
+    this.handleActions();
   }
 
   onConnect() {
@@ -30,54 +31,32 @@ class Client {
     this.peerManager.purge();
     this.packet.setSocket(this.socket.getSocket());
     this.namePicker.force('dev');
+    this.state.set({colour: 0x0f0f0f});
   }
 
   handleMessage(e) {
     // process message from server
     const res = JSON.parse(e.data);
 
-    switch (res.type) {
-      case ACTION.PEERS: {
-        this.peerManager.handleData(res.data);
-        break;
-      }
-      case ACTION.PAINT: {
-        this.grid.drawPixelArray(res.data);
-        break;
-      }
-      case ACTION.STATE_REQUEST: {
-        this.packet.sendState(this.state.getPartJSON(res.data));
-        break;
-      }
-      case ACTION.MESSAGE: {
-        this.console.printMessage(res.data.from, res.data.message);
-        break;
-      }
-      case ACTION.NOTICE: {
-        this.console.printNotice(res.data.message);
-        break;
-      }
-      case ACTION.PEER_DISCONNECT: {
-        this.peerManager.handlePeerDisconnect(res.data);
-        break;
-      }
-      case ACTION.STATE: {
-        this.state.set(res.data);
-        this.peerManager.setMyId(this.state.get('id'));
-        break;
-      }
-      case ACTION.PING: {
-        this.packet.sendPong();
-        break;
-      }
-      case ACTION.PONG: {
-        this.state.set({ping: (new Date()) - (new Date(res.data.timestamp))});
-        break;
-      }
-      default: {
-        break;
-      }
+    if (this.on[res.type]) {
+      this.on[res.type](res.data);
     }
+  }
+
+  handleActions() {
+    this.on = {};
+    this.on[ACTION.PEERS] = data => { this.peerManager.handleData(data); };
+    this.on[ACTION.PAINT] = data => { this.grid.drawPixelArray(data); };
+    this.on[ACTION.STATE_REQUEST] = data => { this.packet.sendState(this.state.getPartJSON(data)); };
+    this.on[ACTION.MESSAGE] = data => { this.console.printMessage(data.from, data.message); };
+    this.on[ACTION.NOTICE] = data => { this.console.printNotice(data.message); };
+    this.on[ACTION.PEER_DISCONNECT] = data => { this.peerManager.handlePeerDisconnect(data); };
+    this.on[ACTION.STATE] = data => {
+      this.state.set(data);
+      this.peerManager.setMyId(this.state.get('id'));
+    };
+    this.on[ACTION.PING] = data => { this.packet.sendPong(); };
+    this.on[ACTION.PONG] = data => { this.state.set({ping: (new Date()) - (new Date(data.timestamp))}); }
   }
 
   update(delta) {

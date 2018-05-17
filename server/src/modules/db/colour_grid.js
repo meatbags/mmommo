@@ -3,8 +3,9 @@ import { FileHandler } from './file_handler';
 
 class ColourGrid {
   constructor() {
+    this.file = new FileHandler();
     this.changesCount = 0;
-    this.changesPerSave = 250;
+    this.changesPerSave = 100;
     this.size = Config.global.grid.size;
     this.imageData = {};
     this.changed = [];
@@ -26,6 +27,10 @@ class ColourGrid {
       if (++this.changesCount >= this.changesPerSave) {
         this.save();
       }
+
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -52,8 +57,15 @@ class ColourGrid {
   }
 
   save() {
-    // save to file (async) then flush session image data
-    // this.changesCount = 0;
+    this.file.writePixels(this.imageData);
+    this.file.save((err) => {
+      if (!err) {
+        // TODO: check for changes in between
+        this.changes = [];
+        this.imageData = {};
+        this.changesCount = 0;
+      }
+    });
   }
 
   getChanged() {

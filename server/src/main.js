@@ -1,15 +1,11 @@
-import * as Module from './modules';
+import { Manager } from './modules';
 import * as http from 'http';
 import { server as WebSocketServer } from 'websocket';
 
 class Server {
   constructor() {
-    // database
-    //this.db = new Module.DatabaseHandler();
-    this.grid = new Module.ColourGrid();
-
-    // user manager
-    this.manager = new Module.UserManager(this.grid);
+    // app logic
+    this.manager = new Manager();
 
     // http & ws server
     this.port = 1337;
@@ -25,10 +21,6 @@ class Server {
         req.reject();
       }
     });
-  }
-
-  onManagerWriteRequest() {
-
   }
 
   verify(req) {
