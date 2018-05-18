@@ -1,4 +1,5 @@
 import { Grid } from './grid';
+import { PlayerModel } from './player_model';
 
 class Scene {
   constructor(player, peerManager) {
@@ -24,33 +25,24 @@ class Scene {
   }
 
   init() {
-    // art grid
+    // colour grid
     this.grid = new Grid(this.scene);
 
     // players
-    this.playerMesh = new THREE.Mesh(new THREE.SphereBufferGeometry(0.25, 16, 16), new THREE.MeshPhongMaterial({emissive: 0xffffff}));
+    this.playerMesh = new PlayerModel(this.scene);
     this.peerMeshes = [];
-    this.scene.add(this.playerMesh);
 
     // some lights
     this.lights = {
       a: new THREE.AmbientLight(0xffffff, 0.125),
       d: new THREE.DirectionalLight(0xffffff, 0.125)
-    }
+    };
     //this.scene.add(this.lights.a, this.lights.d);
-  }
-
-  getGrid() {
-    return this.grid;
   }
 
   updatePlayerObjects() {
     // player
-    this.playerMesh.position.set(
-      this.player.position.x,
-      this.player.position.y,
-      this.player.position.z
-    );
+    this.playerMesh.update(this.player);
 
     // conform peer mesh array
     const peers = Object.keys(this.peerManager.peers);
@@ -70,12 +62,7 @@ class Scene {
 
     // move peer meshes
     for (var i=0, len=peers.length; i<len; i++) {
-      const p = this.peerManager.peers[peers[i]];
-      this.peerMeshes[i].position.set(
-        p.target.position.x,
-        p.target.position.y,
-        p.target.position.z
-      )
+      this.peers[i].update(this.peerManager.peers[peers[i]]);
     }
   }
 
@@ -87,17 +74,12 @@ class Scene {
       this.camera.position.y + ((this.player.position.y + this.offset.y) - this.camera.position.y) * f,
       this.camera.position.z + ((this.player.position.z + this.offset.z) - this.camera.position.z) * f
     );
+
+    // move players
     this.updatePlayerObjects();
 
+    // colour grid
     this.grid.update();
-  }
-
-  getScene() {
-    return this.scene;
-  }
-
-  getCamera() {
-    return this.camera;
   }
 
   resize() {
@@ -109,6 +91,18 @@ class Scene {
     this.camera.top = h / 2;
     this.camera.bottom = h / -2;
     this.camera.updateProjectionMatrix();
+  }
+
+  getGrid() {
+    return this.grid;
+  }
+
+  getScene() {
+    return this.scene;
+  }
+
+  getCamera() {
+    return this.camera;
   }
 }
 

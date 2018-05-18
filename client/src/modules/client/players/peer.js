@@ -4,6 +4,7 @@ class Peer {
   constructor(id) {
     this.id = id;
     this.name = 'player';
+    this.colour = 0;
     this.accel = 0;
     this.acceleration = Config.acceleration;
     this.position = new THREE.Vector3();

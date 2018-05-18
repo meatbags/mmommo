@@ -1,14 +1,25 @@
 class PlayerModel {
-  constructor(scene, target) {
-    this.position = target.position;
-    this.motion = target.motion;
-    this.model = new THREE.Mesh(
-      new THREE.SphereBufferGeometry(0.5, 12, 12),
-      new THREE.MeshPhongMaterial({color: 0xffffff})
+  constructor(scene) {
+    this.scene = scene;
+    this.colour = 0;
+    this.group = new THREE.Group();
+    this.mesh = new THREE.Mesh(
+      new THREE.SphereBufferGeometry(0.25, 12, 12),
+      new THREE.MeshPhongMaterial({emissive: 0xffffff})
     );
+    this.group.add(this.mesh);
+    this.scene.add(this.group);
   }
 
-  update() {
+  update(target) {
+    if (this.colour != target.colour) {
+      this.mesh.material.emissive.set(target.colour);
+    }
+    this.group.position.set(target.position.x, target.position.y, target.position.z);
+  }
+
+  clone() {
+    return new PlayerModel(this.scene);
   }
 }
 

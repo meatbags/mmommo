@@ -39,7 +39,7 @@ class ColourGrid {
     // get all image data
     const data = [];
     const xkey = Object.keys(this.imageData);
-
+    
     for (var i=0, len=xkey.length; i<len; ++i) {
       const x = xkey[i];
       const ykey = Object.keys(this.imageData[x]);

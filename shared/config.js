@@ -2,11 +2,6 @@ const Config = {
   global: {
     maxDataSize: 400,
     maxMessageSize: 250,
-    colours: {
-      red: 0xff2222,
-      green: 0x22ff22,
-      blue: 0x2222ff
-    },
     grid: {
       size: 32,
       step: 2

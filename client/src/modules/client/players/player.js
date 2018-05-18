@@ -11,6 +11,7 @@ class Player {
     this.name = '';
     this.disabled = false;
     this.accel = 0;
+    this.colour = 0xff0000;
     this.acceleration = Config.acceleration;
     this.speed = Config.speed;
     this.diagonalReduction = 1 / (Math.sqrt(2));
@@ -113,7 +114,7 @@ class Player {
       }
     }
   }
-  
+
   update(delta) {
     this.move(delta);
   }

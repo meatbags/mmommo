@@ -30,8 +30,10 @@ class Client {
     // on new or reset connection
     this.peerManager.purge();
     this.packet.setSocket(this.socket.getSocket());
+
+    // dev
     this.namePicker.force('dev');
-    this.state.set({colour: 0x0f0f0f});
+    this.state.set({colour: 0xff0000});
   }
 
   handleMessage(e) {

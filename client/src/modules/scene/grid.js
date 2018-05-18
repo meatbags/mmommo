@@ -10,12 +10,6 @@ class Grid {
     this.init2d();
     this.init3d();
     this.map = null;
-
-    // dev
-    const x = this.size / 2;
-    this.setPixel(x, x, 0xff0000);
-    this.setPixel(x, x + 1, 0x0000ff);
-    this.setPixel(x + 1, x, 0x00ff00);
   }
 
   init2d() {
