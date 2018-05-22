@@ -45,13 +45,15 @@ class Client {
         this.on[res.type](res.data);
       }
     } else {
-      // binary map data
+      // binary data
+      /*
       if (e.data instanceof ArrayBuffer) {
         const uint8 = new Uint8Array(e.data);
         const b64 = btoa(String.fromCharCode.apply(null, uint8));
         const src = 'data:image/png;base64,' + b64;
         this.grid.parseMap(src);
       }
+      */
     }
   }
 
@@ -69,6 +71,7 @@ class Client {
     };
     this.on[ACTION.PING] = data => { this.packet.sendPong(); };
     this.on[ACTION.PONG] = data => { this.state.set({ping: (new Date()) - (new Date(data.timestamp))}); }
+    this.on[ACTION.MAP] = data => { this.grid.parseMap(data); };
   }
 
   update(delta) {

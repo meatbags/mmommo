@@ -1,107 +1,70 @@
 import { Config } from '../../../../shared';
 import * as fs from 'fs';
-import { PNG as PNG } from 'pngjs';
+import { PNG } from './png';
 
 class FileHandler {
   constructor() {
-    // handle image data
-    this.size = Config.global.grid.size;
+    // handle loading & saving
     this.path = './img/map.png';
-    this.buffer = false;
-    this.saveLock = false;
-    this.pngOptions = {width: this.size, height: this.size, colorType: 2};
+    this.png = new PNG();
+    this.load();
+  }
 
-    // read map from file
+  load() {
     fs.readFile(this.path, (err, data) => {
       if (err) {
-        console.log('Error reading file.');
-        this.createNewImage();
+        this.png.load(false);
       } else {
-        console.log('File read. Parsing data.');
-        this.setImage(data);
+        this.png.load(data);
       }
     });
   }
 
-  parseBuffer() {
-    this.buffer = PNG.sync.write(this.image, this.pngOptions);
-    console.log(this.buffer);
+  getImageSrc() {
+    return this.png.getImageSrc();
   }
 
-  createNewImage() {
-    console.log('Creating new image file.');
-    this.image = new PNG(this.pngOptions);
+  writeToFile(data) {
+    for (var i=0, len=data.length; i<len; ++i) {
+      this.png.writeRGB(data[i].x, data[i].y, data[i].colour);
+    }
+
     this.save();
   }
 
-  getBuffer() {
-    return this.buffer;
-  }
-
-  setImage(data) {
-    if (data.length) {
-      this.image = new PNG(this.pngOptions).parse(data, (err, res) => {
-        if (err || this.image.width != this.size) {
-          this.createNewImage();
-        } else {
-          this.parseBuffer();
-          console.log('Done.');
-        }
-      });
-    } else {
-      this.createNewImage();
-    }
-  }
-
-  putPixel(x, y, colour) {
-    // write pixel to image buffer
-    const index = (this.image.width * y + x) << 2;
-
-    if (index + 3 < this.image.data.length) {
-      this.image.data[index] = colour >> 16 & 0xff;
-      this.image.data[index + 1] = colour >> 8 & 0xff;
-      this.image.data[index + 2] = colour & 0xff;
-    }
-  }
-
-  writeData(data, onComplete) {
-    // write data & save
-    const xkey = Object.keys(data);
-
-    for (var i=0, len=xkey.length; i<len; ++i) {
-      const x = xkey[i];
-      const xint = parseInt(x);
-      const ykey = Object.keys(data[x]);
-
-      for (var j=0, jlen=ykey.length; j<jlen; ++j) {
-        const y = ykey[j];
-        const yint = parseInt(y);
-        this.putPixel(xint, yint, data[x][y]);
-      }
-    }
-
-    // save
-    this.save(onComplete);
-  }
-
-  save(onComplete) {
-    // save to file
+  save() {
+    // encode PNG and save it
     if (!this.saveLock) {
       this.saveLock = true;
-      this.onComplete = onComplete || null;
-      this.parseBuffer();
-      console.log('Saving file.');
+      process.stdout.write('Saving...');
 
-      fs.writeFile(this.path, this.buffer, (err) => {
-        if (err) throw err;
-
-        console.log('Saved.');
-        this.saveLock = false;
-        if (this.onComplete) {
-          this.onComplete();
+      // encode png & save
+      this.png.getPNG().then(
+        (data) => {
+          fs.writeFile(this.path, data, (err) => {
+            if (!err) {
+              this.onSaveSuccess();
+            } else {
+              this.onSaveErr(err);
+            }
+          });
         }
-      });
+      ).catch(
+        (err) => {
+          this.onSaveErr(err);
+        }
+      );
     }
+  }
+
+  onSaveErr(err) {
+    console.log('Save error', err);
+    this.saveLock = false;
+  }
+
+  onSaveSuccess() {
+    process.stdout.write(' saved.\n');
+    this.saveLock = false;
   }
 }
 

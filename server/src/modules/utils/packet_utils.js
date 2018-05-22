@@ -32,8 +32,8 @@ class PacketUtils {
   }
 
   map(id, data) {
-    if (data !== false) {
-      this.clients[id].sendBytes(data);
+    if (data) {
+      this.clients[id].sendMessage(ACTION.MAP, data);
     }
   }
 

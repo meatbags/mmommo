@@ -8,7 +8,5 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "pngjs": "^3.3.3"
-  }
+  "dependencies": {}
 }

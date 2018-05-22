@@ -16,7 +16,7 @@ class Server {
     this.ws = new WebSocketServer({httpServer: this.server, autoAcceptConnections: false});
     this.ws.on('request', (req) => {
       if (this.verify(req)) {
-        this.manager.add(req.accept(null, req.origin));
+        this.manager.add(req);
       } else {
         req.reject();
       }
@@ -25,7 +25,6 @@ class Server {
 
   verify(req) {
     // TODO: IP connect rate limit
-    console.log('User connected', req.origin, req.remoteAddress);
     return true;
   }
 }
