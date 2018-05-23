@@ -1,18 +1,15 @@
 class Converter {
   constructor() {}
 
-  atob(b64) {
-    // base64 to string
-    return Buffer.from(b64, 'base64').toString();
+  atob(b64str) {
+    return Buffer.from(b64str, 'base64').toString();
   }
 
   btoa(str) {
-    // string to base64
     return Buffer.from(str).toString('base64');
   }
 
   UTF8ToBuffer(str) {
-    // string to array
     const buffer = [];
 
     for (var i=0, len=str.length; i<len; i++) {
@@ -22,9 +19,8 @@ class Converter {
     return buffer;
   }
 
-  bufferToUTF8(arr) {
-    // array to string
-    return String.fromCharCode.apply(null, arr);
+  bufferToUTF8(buf) {
+    return String.fromCharCode.apply(null, buf);
   }
 
   CRC32(data) {

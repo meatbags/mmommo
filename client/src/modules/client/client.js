@@ -1,7 +1,7 @@
 import { ACTION, ClientState, Config } from '../../../../shared';
-import { Socket, PacketUtils, Emitter } from './connexion';
+import { Socket, PacketUtils, Emitter } from './network';
 import { Player, PeerManager } from './players';
-import { Console, HUD, NamePicker } from './interface';
+import { Console, HUD, NamePicker } from './ui';
 
 class Client {
   constructor(url) {

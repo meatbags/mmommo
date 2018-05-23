@@ -1,4 +1,4 @@
-import { div, formWindow } from '../../dom';
+import { div } from './div';
 
 class Console {
   constructor(client) {

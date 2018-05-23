@@ -1,5 +1,4 @@
 // DEPRECATED -- keep for future
-
 import * as mongodb from 'mongodb';
 
 class DB {

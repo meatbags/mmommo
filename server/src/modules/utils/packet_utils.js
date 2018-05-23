@@ -22,7 +22,7 @@ class PacketUtils {
     // request state (case server disconnect)
     this.clients[id].sendMessage(ACTION.STATE_REQUEST, this.peerDataKeys);
   }
-
+  
   ping(id) {
     this.clients[id].sendMessage(ACTION.PING, null);
   }

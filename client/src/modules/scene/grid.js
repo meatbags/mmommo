@@ -86,6 +86,7 @@ class Grid {
 
   parseMap(src) {
     src = 'data:image/png;base64,' + btoa(src);
+    console.log('File size', src.length);
     this.clear();
 
     // draw image, reset image data & history

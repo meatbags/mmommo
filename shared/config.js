@@ -3,8 +3,8 @@ const Config = {
     maxDataSize: 400,
     maxMessageSize: 250,
     grid: {
-      size: 64,
-      step: 2
+      size: 256,
+      step: 3
     },
   },
   client: {

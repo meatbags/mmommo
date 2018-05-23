@@ -1,5 +1,3 @@
-// maybe useful one day
-
 function toColourString(n) {
   var r = n >> 16 & 0xff;
   var g = n >> 8 & 0xff;
@@ -7,10 +5,10 @@ function toColourString(n) {
   r = ((r < 16) ? '0' : '') + r.toString(16);
   g = ((g < 16) ? '0' : '') + g.toString(16);
   b = ((b < 16) ? '0' : '') + b.toString(16);
-
   return `#${r}${g}${b}`;
 }
 
+/*
 function hueToRGB(p, q, t) {
   // convert hue to RGB
   t += (t < 0) ? 1 : (t > 1) ? -1 : 0;
@@ -41,8 +39,8 @@ function randomiseColour(c) {
     g = this.HueToRGB(P, Q, H);
     b = this.HueToRGB(P, Q, H - 1/3);
   }
-
   c.setRGB(r, g, b);
 }
+*/
 
 export { toColourString };

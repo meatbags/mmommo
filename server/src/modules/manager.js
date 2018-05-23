@@ -1,5 +1,5 @@
-import { ColourGrid } from './db';
-import { User } from './users';
+import { ColourGrid } from './grid';
+import { User } from './user';
 import { SessionToken, PacketUtils } from './utils';
 import { ACTION } from '../../../shared';
 
