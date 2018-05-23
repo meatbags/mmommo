@@ -9,7 +9,6 @@ class EventEmitter {
 
   update(delta) {
     this.age += delta;
-
     if (this.age >= this.interval) {
       this.age -= this.interval;
       this.event();

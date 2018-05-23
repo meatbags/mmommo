@@ -17,7 +17,7 @@ class Scene {
     this.camera = new THREE.OrthographicCamera(-w/2, w/2, h/2, -h/2, 1, 1000);
     this.offset = new THREE.Vector3(10, 10, 10);
     this.adjust = 8;
-
+    
     // initial position
     this.camera.position.copy(this.player.position);
     this.camera.position.add(this.offset);
@@ -27,42 +27,45 @@ class Scene {
   init() {
     // colour grid
     this.grid = new Grid(this.scene);
-
-    // players
-    this.playerMesh = new PlayerModel(this.scene);
-    this.peerMeshes = [];
-
-    // some lights
+    this.playerModel = new PlayerModel(this.scene);
+    this.peerModels = [];
     this.lights = {
       a: new THREE.AmbientLight(0xffffff, 0.125),
-      d: new THREE.DirectionalLight(0xffffff, 0.125)
+      d: {
+        key: new THREE.DirectionalLight(0xffffff, 0.5),
+        back: new THREE.DirectionalLight(0xffffff, 0.25)
+      }
     };
-    //this.scene.add(this.lights.a, this.lights.d);
+    this.lights.d.key.position.set(1, 0.5, 0.5);
+    this.lights.d.back.position.set(-1, 0.25, -0.5);
+    this.scene.add(this.lights.a, this.lights.d.key, this.lights.d.back);
   }
 
   updatePlayerObjects() {
     // player
-    this.playerMesh.update(this.player);
+    this.playerModel.update(this.player);
 
     // conform peer mesh array
-    const peers = Object.keys(this.peerManager.peers);
+    const keys = this.peerManager.getKeys();
+    const count = keys.length;
 
-    if (peers.length > this.peerMeshes.length) {
-      for (var i=0, len=peers.length - this.peerMeshes.length; i<len; ++i) {
-        const clone = this.playerMesh.clone();
-        this.peerMeshes.push(clone);
-        this.scene.add(clone);
+    if (count > this.peerModels.length) {
+      for (var i=0, len=count-this.peerModels.length; i<len; ++i) {
+        this.peerModels.push(new PlayerModel(this.scene));
       }
-    } else if (peers.length < this.peerMeshes.length) {
-      for (var i=0, len=this.peerMeshes.length - peers.length; i<len; ++i) {
-        this.scene.remove(this.peerMeshes[i]);
-        this.peerMeshes.splice(i, 1);
+    } else if (count < this.peerModels.length) {
+      for (var i=0, len=this.peerModels.length - count; i<len; ++i) {
+        const index = this.peerModels.length - 1;
+        this.peerModels[index].remove();
+        this.peerModels.splice(index, 1);
       }
     }
 
     // move peer meshes
-    for (var i=0, len=peers.length; i<len; i++) {
-      this.peers[i].update(this.peerManager.peers[peers[i]]);
+    for (var i=0, len=keys.length; i<len; ++i) {
+      if (this.peerModels.length > i) {
+        this.peerModels[i].update(this.peerManager.getPeer(keys[i]));
+      }
     }
   }
 

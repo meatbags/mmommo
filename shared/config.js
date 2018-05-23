@@ -4,7 +4,8 @@ const Config = {
     maxMessageSize: 250,
     grid: {
       size: 256,
-      step: 3
+      step: 3,
+      playerSpawnRange: 25 // from centre
     },
   },
   client: {

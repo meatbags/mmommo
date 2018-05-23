@@ -32,7 +32,7 @@ class Emitter {
       this.client.state.set({p: this.client.player.position, v: this.client.player.motion});
       this.client.packet.sendMove(this.client.state.get('p'), this.client.state.get('v'));
     }
-
+    
     // send new grid cell colour
     if (this.client.player.inNewGridCell()) {
       const cell = this.client.player.getGridCell();
@@ -41,6 +41,7 @@ class Emitter {
 
       if (cellColour != null && colour != null && cellColour != colour) {
         this.client.packet.sendPaint(cell.x, cell.y, colour);
+        this.client.grid.setPixel(cell.x, cell.y, colour);
       }
     }
   }

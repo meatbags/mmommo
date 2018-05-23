@@ -12,6 +12,18 @@ class PeerManager {
     this.id = id;
   }
 
+  getCount() {
+    return this.peerCount;
+  }
+
+  getKeys() {
+    return Object.keys(this.peers);
+  }
+
+  getPeer(key) {
+    return this.peers[key];
+  }
+
   purge() {
     // reset everything
     this.id = null;

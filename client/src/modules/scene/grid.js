@@ -28,6 +28,18 @@ class Grid {
 
     // clear canvas
     this.clear();
+    this.drawEmptyGrid();
+  }
+
+  drawEmptyGrid() {
+    this.ctx.fillStyle = '#aaa';
+    for (var x=0, xlim=this.cvs.width; x<xlim; ++x) {
+      for (var y=0, ylim=this.cvs.height; y<ylim; ++y) {
+        if ((x + y) % 2 == 0) {
+          this.ctx.fillRect(x, y, 1, 1);
+        }
+      }
+    }
   }
 
   clear() {
@@ -88,6 +100,7 @@ class Grid {
     src = 'data:image/png;base64,' + btoa(src);
     console.log('File size', src.length);
     this.clear();
+    this.drawEmptyGrid();
 
     // draw image, reset image data & history
     this.map = new Image();

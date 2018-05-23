@@ -2,6 +2,7 @@ import { ACTION, ClientState, Config } from '../../../../shared';
 import { Socket, PacketUtils, Emitter } from './network';
 import { Player, PeerManager } from './players';
 import { Console, HUD, NamePicker } from './ui';
+import { getRandomColour } from '../utils/colour';
 
 class Client {
   constructor(url) {
@@ -24,6 +25,11 @@ class Client {
     // colour grid target
     this.grid = null;
     this.handleActions();
+
+    // dev
+    const c = getRandomColour();
+    this.player.colour = c;
+    this.state.set({colour: c});
   }
 
   onConnect() {
@@ -33,7 +39,6 @@ class Client {
 
     // dev
     this.namePicker.force('dev');
-    this.state.set({colour: 0xff0000});
   }
 
   handleMessage(e) {

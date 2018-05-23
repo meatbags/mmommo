@@ -5,7 +5,9 @@ class Renderer2D {
     this.resize();
     this.cvs.classList.add('overlay-canvas');
     document.body.appendChild(this.cvs);
-    this.offsetY = -20;
+    this.offsetY = -100;
+    this.offsetPerLetter = 3;
+    this.ctx.font = '18px Arial';
 
     // targets
     this.scene = scene;
@@ -24,20 +26,20 @@ class Renderer2D {
   renderName(position, name) {
     const vec = position.clone();
     vec.project(this.camera);
-    const x = this.centre.x * vec.x + this.centre.x - (name.length * 2.5);
-    const y = -this.centre.y * vec.y + this.centre.y + this.offsetY;
+    const x = Math.floor(this.centre.x * vec.x + this.centre.x - (name.length * this.offsetPerLetter));
+    const y = Math.floor(-this.centre.y * vec.y + this.centre.y + this.offsetY);
+    this.ctx.fillStyle = '#fff';
+    this.ctx.fillText(name, x + 0.75, y + 0.75);
+    this.ctx.fillStyle = '#000';
     this.ctx.fillText(name, x, y);
   }
 
   render(delta) {
+    // render player & peer names
+
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
-
-    // render player
     this.renderName(this.player.position, this.player.name);
-
-    // render users
     const keys = Object.keys(this.scene.peerManager.peers);
-
     for (var i=0, len=keys.length; i<len; ++i) {
       const peer = this.scene.peerManager.peers[keys[i]];
       this.renderName(peer.target.position, peer.name);

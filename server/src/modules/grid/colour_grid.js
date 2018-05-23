@@ -21,7 +21,7 @@ class ColourGrid {
 
     // save
     this.file.writeToFile(data);
-
+    
     // rm data
     this.imageData = {};
     this.changes.count = 0;

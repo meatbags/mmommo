@@ -3,21 +3,22 @@ import { Config as GlobalConfig } from '../../../../../shared';
 
 class Player {
   constructor() {
+    const range = GlobalConfig.global.grid.playerSpawnRange;
+    this.size = GlobalConfig.global.grid.size;
+    this.step = GlobalConfig.global.grid.step;
     this.position = new THREE.Vector3();
-    this.position.x = Math.random() * 10 - 5;
-    this.position.z = Math.random() * 10 - 5;
+    this.position.x = Math.floor(Math.random() * range - range/2) * this.step - this.step / 2;
+    this.position.z = Math.floor(Math.random() * range - range/2) * this.step - this.step / 2;
     this.motion = new THREE.Vector3();
     this.previous = {};
     this.name = '';
     this.disabled = false;
     this.accel = 0;
-    this.colour = 0xff0000;
+    this.colour = 0x00ff00;
     this.acceleration = Config.acceleration;
     this.speed = Config.speed;
     this.diagonalReduction = 1 / (Math.sqrt(2));
     this.keys = {};
-    this.size = GlobalConfig.global.grid.size;
-    this.step = GlobalConfig.global.grid.step;
     document.onkeydown = (e) => { this.onKeyDown(e); };
     document.onkeyup = (e) => { this.onKeyUp(e); };
   }
