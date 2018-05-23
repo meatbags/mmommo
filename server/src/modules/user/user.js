@@ -22,28 +22,20 @@ class User {
 
     // events
     this.onAction = onAction;
-    this.initActions();
+    this.init();
     this.client = client;
     this.client.on('message', (msg) => { this.onMessage(msg); });
     this.client.on('close', (conn) => { this.onAction(ACTION.CONNECTION_CLOSED, this.id, null); });
   }
 
-  sendMessage(type, data) {
-    this.client.sendUTF(
-      JSON.stringify({type: type, data: data})
-    );
-  }
-
-  sendBytes(data) {
-    this.client.sendBytes(data);
-  }
-
-  initActions() {
+  init() {
+    // action handling
     this.on = {};
     this.on[ACTION.MOVE] = data => { this.setPosition(data); };
     this.on[ACTION.PAINT] = data => { this.setPaint(data); };
     this.on[ACTION.MESSAGE] = data => { this.setChatMessage(data); };
     this.on[ACTION.SET_NAME] = data => { this.setName(data); };
+    this.on[ACTION.SET_COLOUR] = data => { this.setColour(data); };
     this.on[ACTION.STATE] = data => {
       this.setName(data);
       this.setPosition(data);
@@ -59,12 +51,23 @@ class User {
     this.actionRegister = Object.keys(this.on);
   }
 
+  sendMessage(type, data) {
+    try {
+      this.client.sendUTF(JSON.stringify({type: type, data: data}));
+    } catch(err) {
+      console.log('Error sending', type, err);
+    }
+  }
+
+  sendBytes(data) {
+    this.client.sendBytes(data);
+  }
+
   onMessage(msg) {
     // validate client messages
     if (this.rate.request.inLimit() && valid.request(msg)) {
       try {
         const res = JSON.parse(msg.utf8Data);
-
         if (res.type && res.data && this.actionRegister.indexOf(res.type) != -1) {
           this.on[res.type](res.data);
         }
@@ -79,7 +82,6 @@ class User {
     if (!this.isMuted()) {
       if (this.rate.spam.inLimit()) {
         const clean = valid.sanitise(data);
-
         if (valid.stringLength(clean)) {
           this.onAction(ACTION.MESSAGE, this.id, {from: this.state.get('name'), message: clean});
         }
@@ -103,11 +105,20 @@ class User {
   setName(data) {
     if (data.name !== undefined && !this.nameLock) {
       const clean = valid.sanitise(data.name);
-
       if (valid.stringLength(clean)) {
         this.nameLock = true; // lock name
         this.state.set({name: clean});
         this.onAction(ACTION.SET_NAME, this.id, clean);
+      }
+    }
+  }
+
+  setColour(data) {
+    if (data.colour) {
+      const c = data.colour;
+      if (valid.colour(c)) {
+        this.state.set({colour: c});
+        this.onAction(ACTION.SET_COLOUR, this.id, c);
       }
     }
   }
@@ -131,7 +142,6 @@ class User {
     if (this.muted.state) {
       this.muted.state = (new Date()).getTime() <= this.muted.time;
     }
-
     return this.muted.state;
   }
 }

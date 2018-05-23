@@ -1,13 +1,12 @@
-import { Grid } from './grid';
+import { ColourGrid } from './colour_grid';
 import { PlayerModel } from './player_model';
 
 class Scene {
-  constructor(player, peerManager) {
-    // scene handler
-    this.player = player;
-    this.peerManager = peerManager;
+  constructor(client) {
+    // scene
     this.scene = new THREE.Scene();
-    this.init();
+    this.colourGrid = new ColourGrid(this.scene);
+    this.playerModel = new PlayerModel(this.scene);
 
     // camera
     this.ratio = window.innerWidth / window.innerHeight;
@@ -17,28 +16,22 @@ class Scene {
     this.camera = new THREE.OrthographicCamera(-w/2, w/2, h/2, -h/2, 1, 1000);
     this.offset = new THREE.Vector3(10, 10, 10);
     this.adjust = 8;
-    
-    // initial position
+
+    // player & peer manager
+    this.player = client.player;
+    this.peerManager = client.peerManager;
+    this.peerModels = [];
     this.camera.position.copy(this.player.position);
     this.camera.position.add(this.offset);
     this.camera.lookAt(this.player.position);
-  }
 
-  init() {
-    // colour grid
-    this.grid = new Grid(this.scene);
-    this.playerModel = new PlayerModel(this.scene);
-    this.peerModels = [];
-    this.lights = {
-      a: new THREE.AmbientLight(0xffffff, 0.125),
-      d: {
-        key: new THREE.DirectionalLight(0xffffff, 0.5),
-        back: new THREE.DirectionalLight(0xffffff, 0.25)
-      }
-    };
-    this.lights.d.key.position.set(1, 0.5, 0.5);
-    this.lights.d.back.position.set(-1, 0.25, -0.5);
-    this.scene.add(this.lights.a, this.lights.d.key, this.lights.d.back);
+    // lighting
+    const a1 = new THREE.AmbientLight(0xffffff, 0.125);
+    const d1 = new THREE.DirectionalLight(0xffffff, 0.5);
+    const d2 = new THREE.DirectionalLight(0xffffff, 0.25);
+    d1.position.set(1, 0.5, 0.5);
+    d2.position.set(-1, 0.25, -0.5);
+    this.scene.add(a1, d1, d2);
   }
 
   updatePlayerObjects() {
@@ -69,7 +62,7 @@ class Scene {
     }
   }
 
-  update(delta) {
+  update(delta, client) {
     // move camera to player
     const f = this.adjust * delta;
     this.camera.position.set(
@@ -81,8 +74,8 @@ class Scene {
     // move players
     this.updatePlayerObjects();
 
-    // colour grid
-    this.grid.update();
+    // update colour grid
+    this.colourGrid.update();
   }
 
   resize() {
@@ -94,18 +87,6 @@ class Scene {
     this.camera.top = h / 2;
     this.camera.bottom = h / -2;
     this.camera.updateProjectionMatrix();
-  }
-
-  getGrid() {
-    return this.grid;
-  }
-
-  getScene() {
-    return this.scene;
-  }
-
-  getCamera() {
-    return this.camera;
   }
 }
 

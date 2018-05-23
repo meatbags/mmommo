@@ -2,7 +2,7 @@ import { div } from './div';
 
 class NamePicker {
   constructor(client) {
-    // create name form and hook to client
+    // hook name picker to client
     this.client = client;
     this.createWindow();
     this.input = this.form.querySelector('input');
@@ -21,7 +21,6 @@ class NamePicker {
 
   force(name) {
     this.client.setName(name);
-    this.client.packet.sendSetName(name);
     this.closeWindow();
   }
 
@@ -29,7 +28,6 @@ class NamePicker {
     e.preventDefault();
 
     if (this.input.value.length) {
-      this.client.packet.sendSetName(this.input.value)
       this.client.setName(this.input.value);
       this.closeWindow();
     } else {

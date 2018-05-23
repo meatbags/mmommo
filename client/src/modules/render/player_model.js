@@ -4,8 +4,11 @@ class PlayerModel {
   constructor(scene) {
     this.scene = scene;
     this.isSet = false;
+    this.label = '';
     this.colour = 0;
-    this.adjust = 0.25;
+    this.adjust = 0.2;
+    this.isSet = false;
+    this.maxTilt = Math.PI / 8;
     this.buildModel();
   }
 
@@ -34,15 +37,27 @@ class PlayerModel {
   }
 
   update(target) {
+    // label
+    this.label = `${target.name} ${Math.floor(target.position.x)} ${Math.floor(target.position.z)}`;
+
+    // move
     if (!this.isSet) {
       this.isSet = true;
-      this.position = new THREE.Vector3();
-      this.position.set(target.position.x, target.position.y, target.position.z);
+      this.group.position.set(target.position.x, target.position.y, target.position.z);
+    } else {
+      this.group.position.x += (target.position.x - this.group.position.x) * this.adjust;
+      this.group.position.z += (target.position.z - this.group.position.z) * this.adjust;
     }
 
-    this.position.x = (target.position.x - this.position.x) * this.adjust;
-    this.group.position.set(target.position.x, target.position.y, target.position.z);
+    // tilt pencil
+    if (target.accel == 0) {
+      this.group.rotation.z += -this.group.rotation.z * this.adjust;
+    } else {
+      this.group.rotation.z += (this.maxTilt - this.group.rotation.z) * this.adjust;
+      this.group.rotation.y += minAngleTo(this.group.rotation.y, Math.atan2(-target.motion.z, target.motion.x)) * this.adjust;
+    }
 
+    // change material
     if (this.colour != target.colour) {
       this.colour = target.colour;
       this.material.shade.color.set(target.colour);

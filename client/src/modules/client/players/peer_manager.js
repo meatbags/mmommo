@@ -68,7 +68,7 @@ class PeerManager {
           this.add(id);
         }
 
-        // set position, name
+        // set position, name, colour
         if (this.reset) {
           this.reset = false;
           this.peers[id].setInitialPosition(data[i]);
@@ -78,6 +78,10 @@ class PeerManager {
 
         if (this.peers[id].name != data[i].name) {
           this.peers[id].setName(data[i].name);
+        }
+        
+        if (this.peers[id].colour != data[i].colour) {
+          this.peers[id].setColour(data[i].colour);
         }
       }
     }

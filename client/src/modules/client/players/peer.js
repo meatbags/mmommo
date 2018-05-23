@@ -19,6 +19,10 @@ class Peer {
     this.name = name;
   }
 
+  setColour(colour) {
+    this.colour = colour;
+  }
+
   setInitialPosition(data) {
     this.position.set(data.p.x, data.p.y, data.p.z);
     this.motion.set(data.v.x, data.v.y, data.v.z);

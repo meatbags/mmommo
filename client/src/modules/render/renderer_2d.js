@@ -5,8 +5,8 @@ class Renderer2D {
     this.resize();
     this.cvs.classList.add('overlay-canvas');
     document.body.appendChild(this.cvs);
-    this.offsetY = -100;
-    this.offsetPerLetter = 3;
+    this.offsetY = -60;
+    this.offsetPerLetter = 1;
     this.ctx.font = '18px Arial';
 
     // targets
@@ -23,7 +23,7 @@ class Renderer2D {
     this.cvs.height = this.height;
   }
 
-  renderName(position, name) {
+  renderLabel(position, name) {
     const vec = position.clone();
     vec.project(this.camera);
     const x = Math.floor(this.centre.x * vec.x + this.centre.x - (name.length * this.offsetPerLetter));
@@ -35,14 +35,12 @@ class Renderer2D {
   }
 
   render(delta) {
-    // render player & peer names
-
+    // render model labels
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
-    this.renderName(this.player.position, this.player.name);
-    const keys = Object.keys(this.scene.peerManager.peers);
-    for (var i=0, len=keys.length; i<len; ++i) {
-      const peer = this.scene.peerManager.peers[keys[i]];
-      this.renderName(peer.target.position, peer.name);
+    this.renderLabel(this.scene.playerModel.group.position, this.scene.playerModel.label);
+
+    for (var i=0, len=this.scene.peerModels.length; i<len; ++i) {
+      this.renderLabel(this.scene.peerModels[i].group.position, this.scene.peerModels[i].label);
     }
   }
 }

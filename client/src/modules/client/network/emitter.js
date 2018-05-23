@@ -32,16 +32,20 @@ class Emitter {
       this.client.state.set({p: this.client.player.position, v: this.client.player.motion});
       this.client.packet.sendMove(this.client.state.get('p'), this.client.state.get('v'));
     }
-    
+
     // send new grid cell colour
     if (this.client.player.inNewGridCell()) {
       const cell = this.client.player.getGridCell();
-      const cellColour = this.client.grid.getPixel(cell.x, cell.y);
+      const cellColour = this.client.colourGrid.getPixel(cell.x, cell.y);
       const colour = this.client.state.get('colour');
 
       if (cellColour != null && colour != null && cellColour != colour) {
         this.client.packet.sendPaint(cell.x, cell.y, colour);
-        this.client.grid.setPixel(cell.x, cell.y, colour);
+        this.client.colourGrid.drawPixelArray([{
+          x: cell.x,
+          y: cell.y,
+          colour: colour
+        }]);
       }
     }
   }

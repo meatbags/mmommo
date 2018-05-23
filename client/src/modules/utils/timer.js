@@ -8,6 +8,7 @@ class Timer {
     var t = (new Date()).getTime();
     this.delta = (t - this.now) / 1000.;
     this.now = t;
+    return this.delta;
   }
 }
 

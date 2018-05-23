@@ -2,9 +2,9 @@ import { Renderer2D } from './renderer_2d';
 import '../../../lib/glsl';
 
 class Renderer {
-  constructor(sceneHandler) {
-    this.scene = sceneHandler.getScene();
-    this.camera = sceneHandler.getCamera();
+  constructor(scene) {
+    this.scene = scene.scene;
+    this.camera = scene.camera;
 
     // webgl renderer
     this.width = window.innerWidth;
@@ -20,7 +20,7 @@ class Renderer {
     document.body.appendChild(this.renderer.domElement);
 
     // 2d renderer (overlays)
-    this.renderer2d = new Renderer2D(sceneHandler, this.camera);
+    this.renderer2d = new Renderer2D(scene, this.camera);
   }
 
   resize() {

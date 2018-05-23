@@ -1,8 +1,7 @@
 import { ACTION, ClientState, Config } from '../../../../shared';
 import { Socket, PacketUtils, Emitter } from './network';
 import { Player, PeerManager } from './players';
-import { Console, HUD, NamePicker } from './ui';
-import { getRandomColour } from '../utils/colour';
+import { Console, HUD, NamePicker, ColourPicker } from './ui';
 
 class Client {
   constructor(url) {
@@ -10,26 +9,37 @@ class Client {
     this.url = url;
     this.state = new ClientState();
 
-    // hook ui to socket
+    // ui/ utils
     this.namePicker = new NamePicker(this);
+    this.colourPicker = new ColourPicker(this);
     this.console = new Console(this);
     this.hud = new HUD();
     this.socket = new Socket(this);
     this.packet = new PacketUtils(this.socket.getSocket());
-
-    // input
     this.player = new Player();
     this.peerManager = new PeerManager();
     this.emitter = new Emitter(this);
+  }
 
-    // colour grid target
-    this.grid = null;
-    this.handleActions();
+  init(scene) {
+    // hook up to scene
+    this.colourGrid = scene.colourGrid;
 
-    // dev
-    const c = getRandomColour();
-    this.player.colour = c;
-    this.state.set({colour: c});
+    // actions
+    this.on = {};
+    this.on[ACTION.PEERS] = data => { this.peerManager.handleData(data); };
+    this.on[ACTION.PAINT] = data => { this.colourGrid.drawPixelArray(data); };
+    this.on[ACTION.STATE_REQUEST] = data => { this.packet.sendState(this.state.getPartJSON(data)); };
+    this.on[ACTION.MESSAGE] = data => { this.console.printMessage(data.from, data.message); };
+    this.on[ACTION.NOTICE] = data => { this.console.printNotice(data.message); };
+    this.on[ACTION.PEER_DISCONNECT] = data => { this.peerManager.handlePeerDisconnect(data); };
+    this.on[ACTION.STATE] = data => {
+      this.state.set(data);
+      this.peerManager.setMyId(this.state.get('id'));
+    };
+    this.on[ACTION.PING] = data => { this.packet.sendPong(); };
+    this.on[ACTION.PONG] = data => { this.state.set({ping: (new Date()) - (new Date(data.timestamp))}); }
+    this.on[ACTION.MAP] = data => { this.colourGrid.parseMap(data); };
   }
 
   onConnect() {
@@ -39,6 +49,7 @@ class Client {
 
     // dev
     this.namePicker.force('dev');
+    this.colourPicker.random();
   }
 
   handleMessage(e) {
@@ -50,33 +61,10 @@ class Client {
         this.on[res.type](res.data);
       }
     } else {
-      // binary data
-      /*
-      if (e.data instanceof ArrayBuffer) {
-        const uint8 = new Uint8Array(e.data);
-        const b64 = btoa(String.fromCharCode.apply(null, uint8));
-        const src = 'data:image/png;base64,' + b64;
-        this.grid.parseMap(src);
-      }
-      */
+      // binary data -- ArrayBuffer
+      // const uint8 = new Uint8Array(e.data);
+      // const str = String.fromCharCode.apply(null, uint8);
     }
-  }
-
-  handleActions() {
-    this.on = {};
-    this.on[ACTION.PEERS] = data => { this.peerManager.handleData(data); };
-    this.on[ACTION.PAINT] = data => { this.grid.drawPixelArray(data); };
-    this.on[ACTION.STATE_REQUEST] = data => { this.packet.sendState(this.state.getPartJSON(data)); };
-    this.on[ACTION.MESSAGE] = data => { this.console.printMessage(data.from, data.message); };
-    this.on[ACTION.NOTICE] = data => { this.console.printNotice(data.message); };
-    this.on[ACTION.PEER_DISCONNECT] = data => { this.peerManager.handlePeerDisconnect(data); };
-    this.on[ACTION.STATE] = data => {
-      this.state.set(data);
-      this.peerManager.setMyId(this.state.get('id'));
-    };
-    this.on[ACTION.PING] = data => { this.packet.sendPong(); };
-    this.on[ACTION.PONG] = data => { this.state.set({ping: (new Date()) - (new Date(data.timestamp))}); }
-    this.on[ACTION.MAP] = data => { this.grid.parseMap(data); };
   }
 
   update(delta) {
@@ -88,18 +76,13 @@ class Client {
   setName(name) {
     this.state.set({name: name});
     this.player.name = name;
+    this.packet.sendSetName(name);
   }
 
-  setGrid(grid) {
-    this.grid = grid;
-  }
-
-  getPlayer() {
-    return this.player;
-  }
-
-  getPeers() {
-    return this.peerManager;
+  setColour(colour) {
+    this.state.set({colour: colour});
+    this.player.colour = colour;
+    this.packet.sendSetColour(colour);
   }
 }
 

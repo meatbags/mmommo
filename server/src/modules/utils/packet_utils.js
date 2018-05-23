@@ -6,7 +6,7 @@ class PacketUtils {
     this.clients = clients;
     this.broadcastRate = new RateLimiter(Config.server.limitBroadcastRate, Config.server.limitBroadcastPeriod);
     this.broadcastPaintRate = new RateLimiter(Config.server.limitBroadcastPaintRate, Config.server.limitBroadcastPaintPeriod);
-    this.peerDataKeys = ['id', 'name', 'p', 'v'];
+    this.peerDataKeys = ['id', 'name', 'p', 'v', 'colour'];
     this.queue = {
       peers: []
     };
@@ -22,7 +22,7 @@ class PacketUtils {
     // request state (case server disconnect)
     this.clients[id].sendMessage(ACTION.STATE_REQUEST, this.peerDataKeys);
   }
-  
+
   ping(id) {
     this.clients[id].sendMessage(ACTION.PING, null);
   }

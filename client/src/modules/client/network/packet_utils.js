@@ -47,6 +47,10 @@ class PacketUtils {
     return this.send(ACTION.SET_NAME, {name: name});
   }
 
+  sendSetColour(colour) {
+    return this.send(ACTION.SET_COLOUR, {colour: colour});
+  }
+
   connectionOK() {
     return this.socket.readyState === this.socket.OPEN;
   }

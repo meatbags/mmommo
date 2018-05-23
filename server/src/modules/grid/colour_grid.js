@@ -7,8 +7,8 @@ class ColourGrid {
     this.file = new FileHandler();
     this.changes = {
       count: 0,
-      perSaveBase: 5,
-      perPlayer: 5
+      perSaveBase: 10,
+      perPlayer: 10
     };
     this.size = Config.global.grid.size;
     this.imageData = {};
@@ -18,10 +18,10 @@ class ColourGrid {
   save() {
     // save data to file
     const data = this.getSessionImageData();
-
+    
     // save
     this.file.writeToFile(data);
-    
+
     // rm data
     this.imageData = {};
     this.changes.count = 0;

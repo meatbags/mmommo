@@ -1,0 +1,5 @@
+
+-l <logfile> logs the forever output
+-o <outfile> logs stdout from child script
+-e <errfile> logs stderr from child script
+forever start -o out.log -e err.log my-script.js

@@ -50,6 +50,7 @@ class Manager {
     this.on[ACTION.MESSAGE] = (id, data) => { this.packet.broadcastMessage(data.from, data.message); };
     this.on[ACTION.PING] = (id, data) => { this.packet.pong(id, data); };
     this.on[ACTION.MUTE] = (id, data) => { this.packet.notify(id, `Don't spam. Muted ${data} seconds.`); };
+    this.on[ACTION.SET_COLOUR] = (id, data) => {};
     this.on[ACTION.SET_NAME] = (id, data) => { this.packet.notify(id, `Welcome ${data}!`); };
     this.on[ACTION.CONNECTION_CLOSED] = (id, data) => { this.remove(id); };
   }
