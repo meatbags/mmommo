@@ -1,4 +1,4 @@
-import { Config } from '../../../../shared';
+import { Config } from '../../../shared';
 import { Converter } from '../utils';
 import * as zlib from 'zlib';
 

@@ -1,5 +1,6 @@
 class RateLimiter {
   constructor(rate, period) {
+    // general purpose rate limiter
     this.stamps = [];
     this.setRate(rate, period);
   }
@@ -12,7 +13,7 @@ class RateLimiter {
   }
 
   inLimit() {
-    // check num requests in time period
+    // check whether requests in period exceeds limit
     const t = new Date();
 
     for (var i=this.stamps.length-1, end=-1; i>end; --i) {
@@ -31,6 +32,7 @@ class RateLimiter {
   }
 
   getRate() {
+    // return the average rate
     return this.average;
   }
 }

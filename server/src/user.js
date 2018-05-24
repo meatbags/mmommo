@@ -1,6 +1,6 @@
-import { ACTION, ClientState, Vector, Config } from '../../../../shared';
-import { RateLimiter } from '../utils';
-import * as valid from '../utils/validation';
+import { ACTION, ClientState, Vector, Config } from '../../shared';
+import { RateLimiter } from './utils';
+import * as valid from './utils/validation';
 
 class User {
   constructor(client, id, onAction) {

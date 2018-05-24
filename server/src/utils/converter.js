@@ -1,6 +1,4 @@
 class Converter {
-  constructor() {}
-
   atob(b64str) {
     return Buffer.from(b64str, 'base64').toString();
   }

@@ -1,7 +1,7 @@
-import { ColourGrid } from './grid';
+import { ACTION } from '../../shared';
+import { ColourGrid } from './file';
 import { User } from './user';
 import { SessionToken, PacketUtils } from './utils';
-import { ACTION } from '../../../shared';
 
 class Manager {
   constructor(grid) {

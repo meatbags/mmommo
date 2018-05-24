@@ -1,4 +1,4 @@
-import { Config } from '../../../../shared';
+import { Config } from '../../../shared';
 
 function bounds(x, y) {
   return (x > -1 && y > -1 && x < Config.global.grid.size && y < Config.global.grid.size);

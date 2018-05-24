@@ -1,6 +1,6 @@
-import { Manager } from './modules';
-import * as http from 'http';
+import { Manager } from './manager';
 import { server as WebSocketServer } from 'websocket';
+import * as http from 'http';
 
 class Server {
   constructor() {

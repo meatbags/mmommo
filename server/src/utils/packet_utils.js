@@ -1,4 +1,4 @@
-import { ACTION, Config } from '../../../../shared';
+import { ACTION, Config } from '../../../shared';
 import { RateLimiter } from './rate_limiter';
 
 class PacketUtils {

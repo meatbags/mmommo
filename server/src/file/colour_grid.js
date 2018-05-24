@@ -1,8 +1,9 @@
-import { Config } from '../../../../shared';
+import { Config } from '../../../shared';
 import { FileHandler } from './file_handler';
 
 class ColourGrid {
   constructor(root) {
+    // the active colour grid (recent changes)
     this.root = root;
     this.file = new FileHandler();
     this.changes = {
@@ -18,8 +19,6 @@ class ColourGrid {
   save() {
     // save data to file
     const data = this.getSessionImageData();
-    
-    // save
     this.file.writeToFile(data);
 
     // rm data

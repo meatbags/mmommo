@@ -1,10 +1,10 @@
-import { Config } from '../../../../shared';
+import { Config } from '../../../shared';
 import * as fs from 'fs';
 import { PNG } from './png';
 
 class FileHandler {
   constructor() {
-    // handle loading & saving
+    // read and write files
     this.path = './img/map.png';
     this.png = new PNG();
     this.load();
