@@ -1,3 +1,8 @@
+/*
+ * Server
+ * -- setup websockets & server
+ */
+
 import { Manager } from './manager';
 import { server as WebSocketServer } from 'websocket';
 import * as http from 'http';

@@ -1,3 +1,8 @@
+/*
+ * Renderer
+ * -- 3D rendering & post-processing
+ */
+
 import { Renderer2D } from './renderer_2d';
 import '../../lib/glsl';
 

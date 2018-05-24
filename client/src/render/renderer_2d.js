@@ -1,3 +1,8 @@
+/*
+ * Renderer2D
+ * -- 2D renderer for screen-space overlays
+ */
+
 import { Config } from '../../../shared';
 
 class Renderer2D {

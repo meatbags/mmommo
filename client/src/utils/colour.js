@@ -1,3 +1,8 @@
+/*
+ * Colour
+ * -- colour conversion & utility functions
+ */
+
 function averageColours(arr) {
   // average array of colours
   var r = 0;

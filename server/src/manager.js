@@ -1,3 +1,10 @@
+/*
+ * Manager
+ * -- add/ remove users
+ * -- action pre-validated requests
+ * -- manage interactions & distribute messages
+ */
+
 import { ACTION } from '../../shared';
 import { ColourGrid } from './file';
 import { User } from './user';
@@ -32,7 +39,7 @@ class Manager {
 
   remove(id) {
     delete this.clients[id];
-    this.token.unregister(id);
+    this.token.deregister(id);
     this.packet.broadcastRemovePlayer(id);
     this.clientCount = Math.max(0, this.clientCount - 1);
     console.log(`User ${id.substr(0, 10)}... disconnected.`);

@@ -1,6 +1,10 @@
+/*
+ * Socket
+ * -- handle socket connection, io
+ */
+
 class Socket {
   constructor(client) {
-    // websocket client
     this.client = client;
     this.reconnect = {count: 0, max: 3, timeout: 3000, lock: false};
     this.connect();

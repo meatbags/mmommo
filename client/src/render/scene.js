@@ -1,3 +1,8 @@
+/*
+ * Scene
+ * -- handle world objects & camera
+ */
+
 import { ColourGrid } from './colour_grid';
 import { PlayerModel } from './player_model';
 

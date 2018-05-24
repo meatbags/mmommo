@@ -1,3 +1,8 @@
+/*
+ * HUD
+ * -- ?
+ */
+
 class HUD {
   constructor() {
     this.hud = document.querySelector('#hud');

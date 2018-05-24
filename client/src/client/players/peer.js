@@ -1,9 +1,14 @@
+/*
+ * Peer
+ * -- container for peer users
+ * -- smooths motion to compensate for latency
+ */
+
 import { Config } from './config';
 import { Config as GlobalConfig } from '../../../../shared';
 
 class Peer {
   constructor(id) {
-    // container for peer position, label, colour
     this.id = id;
     this.name = 'player';
     this.colour = null;

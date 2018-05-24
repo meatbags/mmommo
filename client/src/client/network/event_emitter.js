@@ -1,3 +1,8 @@
+/*
+ * EventEmitter
+ * -- emits event at regular intervals
+ */
+
 class EventEmitter {
   constructor(rate, period, event) {
     this.rate = rate;

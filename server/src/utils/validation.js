@@ -1,4 +1,13 @@
+/*
+ * Validation
+ * -- validate data from users
+ */
+
 import { Config } from '../../../shared';
+
+function int(n) {
+  return (typeof(n) === 'number' && n % 1 == 0);
+}
 
 function bounds(x, y) {
   return (x > -1 && y > -1 && x < Config.global.grid.size && y < Config.global.grid.size);
@@ -6,10 +15,6 @@ function bounds(x, y) {
 
 function colour(colour) {
   return (int(colour) && colour >= 0 && colour <= 0xffffff);
-}
-
-function int(n) {
-  return (typeof(n) === 'number' && n % 1 == 0);
 }
 
 function request(req, max) {
@@ -25,7 +30,7 @@ function stringLength(str) {
 }
 
 function vector(v) {
-  return (typeof(v.x) === 'number' && typeof(v.y) === 'number' && typeof(v.z) === 'number');
+  return (typeof(v) === 'object' && typeof(v.x) === 'number' && typeof(v.y) === 'number' && typeof(v.z) === 'number');
 }
 
 export { bounds, colour, int, request, sanitise, stringLength, vector };

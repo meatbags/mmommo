@@ -1,3 +1,9 @@
+/*
+ * Converter
+ * -- convert data for saving
+ * -- generate CRC checksums (for PNG)
+ */
+
 class Converter {
   atob(b64str) {
     return Buffer.from(b64str, 'base64').toString();
@@ -9,11 +15,9 @@ class Converter {
 
   UTF8ToBuffer(str) {
     const buffer = [];
-
     for (var i=0, len=str.length; i<len; i++) {
       buffer.push(str.charCodeAt(i));
     }
-
     return buffer;
   }
 

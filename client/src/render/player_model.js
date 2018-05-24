@@ -1,3 +1,8 @@
+/*
+ * PlayerModel
+ * -- player model & animation (shared by player & other users)
+ */
+
 import { minAngleTo } from '../utils/maths';
 
 class PlayerModel {

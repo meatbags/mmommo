@@ -1,3 +1,9 @@
+/*
+ * User
+ * -- handle user-state for single user/ connection
+ * -- validate & rate-limit requests
+ */
+
 import { ACTION, ClientState, Vector, Config } from '../../shared';
 import { RateLimiter } from './utils';
 import * as valid from './utils/validation';
@@ -47,7 +53,7 @@ class User {
     };
     this.on[ACTION.PONG] = data => {};
 
-    // valid actions
+    // register valid actions
     this.actionRegister = Object.keys(this.on);
   }
 
@@ -55,7 +61,7 @@ class User {
     try {
       this.client.sendUTF(JSON.stringify({type: type, data: data}));
     } catch(err) {
-      console.log('Error sending', type, err);
+      console.log('Err @ sendUTF', type, err);
     }
   }
 
@@ -93,11 +99,7 @@ class User {
   }
 
   setPaint(data) {
-    if (
-      valid.int(data.x) && valid.int(data.y) &&
-      valid.colour(data.colour) &&
-      valid.bounds(data.x, data.y)
-    ) {
+    if (valid.int(data.x) && valid.int(data.y) && valid.colour(data.colour) && valid.bounds(data.x, data.y)) {
       this.onAction(ACTION.PAINT, this.id, {x: data.x, y: data.y, colour: data.colour});
     }
   }
@@ -124,7 +126,7 @@ class User {
   }
 
   setPosition(data) {
-    if (data.p && data.v && valid.vector(data.p) && valid.vector(data.v)) {
+    if (valid.vector(data.p) && valid.vector(data.v)) {
       this.state.set({p: data.p, v: data.v});
       this.onAction(ACTION.MOVE, this.id, null);
     }

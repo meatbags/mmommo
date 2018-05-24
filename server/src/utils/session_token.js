@@ -1,3 +1,8 @@
+/*
+ * SessionToken
+ * -- create & register session tokens
+ */
+
 import * as crypto from 'crypto';
 
 class SessionToken {
@@ -8,22 +13,18 @@ class SessionToken {
   register(hex) {
     this.tokens[hex] = true;
   }
-  
-  unregister(hex) {
-    delete this.tokens[hex];
-  }
 
-  exists(hex) {
-    return (this.tokens[hex] !== undefined);
+  deregister(hex) {
+    delete this.tokens[hex];
   }
 
   getUnique() {
     const hash = crypto.createHash('sha256');
     hash.update(Math.random().toString());
-    let hex = hash.digest('hex');
+    var hex = hash.digest('hex');
 
-    // prevent collision
-    while (this.exists(hex)) {
+    // collision
+    while (this.tokens[hex] !== undefined) {
       hash.update(Math.random().toString());
       hex = hash.digest('hex');
     }

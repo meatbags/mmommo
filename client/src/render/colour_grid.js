@@ -1,3 +1,8 @@
+/*
+ * ColourGrid
+ * -- colour grid handler (2D & 3D)
+ */
+
 import { Config } from '../../../shared';
 import { toColourString } from '../utils';
 

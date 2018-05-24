@@ -1,6 +1,10 @@
+/*
+ * RateLimiter
+ * -- general purpose rate-limiter
+ */
+
 class RateLimiter {
   constructor(rate, period) {
-    // general purpose rate limiter
     this.stamps = [];
     this.setRate(rate, period);
   }

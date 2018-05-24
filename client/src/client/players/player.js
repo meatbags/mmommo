@@ -1,3 +1,9 @@
+/*
+ * Player
+ * -- handle mouse & keyboard input
+ * -- move player & interact with grid
+ */
+
 import { Config } from './config';
 import { Config as GlobalConfig } from '../../../../shared';
 import { clamp } from '../../utils/maths';

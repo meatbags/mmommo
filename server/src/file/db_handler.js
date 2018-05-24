@@ -1,4 +1,8 @@
-// DEPRECATED -- keep for future
+/*
+ * DB
+ * -- DEPRECATED, keep for reference
+ */
+
 import * as mongodb from 'mongodb';
 
 class DB {
@@ -21,4 +25,4 @@ class DB {
   }
 }
 
-export { DB };
+//export { DB };

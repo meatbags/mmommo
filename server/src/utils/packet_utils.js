@@ -1,3 +1,10 @@
+/*
+ * PacketUtils
+ * -- message single users
+ * -- broadcast messages, ie: all user states
+ */
+
+
 import { ACTION, Config } from '../../../shared';
 import { RateLimiter } from './rate_limiter';
 

@@ -1,10 +1,13 @@
+/*
+ *  PNG -- encode & decode PNG images
+ */
+
 import { Config } from '../../../shared';
 import { Converter } from '../utils';
 import * as zlib from 'zlib';
 
 class PNG {
   constructor() {
-    // png encoding & decoding
     this.width = Config.global.grid.size;
     this.height = Config.global.grid.size;
     this.rowPadding = this.height;

@@ -1,10 +1,15 @@
+/*
+ * FileHandler
+ * -- read/ write files
+ * -- keep track of images on disk
+ */
+
 import { Config } from '../../../shared';
 import * as fs from 'fs';
 import { PNG } from './png';
 
 class FileHandler {
   constructor() {
-    // read and write files
     this.path = './img/map.png';
     this.png = new PNG();
     this.load();

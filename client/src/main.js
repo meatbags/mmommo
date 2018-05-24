@@ -1,3 +1,9 @@
+/*
+ * App
+ * -- client entry point
+ * -- init sockets, game logic, renderers
+ */
+
 import { Client } from './client';
 import { Renderer, Scene } from './render';
 import { Timer } from './utils';

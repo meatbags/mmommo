@@ -1,3 +1,9 @@
+/*
+ * Client
+ * -- handle connection & server req/ res
+ * -- hook UI & player controls to server requests
+ */
+
 import { Config, ACTION, ClientState } from '../../../shared';
 import { PacketUtils, Socket, EventEmitter } from './network';
 import { Player, PeerManager } from './players';
@@ -6,7 +12,6 @@ import { averageColours } from '../utils';
 
 class Client {
   constructor(url) {
-    // handle server connection and player input
     this.config = Config.client;
     this.url = url;
     this.state = new ClientState();

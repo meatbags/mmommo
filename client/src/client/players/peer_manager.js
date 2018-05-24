@@ -1,3 +1,9 @@
+/*
+ * PeerManager
+ * -- manage positions/ attributes of peers
+ * -- update peers from server instructions
+ */
+
 import { Peer } from './peer';
 
 class PeerManager {

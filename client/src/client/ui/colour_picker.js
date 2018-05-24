@@ -1,9 +1,13 @@
+/*
+ * ColourPicker
+ * -- colour picker UI element
+ */
+
 import { div } from './div';
 import { getRandomColour, toColourString } from '../../utils/colour';
 
 class ColourPicker {
   constructor(client) {
-    // hook colour picker to client
     this.client = client;
     this.target = document.querySelector('#colour-target');
     document.querySelector('#colour-reroll').onclick = () => { this.makeNewColours(); };

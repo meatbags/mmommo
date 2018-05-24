@@ -1,9 +1,14 @@
+/*
+ * ColourGrid
+ * -- monitor changes in grid
+ * -- buffer & save
+ */
+
 import { Config } from '../../../shared';
 import { FileHandler } from './file_handler';
 
 class ColourGrid {
   constructor(root) {
-    // the active colour grid (recent changes)
     this.root = root;
     this.file = new FileHandler();
     this.changes = {

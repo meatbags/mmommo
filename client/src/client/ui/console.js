@@ -1,3 +1,8 @@
+/*
+ * Console
+ * -- console UI element (chat & server messages)
+ */
+
 import { div } from './div';
 
 class Console {

@@ -1,3 +1,8 @@
+/*
+ * NamePicker
+ * -- name picker UI element (window)
+ */
+
 import { div } from './div';
 
 class NamePicker {

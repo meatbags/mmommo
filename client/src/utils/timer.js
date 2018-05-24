@@ -1,3 +1,8 @@
+/*
+ * Timer
+ * -- basic timekeeping
+ */
+
 class Timer {
   constructor() {
     this.now = (new Date()).getTime();
