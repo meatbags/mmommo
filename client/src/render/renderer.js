@@ -1,5 +1,5 @@
 import { Renderer2D } from './renderer_2d';
-import '../../../lib/glsl';
+import '../../lib/glsl';
 
 class Renderer {
   constructor(scene, client) {

@@ -1,6 +1,6 @@
 class Socket {
   constructor(client) {
-    // create websocket client
+    // websocket client
     this.client = client;
     this.reconnect = {count: 0, max: 3, timeout: 3000, lock: false};
     this.connect();

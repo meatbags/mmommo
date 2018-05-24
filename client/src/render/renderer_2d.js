@@ -1,4 +1,4 @@
-import { Config } from '../../../../shared';
+import { Config } from '../../../shared';
 
 class Renderer2D {
   constructor(scene, camera, client) {
@@ -11,8 +11,8 @@ class Renderer2D {
     document.body.appendChild(this.cvs);
     this.offsetY = -60;
     this.offsetPerLetter = 1;
-    this.textColour = '#001';
-    this.textOutlineColour = '#88f';
+    this.textColour = '#002';
+    this.textOutlineColour = '#22f';
     this.step = Config.global.grid.step;
 
     // targets
@@ -59,6 +59,8 @@ class Renderer2D {
       const x = 20;
       const y = 30 + i * 24;
       this.ctx.fillStyle = this.textColour;
+      this.ctx.fillText(arguments[i], x + 0.5, y + 0.5);
+      this.ctx.fillStyle = this.textOutlineColour;
       this.ctx.fillText(arguments[i], x, y);
     }
   }
@@ -67,6 +69,7 @@ class Renderer2D {
     this.clear();
 
     // draw selected cell
+    this.ctx.lineWidth = 2;
     this.ctx.strokeStyle = this.textOutlineColour;
     const cell = this.client.player.cursor.cell.clone();
     const p1 = this.toScreenPosition(cell);
@@ -82,7 +85,7 @@ class Renderer2D {
     this.ctx.stroke();
 
     // print useful stuff
-    this.ctx.font = '18px Karla';
+    this.ctx.font = '16px Karla';
     this.print(
       `ping ${this.client.state.get('ping')}`,
       `pencils in server ${this.client.peerManager.peerCount + 1}`,
@@ -90,7 +93,7 @@ class Renderer2D {
     );
 
     // render model labels
-    this.ctx.font = '22px Karla';
+    this.ctx.font = '20px Karla';
     this.renderLabel(this.scene.playerModel.group.position, this.scene.playerModel.label);
     for (var i=0, len=this.scene.peerModels.length; i<len; ++i) {
       this.renderLabel(this.scene.peerModels[i].group.position, this.scene.peerModels[i].label);

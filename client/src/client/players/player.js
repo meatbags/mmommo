@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { Config as GlobalConfig } from '../../../../../shared';
+import { Config as GlobalConfig } from '../../../../shared';
 import { clamp } from '../../utils/maths';
 
 class Player {
@@ -13,8 +13,8 @@ class Player {
     // spawn position
     const range = GlobalConfig.global.grid.playerSpawnRange;
     this.position = new THREE.Vector3();
-    this.position.x = Math.floor(Math.random() * range - range/2) * this.step - this.step / 2;
-    this.position.z = Math.floor(Math.random() * range - range/2) * this.step - this.step / 2;
+    this.position.x = Math.floor(Math.random() * range - range / 2) * this.step - this.step / 2;
+    this.position.z = Math.floor(Math.random() * range - range / 2) * this.step - this.step / 2;
 
     // game props
     this.motion = new THREE.Vector3();
@@ -49,20 +49,29 @@ class Player {
     };
 
     // events
-    this.canvas.onmousemove = (e) => {
-      this.cursor.screen.x = e.clientX / this.canvas.width * 2 - 1;
-      this.cursor.screen.y = -(e.clientY / this.canvas.height * 2 - 1);
-      this.raycaster.setFromCamera(this.cursor.screen, this.camera);
-      this.raycaster.ray.intersectPlane(this.plane, this.cursor.position);
-      this.cursor.cell.x = Math.floor(this.cursor.position.x / this.step) * this.step;
-      this.cursor.cell.z = Math.floor(this.cursor.position.z / this.step) * this.step;
-    };
-    this.canvas.onclick = () => {
-      this.autoMove = true;
-      this.autoMoveTarget = this.cursor.cell.clone();
-      this.autoMoveTarget.x += this.step / 2;
-      this.autoMoveTarget.z += this.step / 2;
-    };
+    this.canvas.onmousemove = (e) => { this.onMouseMove(e); };
+    this.canvas.onmousedown = () => { this.onMouseDown(); };
+  }
+
+  onMouseMove(e) {
+    this.cursor.screen.x = e.clientX / this.canvas.width * 2 - 1;
+    this.cursor.screen.y = -(e.clientY / this.canvas.height * 2 - 1);
+    this.raycaster.setFromCamera(this.cursor.screen, this.camera);
+    this.raycaster.ray.intersectPlane(this.plane, this.cursor.position);
+    this.cursor.cell.x = Math.floor(this.cursor.position.x / this.step) * this.step;
+    this.cursor.cell.z = Math.floor(this.cursor.position.z / this.step) * this.step;
+
+    // allow drag
+    if (e.which) {
+      this.onMouseDown();
+    }
+  }
+
+  onMouseDown() {
+    this.autoMove = true;
+    this.autoMoveTarget = this.cursor.cell.clone();
+    this.autoMoveTarget.x += this.step / 2;
+    this.autoMoveTarget.z += this.step / 2;
   }
 
   onKeyDown(e) {

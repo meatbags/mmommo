@@ -1,13 +1,15 @@
-import * as Module from './modules';
+import { Client } from './client';
+import { Renderer, Scene } from './render';
+import { Timer } from './utils';
 
 class App {
   constructor() {
     // start modules
     this.url = `ws://${window.location.host}:1337`;
-    this.client = new Module.Client(this.url);
-    this.scene = new Module.Scene(this.client);
-    this.renderer = new Module.Renderer(this.scene, this.client);
-    this.timer = new Module.Timer();
+    this.client = new Client(this.url);
+    this.scene = new Scene(this.client);
+    this.renderer = new Renderer(this.scene, this.client);
+    this.timer = new Timer();
     this.client.init(this.scene, this.renderer);
 
     // resize on window change
@@ -31,6 +33,4 @@ class App {
   }
 }
 
-window.onload = () => {
-  var app = new App();
-};
+window.onload = () => { var app = new App(); };

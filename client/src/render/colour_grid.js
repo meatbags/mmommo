@@ -1,4 +1,4 @@
-import { Config } from '../../../../shared';
+import { Config } from '../../../shared';
 import { toColourString } from '../utils';
 
 class ColourGrid {
@@ -143,7 +143,8 @@ class ColourGrid {
     var x = cx - this.client.player.cell.x * scale;
     var y = cy - this.client.player.cell.y * scale;
     this.displayCtx.drawImage(this.buffer, x, y, this.buffer.width * scale, this.buffer.height * scale);
-    this.displayCtx.strokeStyle = '#00f';
+    this.displayCtx.strokeStyle = '#22f';
+    this.displayCtx.lineWidth = 2;
     cx += scale / 2;
     cy += scale / 2;
     this.displayCtx.strokeRect(cx - scale / 2, cy - scale / 2, scale, scale);

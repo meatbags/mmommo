@@ -1,4 +1,4 @@
-import { Config, ACTION, ClientState } from '../../../../shared';
+import { Config, ACTION, ClientState } from '../../../shared';
 import { PacketUtils, Socket, EventEmitter } from './network';
 import { Player, PeerManager } from './players';
 import { ColourPicker, Console, HUD, NamePicker } from './ui';
@@ -27,7 +27,7 @@ class Client {
     // hook up to scene
     this.colourGrid = scene.colourGrid;
     this.player.init(renderer.renderer.domElement, scene.camera);
-    
+
     // actions
     this.on = {};
     this.on[ACTION.PEERS] = data => { this.peerManager.handleData(data); };

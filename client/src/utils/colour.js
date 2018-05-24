@@ -1,3 +1,7 @@
+function averageColours(arr) {
+  return 1;
+}
+
 function toColourString(n) {
   // convert hex to browser-friendly hex string
   var r = n >> 16 & 0xff;
@@ -52,8 +56,8 @@ function getRandomColour() {
   } else {
     r = g = b = L;
   }
-  
+
   return toColourHex(r, g, b);
 }
 
-export { toColourString, getRandomColour, toColourHex };
+export { toColourString, getRandomColour, toColourHex, averageColours };
