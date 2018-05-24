@@ -9,7 +9,10 @@ class Scene {
     this.playerModel = new PlayerModel(this.scene);
 
     // camera
-    this.ratio = window.innerWidth / window.innerHeight;
+    this.hudSize = document.querySelector('.hud').getBoundingClientRect().width;
+    this.width = window.innerWidth - this.hudSize;
+    this.height = window.innerHeight;
+    this.ratio = this.width / this.height;
     this.size = 20;
     const w = this.size * this.ratio;
     const h = this.size;
@@ -79,7 +82,10 @@ class Scene {
   }
 
   resize() {
-    this.ratio = window.innerWidth / window.innerHeight;
+    this.hudSize = document.querySelector('.hud').getBoundingClientRect().width;
+    this.width = window.innerWidth - this.hudSize;
+    this.height = window.innerHeight;
+    this.ratio = this.width / this.height;
     const w = this.size * this.ratio;
     const h = this.size;
     this.camera.left = w / -2;

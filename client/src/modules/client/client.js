@@ -23,10 +23,11 @@ class Client {
     this.positionEmitter = new EventEmitter(this.config.emitMovementRate, this.config.emitMovementPeriod, () => { this.move(); });
   }
 
-  init(scene) {
+  init(scene, renderer) {
     // hook up to scene
     this.colourGrid = scene.colourGrid;
-
+    this.player.init(renderer.renderer.domElement, scene.camera);
+    
     // actions
     this.on = {};
     this.on[ACTION.PEERS] = data => { this.peerManager.handleData(data); };

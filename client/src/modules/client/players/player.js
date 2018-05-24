@@ -1,5 +1,6 @@
 import { Config } from './config';
 import { Config as GlobalConfig } from '../../../../../shared';
+import { clamp } from '../../utils/maths';
 
 class Player {
   constructor() {
@@ -24,23 +25,56 @@ class Player {
     this.colour = 0x00ff00;
     this.acceleration = Config.acceleration;
     this.speed = Config.speed;
-    this.cell = {x: this.size/2, y: this.size/2};
+    this.cell = {x: 0, y: 0};
     this.diagonalReduction = 1 / (Math.sqrt(2));
+    this.autoMove = false;
+    this.autoMoveTarget = null;
 
-    // handle input
+    // handle mkb input
     this.keys = {};
     document.onkeydown = (e) => { this.onKeyDown(e); };
     document.onkeyup = (e) => { this.onKeyUp(e); };
   }
 
+  init(canvas, camera) {
+    // hook mouse to canvas
+    this.canvas = canvas;
+    this.camera = camera;
+    this.raycaster = new THREE.Raycaster();
+    this.plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
+    this.cursor = {
+      screen: new THREE.Vector2(),
+      position: new THREE.Vector3(),
+      cell: new THREE.Vector3()
+    };
+
+    // events
+    this.canvas.onmousemove = (e) => {
+      this.cursor.screen.x = e.clientX / this.canvas.width * 2 - 1;
+      this.cursor.screen.y = -(e.clientY / this.canvas.height * 2 - 1);
+      this.raycaster.setFromCamera(this.cursor.screen, this.camera);
+      this.raycaster.ray.intersectPlane(this.plane, this.cursor.position);
+      this.cursor.cell.x = Math.floor(this.cursor.position.x / this.step) * this.step;
+      this.cursor.cell.z = Math.floor(this.cursor.position.z / this.step) * this.step;
+    };
+    this.canvas.onclick = () => {
+      this.autoMove = true;
+      this.autoMoveTarget = this.cursor.cell.clone();
+      this.autoMoveTarget.x += this.step / 2;
+      this.autoMoveTarget.z += this.step / 2;
+    };
+  }
+
   onKeyDown(e) {
     if (document.body == document.activeElement) {
       this.keys[e.code] = true;
+      this.autoMove = false;
     }
   }
 
   onKeyUp(e) {
     this.keys[e.code] = false;
+    this.autoMove = false;
   }
 
   getGridCell() {
@@ -84,13 +118,33 @@ class Player {
   }
 
   move(delta) {
-    this.motion.x = -(this.keys['KeyA'] || this.keys['ArrowLeft'] ? this.speed : 0) + (this.keys['KeyD'] || this.keys['ArrowRight'] ? this.speed : 0);
-    this.motion.z = -(this.keys['KeyW'] || this.keys['ArrowUp'] ? this.speed : 0) + (this.keys['KeyS'] || this.keys['ArrowDown'] ? this.speed : 0);
+    if (this.autoMove) {
+      // move on click
+      const d = new THREE.Vector3(this.autoMoveTarget.x - this.position.x, 0, this.autoMoveTarget.z - this.position.z);
+      const dist = d.length();
+      const vec = d.clone();
+      vec.normalize();
+      vec.multiplyScalar(this.speed);
 
-    // reduce speed on diagonal
-    if (this.motion.x != 0 && this.motion.z != 0) {
-      this.motion.x *= this.diagonalReduction;
-      this.motion.z *= this.diagonalReduction;
+      if (dist < vec.length() * delta) {
+        this.autoMove = false;
+        this.position.x = this.autoMoveTarget.x;
+        this.position.z = this.autoMoveTarget.z;
+        this.motion.x = 0;
+        this.motion.z = 0;
+      } else {
+        this.motion = vec;
+      }
+    } else {
+      // move on keyboard
+      this.motion.x = -(this.keys['KeyA'] || this.keys['ArrowLeft'] ? this.speed : 0) + (this.keys['KeyD'] || this.keys['ArrowRight'] ? this.speed : 0);
+      this.motion.z = -(this.keys['KeyW'] || this.keys['ArrowUp'] ? this.speed : 0) + (this.keys['KeyS'] || this.keys['ArrowDown'] ? this.speed : 0);
+
+      // reduce speed on diagonals
+      if (this.motion.x != 0 && this.motion.z != 0) {
+        this.motion.x *= this.diagonalReduction;
+        this.motion.z *= this.diagonalReduction;
+      }
     }
 
     // accelerate, move, wrap

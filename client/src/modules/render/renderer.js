@@ -5,9 +5,10 @@ class Renderer {
   constructor(scene, client) {
     this.scene = scene.scene;
     this.camera = scene.camera;
+    this.hudSize = document.querySelector('.hud').getBoundingClientRect().width;
 
     // webgl renderer
-    this.width = window.innerWidth;
+    this.width = window.innerWidth - this.hudSize;
     this.height = window.innerHeight;
     this.size = new THREE.Vector2(this.width, this.height);
     this.renderer = new THREE.WebGLRenderer({antialias: true});
@@ -25,7 +26,7 @@ class Renderer {
 
   resize() {
     // resize screen and pp render passes
-    this.width = window.innerWidth;
+    this.width = window.innerWidth - this.hudSize;
     this.height = window.innerHeight;
     this.size.x = this.width;
     this.size.y = this.height;

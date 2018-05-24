@@ -8,8 +8,8 @@ class App {
     this.scene = new Module.Scene(this.client);
     this.renderer = new Module.Renderer(this.scene, this.client);
     this.timer = new Module.Timer();
-    this.client.init(this.scene);
-    
+    this.client.init(this.scene, this.renderer);
+
     // resize on window change
     window.onresize = () => {
       this.scene.resize();

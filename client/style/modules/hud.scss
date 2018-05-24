@@ -1,8 +1,9 @@
 .hud {
   height: 100vh;
-  width: 300px;
-  border-left: $border;
+  width: $hudSize;
+  border-left: $space/2 solid blue;
   background: $white;
+  pointer-events: all;
 
   .hud__inner {
     height: 100%;

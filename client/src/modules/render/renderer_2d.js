@@ -1,14 +1,19 @@
+import { Config } from '../../../../shared';
+
 class Renderer2D {
   constructor(scene, camera, client) {
+    this.hudSize = document.querySelector('.hud').getBoundingClientRect().width;
     this.cvs = document.createElement('canvas');
     this.ctx = this.cvs.getContext('2d');
     this.resize();
     this.cvs.classList.add('overlay-canvas');
+    this.cvs.style.pointerEvents = 'none';
     document.body.appendChild(this.cvs);
     this.offsetY = -60;
     this.offsetPerLetter = 1;
-    this.textColour = '#111';
-    this.textOutlineColour = '#ccc';
+    this.textColour = '#001';
+    this.textOutlineColour = '#88f';
+    this.step = Config.global.grid.step;
 
     // targets
     this.scene = scene;
@@ -18,7 +23,7 @@ class Renderer2D {
   }
 
   resize() {
-    this.width = window.innerWidth;
+    this.width = window.innerWidth - this.hudSize;
     this.height = window.innerHeight;
     this.centre = {x: this.width / 2, y: this.height / 2};
     this.cvs.width = this.width;
@@ -29,11 +34,20 @@ class Renderer2D {
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
   }
 
-  renderLabel(position, name) {
-    const vec = position.clone();
+  toScreenPosition(vector) {
+    // convert world position to screen
+    const vec = vector.clone();
     vec.project(this.camera);
-    const x = Math.floor(this.centre.x * vec.x + this.centre.x - (name.length * this.offsetPerLetter));
-    const y = Math.floor(-this.centre.y * vec.y + this.centre.y + this.offsetY);
+    return {
+      x: this.centre.x * vec.x + this.centre.x,
+      y: -this.centre.y * vec.y + this.centre.y
+    };
+  }
+
+  renderLabel(position, name) {
+    const p = this.toScreenPosition(position);
+    const x = Math.floor(p.x - (name.length * this.offsetPerLetter));
+    const y = Math.floor(p.y + this.offsetY);
     this.ctx.fillStyle = this.textColour;
     this.ctx.fillText(name, x + 0.5, y + 0.5);
     this.ctx.fillStyle = this.textOutlineColour;
@@ -51,6 +65,23 @@ class Renderer2D {
 
   render(delta) {
     this.clear();
+
+    // draw selected cell
+    this.ctx.strokeStyle = this.textOutlineColour;
+    const cell = this.client.player.cursor.cell.clone();
+    const p1 = this.toScreenPosition(cell);
+    const p2 = this.toScreenPosition(cell.setX(cell.x + this.step));
+    const p3 = this.toScreenPosition(cell.setZ(cell.z + this.step));
+    const p4 = this.toScreenPosition(cell.setX(cell.x - this.step));
+    this.ctx.beginPath();
+    this.ctx.moveTo(p1.x, p1.y);
+    this.ctx.lineTo(p2.x, p2.y);
+    this.ctx.lineTo(p3.x, p3.y);
+    this.ctx.lineTo(p4.x, p4.y);
+    this.ctx.closePath();
+    this.ctx.stroke();
+
+    // print useful stuff
     this.ctx.font = '18px Playfair Display';
     this.print(
       `ping ${this.client.state.get('ping')}`,
@@ -61,7 +92,6 @@ class Renderer2D {
     // render model labels
     this.ctx.font = '22px Playfair Display';
     this.renderLabel(this.scene.playerModel.group.position, this.scene.playerModel.label);
-
     for (var i=0, len=this.scene.peerModels.length; i<len; ++i) {
       this.renderLabel(this.scene.peerModels[i].group.position, this.scene.peerModels[i].label);
     }

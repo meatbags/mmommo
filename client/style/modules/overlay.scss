@@ -2,10 +2,11 @@
   position: fixed;
   user-select: none;
   bottom: 0;
-  left: 0;
+  right: $hudSize;
   padding: $space;
   cursor: pointer;
   z-index: $zOverlay + 1;
+  font-size: $fontSizeLarge;
 
   &.active {
     color: $colourOverlay;
