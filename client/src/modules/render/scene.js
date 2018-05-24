@@ -5,7 +5,7 @@ class Scene {
   constructor(client) {
     // scene
     this.scene = new THREE.Scene();
-    this.colourGrid = new ColourGrid(this.scene);
+    this.colourGrid = new ColourGrid(this.scene, client);
     this.playerModel = new PlayerModel(this.scene);
 
     // camera

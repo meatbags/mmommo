@@ -3,7 +3,7 @@ class EventEmitter {
     this.rate = rate;
     this.period = period;
     this.interval = period / rate;
-    this.age = 0;
+    this.age = this.interval;
     this.event = event;
   }
 

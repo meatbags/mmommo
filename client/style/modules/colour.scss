@@ -1,0 +1,12 @@
+#colour-target {
+  width: 100%;
+  height: 100%;
+  outline: 1px solid red;
+  display: flex;
+  justify-content: flex-start;
+
+  .colour {
+    height: 100%;
+    width: 20%;
+  }
+}

@@ -7,8 +7,8 @@ class Renderer2D {
     document.body.appendChild(this.cvs);
     this.offsetY = -60;
     this.offsetPerLetter = 1;
-    this.textColour = '#ddd';
-    this.textOutlineColour = '#111';
+    this.textColour = '#111';
+    this.textOutlineColour = '#ccc';
 
     // targets
     this.scene = scene;
@@ -34,9 +34,9 @@ class Renderer2D {
     vec.project(this.camera);
     const x = Math.floor(this.centre.x * vec.x + this.centre.x - (name.length * this.offsetPerLetter));
     const y = Math.floor(-this.centre.y * vec.y + this.centre.y + this.offsetY);
-    this.ctx.fillStyle = this.textOutlineColour;
-    this.ctx.fillText(name, x + 0.5, y + 0.5);
     this.ctx.fillStyle = this.textColour;
+    this.ctx.fillText(name, x + 0.5, y + 0.5);
+    this.ctx.fillStyle = this.textOutlineColour;
     this.ctx.fillText(name, x, y);
   }
 
@@ -44,8 +44,6 @@ class Renderer2D {
     for (var i=0; i<arguments.length; ++i) {
       const x = 20;
       const y = 30 + i * 24;
-      this.ctx.fillStyle = this.textOutlineColour;
-      this.ctx.fillText(arguments[i], x + 0.5, y + 0.5);
       this.ctx.fillStyle = this.textColour;
       this.ctx.fillText(arguments[i], x, y);
     }
@@ -53,7 +51,6 @@ class Renderer2D {
 
   render(delta) {
     this.clear();
-
     this.ctx.font = '18px Playfair Display';
     this.print(
       `ping ${this.client.state.get('ping')}`,

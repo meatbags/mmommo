@@ -2,8 +2,9 @@ import { Config } from '../../../../shared';
 import { toColourString } from '../utils';
 
 class ColourGrid {
-  constructor(scene) {
+  constructor(scene, client) {
     this.scene = scene;
+    this.client = client;
     this.size = Config.global.grid.size;
     this.step = Config.global.grid.step;
     this.width = this.height = this.size * this.step;
@@ -11,17 +12,24 @@ class ColourGrid {
     this.mapped = false;
     this.cache = [];
 
-    // 2d canvas & offscreen buffer
-    this.cvs = document.createElement('canvas');
-    this.ctx = this.cvs.getContext('2d');
+    // canvas buffer & screen display
+    this.swapBuffer = false;
     this.buffer = document.createElement('canvas');
     this.bufferCtx = this.buffer.getContext('2d');
-    this.cvs.width = this.buffer.width = this.size;
-    this.cvs.height = this.buffer.height = this.size;
-    this.imageData = this.ctx.getImageData(0, 0, this.size, this.size);
-    this.swapBuffer = false;
+    this.buffer.width = this.size;
+    this.buffer.height = this.size;
+    this.imageData = this.bufferCtx.getImageData(0, 0, this.size, this.size);
     this.target = document.querySelector('#map-target');
-    this.target.appendChild(this.cvs);
+    this.display = document.createElement('canvas');
+    this.displayCtx = this.display.getContext('2d');
+    const rect = this.target.getBoundingClientRect();
+    this.display.width = Math.floor(rect.width);
+    this.display.height = Math.floor(rect.height);
+    this.displayCtx.mozImageSmoothingEnabled = false;
+    this.displayCtx.webkitImageSmoothingEnabled = false;
+    this.displayCtx.msImageSmoothingEnabled = false;
+    this.displayCtx.imageSmoothingEnabled = false;
+    this.target.appendChild(this.display);
     this.clear();
 
     // world objects
@@ -29,7 +37,7 @@ class ColourGrid {
       new THREE.PlaneBufferGeometry(this.width, this.height),
       new THREE.MeshBasicMaterial({})
     );
-    this.plane.material.map = new THREE.Texture(this.cvs);
+    this.plane.material.map = new THREE.Texture(this.buffer);
     this.plane.material.map.magFilter = THREE.NearestFilter;
     //this.plane.material.map.generateMipmaps = false;
     this.plane.material.map.needsUpdate = true;
@@ -127,11 +135,25 @@ class ColourGrid {
     return (x > -1 && y > -1 && x < this.size && y < this.size);
   }
 
+  renderDisplay() {
+    // render buffer canvas to 2d screen display
+    var scale = 8;
+    var cx = this.display.width / 2;
+    var cy = this.display.height / 2;
+    var x = cx - this.client.player.cell.x * scale;
+    var y = cy - this.client.player.cell.y * scale;
+    this.displayCtx.drawImage(this.buffer, x, y, this.buffer.width * scale, this.buffer.height * scale);
+    this.displayCtx.strokeStyle = '#00f';
+    cx += scale / 2;
+    cy += scale / 2;
+    this.displayCtx.strokeRect(cx - scale / 2, cy - scale / 2, scale, scale);
+  }
+
   update() {
     if (this.swapBuffer) {
-      this.ctx.drawImage(this.buffer, 0, 0);
       this.plane.material.map.needsUpdate = true;
       this.swapBuffer = false;
+      this.renderDisplay();
     }
   }
 }

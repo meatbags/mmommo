@@ -3,7 +3,7 @@ const Config = {
     maxDataSize: 400,
     maxMessageSize: 250,
     grid: {
-      size: 256,
+      size: 512,
       step: 2.5,
       playerSpawnRange: 4 // from centre
     },

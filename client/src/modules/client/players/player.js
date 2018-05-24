@@ -24,7 +24,7 @@ class Player {
     this.colour = 0x00ff00;
     this.acceleration = Config.acceleration;
     this.speed = Config.speed;
-    this.cell = {x: 0, y: 0};
+    this.cell = {x: this.size/2, y: this.size/2};
     this.diagonalReduction = 1 / (Math.sqrt(2));
 
     // handle input

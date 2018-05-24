@@ -9,7 +9,7 @@ class ClientState {
       p: new Vector(0, 0, 0),
       v: new Vector(0, 0, 0),
       colour: null,
-      ping: -1,
+      ping: '...',
     };
   }
 
