@@ -2,7 +2,7 @@ import { Renderer2D } from './renderer_2d';
 import '../../../lib/glsl';
 
 class Renderer {
-  constructor(scene) {
+  constructor(scene, client) {
     this.scene = scene.scene;
     this.camera = scene.camera;
 
@@ -20,7 +20,7 @@ class Renderer {
     document.body.appendChild(this.renderer.domElement);
 
     // 2d renderer (overlays)
-    this.renderer2d = new Renderer2D(scene, this.camera);
+    this.renderer2d = new Renderer2D(scene, this.camera, client);
   }
 
   resize() {

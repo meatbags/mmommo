@@ -1,3 +1,3 @@
 export * from './packet_utils';
 export * from './socket';
-export * from './emitter';
+export * from './event_emitter';

@@ -3,7 +3,7 @@ import { Config as GlobalConfig } from '../../../../../shared';
 
 class Player {
   constructor() {
-    // grid settings
+    // player input
     this.size = GlobalConfig.global.grid.size;
     this.step = GlobalConfig.global.grid.step;
     this.bound = this.size * this.step;
@@ -24,6 +24,7 @@ class Player {
     this.colour = 0x00ff00;
     this.acceleration = Config.acceleration;
     this.speed = Config.speed;
+    this.cell = {x: 0, y: 0};
     this.diagonalReduction = 1 / (Math.sqrt(2));
 
     // handle input
@@ -44,10 +45,9 @@ class Player {
 
   getGridCell() {
     // get current containing cell
-    return {
-      x: Math.floor((this.position.x / this.step) + this.size / 2),
-      y: Math.floor((this.position.z / this.step) + this.size / 2)
-    };
+    this.cell.x = Math.floor((this.position.x / this.step) + this.size / 2);
+    this.cell.y = Math.floor((this.position.z / this.step) + this.size / 2);
+    return {x: this.cell.x, y: this.cell.y};
   }
 
   inNewGridCell() {
@@ -87,20 +87,19 @@ class Player {
     this.motion.x = -(this.keys['KeyA'] || this.keys['ArrowLeft'] ? this.speed : 0) + (this.keys['KeyD'] || this.keys['ArrowRight'] ? this.speed : 0);
     this.motion.z = -(this.keys['KeyW'] || this.keys['ArrowUp'] ? this.speed : 0) + (this.keys['KeyS'] || this.keys['ArrowDown'] ? this.speed : 0);
 
-    // reduce speed on diagonals
+    // reduce speed on diagonal
     if (this.motion.x != 0 && this.motion.z != 0) {
       this.motion.x *= this.diagonalReduction;
       this.motion.z *= this.diagonalReduction;
     }
 
-    // accelerate
+    // accelerate, move, wrap
     if (!(this.motion.x == 0 && this.motion.z == 0)) {
       this.accel += (1 - this.accel) * this.acceleration;
     } else {
       this.accel = 0;
     }
 
-    // move & wrap in bounds
     this.position.x += this.motion.x * delta * this.accel;
     this.position.z += this.motion.z * delta * this.accel;
     this.position.x = (this.position.x > this.halfBound) ? this.halfBound : ((this.position.x < -this.halfBound) ? -this.halfBound : this.position.x);
@@ -113,8 +112,6 @@ class Player {
 
   disableInput() {
     this.disabled = true;
-
-    // disable any pressed keys
     for (var prop in this.keys) {
       if (this.keys.hasOwnProperty(prop)) {
         this.keys[prop] = false;

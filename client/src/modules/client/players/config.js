@@ -1,3 +1,5 @@
+// player config
+
 const Config = {
   speed: 6,
   acceleration: 0.25

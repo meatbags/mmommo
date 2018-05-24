@@ -2,6 +2,7 @@ import { ACTION } from '../../../../../shared';
 
 class PacketUtils {
   constructor(socket) {
+    // socket helper funcs
     this.socket = socket;
   }
 

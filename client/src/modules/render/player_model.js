@@ -38,7 +38,7 @@ class PlayerModel {
 
   update(target) {
     // label
-    this.label = `${target.name} ${Math.floor(target.position.x)} ${Math.floor(target.position.z)}`;
+    this.label = `${target.name}`;
 
     // move
     if (!this.isSet) {

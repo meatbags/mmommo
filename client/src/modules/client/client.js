@@ -1,11 +1,12 @@
-import { ACTION, ClientState, Config } from '../../../../shared';
-import { Socket, PacketUtils, Emitter } from './network';
+import { Config, ACTION, ClientState } from '../../../../shared';
+import { PacketUtils, Socket, EventEmitter } from './network';
 import { Player, PeerManager } from './players';
-import { Console, HUD, NamePicker, ColourPicker } from './ui';
+import { ColourPicker, Console, HUD, NamePicker } from './ui';
 
 class Client {
   constructor(url) {
     // handle server connection and player input
+    this.config = Config.client;
     this.url = url;
     this.state = new ClientState();
 
@@ -18,7 +19,8 @@ class Client {
     this.packet = new PacketUtils(this.socket.getSocket());
     this.player = new Player();
     this.peerManager = new PeerManager();
-    this.emitter = new Emitter(this);
+    this.pingEmitter = new EventEmitter(this.config.emitPingRate, this.config.emitPingPeriod, () => { this.packet.sendPing(); });
+    this.positionEmitter = new EventEmitter(this.config.emitMovementRate, this.config.emitMovementPeriod, () => { this.move(); });
   }
 
   init(scene) {
@@ -70,7 +72,8 @@ class Client {
   update(delta) {
     this.player.update(delta);
     this.peerManager.update(delta);
-    this.emitter.update(delta);
+    this.pingEmitter.update(delta);
+    this.positionEmitter.update(delta);
   }
 
   setName(name) {
@@ -83,6 +86,28 @@ class Client {
     this.state.set({colour: colour});
     this.player.colour = colour;
     this.packet.sendSetColour(colour);
+  }
+
+  move() {
+    // send position
+    if (this.player.changed()) {
+      this.state.set({p: this.player.position, v: this.player.motion});
+      this.packet.sendMove(this.state.get('p'), this.state.get('v'));
+    }
+
+    // send new grid cell colour
+    if (this.player.inNewGridCell()) {
+      const cell = this.player.getGridCell();
+      const cellColour = this.colourGrid.getPixel(cell.x, cell.y);
+      const colour = this.state.get('colour');
+
+      if (cellColour != null && colour != null && cellColour != colour) {
+        this.packet.sendPaint(cell.x, cell.y, colour);
+
+        // local preemptive draw
+        this.colourGrid.drawPixelArray([{x: cell.x, y: cell.y, colour: colour}]);
+      }
+    }
   }
 }
 

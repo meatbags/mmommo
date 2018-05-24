@@ -6,10 +6,10 @@ class App {
     this.url = `ws://${window.location.host}:1337`;
     this.client = new Module.Client(this.url);
     this.scene = new Module.Scene(this.client);
-    this.renderer = new Module.Renderer(this.scene);
+    this.renderer = new Module.Renderer(this.scene, this.client);
     this.timer = new Module.Timer();
     this.client.init(this.scene);
-
+    
     // resize on window change
     window.onresize = () => {
       this.scene.resize();

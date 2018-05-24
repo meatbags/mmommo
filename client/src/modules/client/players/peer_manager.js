@@ -2,6 +2,7 @@ import { Peer } from './peer';
 
 class PeerManager {
   constructor() {
+    // container for peer positions, labels, colours
     this.id = null;
     this.peers = {};
     this.peerCount = 0;
@@ -68,20 +69,20 @@ class PeerManager {
           this.add(id);
         }
 
-        // set position, name, colour
+        // update position
         if (this.reset) {
           this.reset = false;
           this.peers[id].setInitialPosition(data[i]);
         } else {
           this.peers[id].updatePosition(data[i]);
         }
-
-        if (this.peers[id].name != data[i].name) {
-          this.peers[id].setName(data[i].name);
-        }
         
+        // set name, colour
+        if (this.peers[id].name != data[i].name) {
+          this.peers[id].name = data[i].name;
+        }
         if (this.peers[id].colour != data[i].colour) {
-          this.peers[id].setColour(data[i].colour);
+          this.peers[id].colour = data[i].colour;
         }
       }
     }
