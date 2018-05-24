@@ -82,7 +82,7 @@ class Renderer2D {
     this.ctx.stroke();
 
     // print useful stuff
-    this.ctx.font = '18px Playfair Display';
+    this.ctx.font = '18px Karla';
     this.print(
       `ping ${this.client.state.get('ping')}`,
       `pencils in server ${this.client.peerManager.peerCount + 1}`,
@@ -90,7 +90,7 @@ class Renderer2D {
     );
 
     // render model labels
-    this.ctx.font = '22px Playfair Display';
+    this.ctx.font = '22px Karla';
     this.renderLabel(this.scene.playerModel.group.position, this.scene.playerModel.label);
     for (var i=0, len=this.scene.peerModels.length; i<len; ++i) {
       this.renderLabel(this.scene.peerModels[i].group.position, this.scene.peerModels[i].label);

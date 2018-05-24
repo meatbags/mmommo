@@ -9,12 +9,12 @@
     flex-direction: column;
 
     .chat-list {
-      border-top: $border;
-      border-bottom: $border;
       padding-bottom: $space * 0.75;
+      padding-left: $space / 2;
       width: 100%;
       display: flex;
       flex: 1;
+      background: $background;
 
       .chat-list__inner {
         width: 100%;
@@ -43,13 +43,15 @@
           flex: 1;
           border: $border;
           outline: none !important;
-          background: none;
+          background: $background;
+          font-family: $fontStack;
         }
 
         .chat-input__send {
           border: $border;
+          font-family: $fontStack;
           outline: none !important;
-          background: none;
+          background: $background;
           @include pad(1, 0.5);
           user-select: none;
           width: 80px;
