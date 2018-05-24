@@ -13,18 +13,6 @@ class PeerManager {
     this.id = id;
   }
 
-  getCount() {
-    return this.peerCount;
-  }
-
-  getKeys() {
-    return Object.keys(this.peers);
-  }
-
-  getPeer(key) {
-    return this.peers[key];
-  }
-
   purge() {
     // reset everything
     this.id = null;
@@ -76,7 +64,7 @@ class PeerManager {
         } else {
           this.peers[id].updatePosition(data[i]);
         }
-        
+
         // set name, colour
         if (this.peers[id].name != data[i].name) {
           this.peers[id].name = data[i].name;
@@ -86,6 +74,34 @@ class PeerManager {
         }
       }
     }
+  }
+
+  getCount() {
+    return this.peerCount;
+  }
+
+  getKeys() {
+    return Object.keys(this.peers);
+  }
+
+  getPeer(key) {
+    return this.peers[key];
+  }
+
+  getColoursInCell(x, y) {
+    const keys = Object.keys(this.peers);
+    const arr = [];
+
+    for (var i=0, len=keys.length; i<len; ++i) {
+      if (keys[i] != this.id) {
+        const peer = this.peers[keys[i]];
+        if (peer.cell.x == x && peer.cell.y == y && peer.colour != null) {
+          arr.push(peer.colour);
+        }
+      }
+    }
+
+    return arr;
   }
 }
 

@@ -20,9 +20,9 @@ class PlayerModel {
     };
 
     // pencil geometry
-    const radius = 0.5;
+    const radius = 0.5 + Math.random() * 0.1;
     const tip = 1.5;
-    const height = 8;
+    const height = 8 + Math.random() * 0.25;
     const segments = 6;
     this.tube = new THREE.Mesh(new THREE.CylinderBufferGeometry(radius, radius, height - tip, segments), this.material.shade);
     this.shaft = new THREE.Mesh(new THREE.CylinderBufferGeometry(radius, radius/2, tip/2, segments, 1, true), this.material.wood);
@@ -58,7 +58,7 @@ class PlayerModel {
     }
 
     // change material
-    if (this.colour != target.colour) {
+    if (target.colour != null && this.colour != target.colour) {
       this.colour = target.colour;
       this.material.shade.color.set(target.colour);
     }

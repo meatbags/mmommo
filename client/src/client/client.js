@@ -2,6 +2,7 @@ import { Config, ACTION, ClientState } from '../../../shared';
 import { PacketUtils, Socket, EventEmitter } from './network';
 import { Player, PeerManager } from './players';
 import { ColourPicker, Console, HUD, NamePicker } from './ui';
+import { averageColours } from '../utils';
 
 class Client {
   constructor(url) {
@@ -103,10 +104,12 @@ class Client {
       const colour = this.state.get('colour');
 
       if (cellColour != null && colour != null && cellColour != colour) {
-        this.packet.sendPaint(cell.x, cell.y, colour);
+        // mix colour with nearby peers
+        const mixed = averageColours(this.peerManager.getColoursInCell(cell.x, cell.y).concat(colour));
+        this.packet.sendPaint(cell.x, cell.y, mixed);
 
         // local preemptive draw
-        this.colourGrid.drawPixelArray([{x: cell.x, y: cell.y, colour: colour}]);
+        this.colourGrid.drawPixelArray([{x: cell.x, y: cell.y, colour: mixed}]);
       }
     }
   }

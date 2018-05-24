@@ -1,5 +1,22 @@
 function averageColours(arr) {
-  return 1;
+  // average array of colours
+  var r = 0;
+  var g = 0;
+  var b = 0;
+
+  for (var i=0, len=arr.length; i<len; ++i) {
+    r += arr[i] >> 16 & 0xff;
+    g += arr[i] >> 8 & 0xff;
+    b += arr[i] & 0xff;
+  }
+
+  if (arr.length) {
+    r = ((r / arr.length) & 0xff) << 16;
+    g = ((g / arr.length) & 0xff) << 8;
+    b = ((b / arr.length) & 0xff);
+  }
+
+  return r + g + b;
 }
 
 function toColourString(n) {

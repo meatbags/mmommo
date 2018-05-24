@@ -15,7 +15,7 @@ class Player {
     this.position = new THREE.Vector3();
     this.position.x = Math.floor(Math.random() * range - range / 2) * this.step - this.step / 2;
     this.position.z = Math.floor(Math.random() * range - range / 2) * this.step - this.step / 2;
-
+    
     // game props
     this.motion = new THREE.Vector3();
     this.previous = {};
