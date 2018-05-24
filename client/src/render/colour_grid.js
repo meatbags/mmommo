@@ -137,25 +137,29 @@ class ColourGrid {
 
   renderDisplay() {
     // render buffer canvas to 2d screen display
-    var scale = 8;
+    this.displayCtx.fillStyle = '#000';
+    this.displayCtx.strokeStyle = '#22f';
+    var scale = 7;
     var cx = this.display.width / 2;
     var cy = this.display.height / 2;
-    var x = cx - this.client.player.cell.x * scale;
-    var y = cy - this.client.player.cell.y * scale;
+    //var x = cx - this.client.player.cell.x * scale;
+    //var y = cy - this.client.player.cell.y * scale;
+    var x = cx - ((this.client.player.position.x + this.client.player.halfBound) / this.step) * scale;
+    var y = cy - ((this.client.player.position.z + this.client.player.halfBound) / this.step) * scale;
+    this.displayCtx.fillRect(0, 0, this.display.width, this.display.height);
     this.displayCtx.drawImage(this.buffer, x, y, this.buffer.width * scale, this.buffer.height * scale);
-    this.displayCtx.strokeStyle = '#22f';
     this.displayCtx.lineWidth = 2;
     cx += scale / 2;
     cy += scale / 2;
-    this.displayCtx.strokeRect(cx - scale / 2, cy - scale / 2, scale, scale);
+    this.displayCtx.strokeRect(cx - scale, cy - scale, scale, scale);
   }
 
   update() {
     if (this.swapBuffer) {
       this.plane.material.map.needsUpdate = true;
       this.swapBuffer = false;
-      this.renderDisplay();
     }
+    this.renderDisplay();
   }
 }
 

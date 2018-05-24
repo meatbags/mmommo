@@ -12,7 +12,7 @@ class Renderer2D {
     this.offsetY = -60;
     this.offsetPerLetter = 1;
     this.textColour = '#002';
-    this.textOutlineColour = '#22f';
+    this.textOutlineColour = '#aaa';
     this.step = Config.global.grid.step;
 
     // targets
@@ -57,7 +57,7 @@ class Renderer2D {
   print() {
     for (var i=0; i<arguments.length; ++i) {
       const x = 20;
-      const y = 30 + i * 24;
+      const y = 30 + i * 20;
       this.ctx.fillStyle = this.textColour;
       this.ctx.fillText(arguments[i], x + 0.5, y + 0.5);
       this.ctx.fillStyle = this.textOutlineColour;
@@ -85,7 +85,7 @@ class Renderer2D {
     this.ctx.stroke();
 
     // print useful stuff
-    this.ctx.font = '16px Karla';
+    this.ctx.font = '12px Karla';
     this.print(
       `ping ${this.client.state.get('ping')}`,
       `pencils in server ${this.client.peerManager.peerCount + 1}`,

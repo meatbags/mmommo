@@ -53,7 +53,7 @@ class Client {
 
     // dev
     this.namePicker.force('dev');
-    this.colourPicker.random();
+    this.colourPicker.setInitial();
   }
 
   handleMessage(e) {

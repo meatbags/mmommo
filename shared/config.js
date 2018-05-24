@@ -5,7 +5,7 @@ const Config = {
     grid: {
       size: 512,
       step: 2.5,
-      playerSpawnRange: 8 // from centre
+      playerSpawnRange: 64 // from centre
     },
   },
   client: {

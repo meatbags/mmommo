@@ -15,7 +15,7 @@ class Player {
     this.position = new THREE.Vector3();
     this.position.x = Math.floor(Math.random() * range - range / 2) * this.step - this.step / 2;
     this.position.z = Math.floor(Math.random() * range - range / 2) * this.step - this.step / 2;
-    
+
     // game props
     this.motion = new THREE.Vector3();
     this.previous = {};
@@ -28,12 +28,20 @@ class Player {
     this.cell = {x: 0, y: 0};
     this.diagonalReduction = 1 / (Math.sqrt(2));
     this.autoMove = false;
-    this.autoMoveTarget = null;
+    this.waypoints = [];
 
     // handle mkb input
     this.keys = {};
-    document.onkeydown = (e) => { this.onKeyDown(e); };
-    document.onkeyup = (e) => { this.onKeyUp(e); };
+    document.onkeydown = (e) => {
+      if (document.body == document.activeElement) {
+        this.keys[e.code] = true;
+        this.autoMove = false;
+      }
+    };
+    document.onkeyup = (e) => {
+      this.keys[e.code] = false;
+      this.autoMove = false;
+    };
   }
 
   init(canvas, camera) {
@@ -48,42 +56,40 @@ class Player {
       cell: new THREE.Vector3()
     };
 
-    // events
-    this.canvas.onmousemove = (e) => { this.onMouseMove(e); };
-    this.canvas.onmousedown = () => { this.onMouseDown(); };
-  }
+    // mouse events
+    this.registerWaypoint = (x, z) => {
+      const last = this.waypoints.length - 1;
+      x += this.step / 2;
+      z += this.step / 2;
 
-  onMouseMove(e) {
-    this.cursor.screen.x = e.clientX / this.canvas.width * 2 - 1;
-    this.cursor.screen.y = -(e.clientY / this.canvas.height * 2 - 1);
-    this.raycaster.setFromCamera(this.cursor.screen, this.camera);
-    this.raycaster.ray.intersectPlane(this.plane, this.cursor.position);
-    this.cursor.cell.x = Math.floor(this.cursor.position.x / this.step) * this.step;
-    this.cursor.cell.z = Math.floor(this.cursor.position.z / this.step) * this.step;
+      if (!(x == this.position.x && z == this.position.z) && (last == -1 || !(this.waypoints[last].x == x && this.waypoints[last].z == z))) {
+        this.waypoints.push({x: x, z: z});
 
-    // allow drag
-    if (e.which) {
-      this.onMouseDown();
-    }
-  }
+        // limit to 10 waypoints
+        if (last > 8) {
+          this.waypoints.splice(0, 1);
+        }
+      }
+    };
+    this.canvas.onmousemove = (e) => {
+      this.cursor.screen.x = e.clientX / this.canvas.width * 2 - 1;
+      this.cursor.screen.y = -(e.clientY / this.canvas.height * 2 - 1);
+      this.raycaster.setFromCamera(this.cursor.screen, this.camera);
+      this.raycaster.ray.intersectPlane(this.plane, this.cursor.position);
+      this.cursor.cell.x = Math.floor(this.cursor.position.x / this.step) * this.step;
+      this.cursor.cell.z = Math.floor(this.cursor.position.z / this.step) * this.step;
 
-  onMouseDown() {
-    this.autoMove = true;
-    this.autoMoveTarget = this.cursor.cell.clone();
-    this.autoMoveTarget.x += this.step / 2;
-    this.autoMoveTarget.z += this.step / 2;
-  }
-
-  onKeyDown(e) {
-    if (document.body == document.activeElement) {
-      this.keys[e.code] = true;
-      this.autoMove = false;
-    }
-  }
-
-  onKeyUp(e) {
-    this.keys[e.code] = false;
-    this.autoMove = false;
+      // case click & drag
+      if (e.which) {
+        this.autoMove = true;
+        this.registerWaypoint(this.cursor.cell.x, this.cursor.cell.z);
+      }
+    };
+    this.canvas.onmousedown = () => {
+      this.autoMove = true;
+      this.waypoints = [];
+      this.registerWaypoint(this.cursor.cell.x, this.cursor.cell.z);
+    };
   }
 
   getGridCell() {
@@ -127,20 +133,28 @@ class Player {
   }
 
   move(delta) {
-    if (this.autoMove) {
+    if (this.autoMove && this.waypoints.length) {
       // move on click
-      const d = new THREE.Vector3(this.autoMoveTarget.x - this.position.x, 0, this.autoMoveTarget.z - this.position.z);
+      const wp = this.waypoints[0];
+      const d = new THREE.Vector3(wp.x - this.position.x, 0, wp.z - this.position.z);
       const dist = d.length();
       const vec = d.clone();
       vec.normalize();
       vec.multiplyScalar(this.speed);
 
+      // move to next auto waypoint
       if (dist < vec.length() * delta) {
-        this.autoMove = false;
-        this.position.x = this.autoMoveTarget.x;
-        this.position.z = this.autoMoveTarget.z;
-        this.motion.x = 0;
-        this.motion.z = 0;
+        this.waypoints.splice(0, 1);
+
+        if (this.waypoints.length == 0) {
+          this.autoMove = false;
+          this.position.x = wp.x;
+          this.position.z = wp.z;
+          this.motion.x = 0;
+          this.motion.z = 0;
+        } else {
+          this.motion = vec;
+        }
       } else {
         this.motion = vec;
       }
