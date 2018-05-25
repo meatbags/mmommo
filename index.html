@@ -2,10 +2,11 @@
 <html>
   <head>
     <!--<link href="https://fonts.googleapis.com/css?family=Playfair+Display" rel="stylesheet">-->
-    <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Karla' rel='stylesheet'>
     <script type='text/javascript' src='./client/lib/three.min.js'></script>
     <script type='text/javascript' src='./client/build/app.min.js'></script>
     <link rel='stylesheet' type='text/css' href='./client/build/main.css'>
+    <link rel='icon' type='image/png' href='./favicon.png'/>
   </head>
   <body>
     <!-- user interface -->
@@ -36,7 +37,7 @@
             <div class='hud-box'>
               <div class='hud-box__inner'>
                 <div id='colour-target'>
-                  <div id='colour-reroll'>&#8635; new<div>
+                  <div id='colour-reroll'>&#8635; new</div>
                 </div>
               </div>
             </div>
@@ -52,18 +53,34 @@
       </div>
     </div>
 
-    <div id='help-button' class='overlay-button'>
-      <div class='overlay-button__inner'>
+    <div id='help-button'>
+      <div class='help-button__inner'>
         help/ about
       </div>
     </div>
 
-    <div class='overlay' id='help-overlay'>
-      <div class='overlay__inner'>
-        <div class='box'>
-          ????
-          <div class='close'>x</div>
-        </div>
+    <div class='help-overlay'>
+      <div class='help-colour'>
+        COLOURS<br />
+        Select new shades.
+      </div>
+      <div class='help-minimap'>
+        MAP<br />
+        Click to enlarge.
+      </div>
+      <div class='help-chat'>
+        CHAT<br />
+        Communicate with your fellow pencils.
+      </div>
+      <div class='help-player'>
+        CONTROLS<br />
+        Click on the grid to move your pencil.<br />
+        Use the ARROW KEYS or WSAD for precise movement.<br />
+      </div>
+      <div class='help-general'>
+        PENCIL MMO<br />
+        is an <a target='_blank' href='https://github.com/meatbags/mmommo'>open-source</a> art project
+        by <a target='_blank' href='https://xavierburrow.com'>Xavier Burrow</a><br />
       </div>
     </div>
 

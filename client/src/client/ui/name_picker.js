@@ -52,6 +52,7 @@ class NamePicker {
 
   createWindow() {
     this.form = div({className: 'window form-window'});
+    this.form.style.zIndex = 150;
 
     // elements
     const title = 'Name your pencil';

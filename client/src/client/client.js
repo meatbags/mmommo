@@ -7,7 +7,7 @@
 import { Config, ACTION, ClientState } from '../../../shared';
 import { PacketUtils, Socket, EventEmitter } from './network';
 import { Player, PeerManager } from './players';
-import { ColourPicker, Console, HUD, NamePicker } from './ui';
+import { ColourPicker, Console, Help, NamePicker } from './ui';
 import { averageColours, getStatus } from '../utils';
 
 class Client {
@@ -20,7 +20,7 @@ class Client {
     this.namePicker = new NamePicker(this);
     this.colourPicker = new ColourPicker(this);
     this.console = new Console(this);
-    this.hud = new HUD();
+    this.hud = new Help();
     this.socket = new Socket(this);
     this.packet = new PacketUtils(this.socket.getSocket());
     this.player = new Player();

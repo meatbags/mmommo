@@ -19,7 +19,7 @@ class Socket {
       this.client.onConnect();
     };
     this.socket.onmessage = (e) => { this.client.handleMessage(e); };
-    this.socket.onerror = (e) => { console.warn(e); };
+    this.socket.onerror = (e) => { console.log('Socket error', e); };
     this.socket.onclose = () => { this.onDisconnect(); };
   }
 

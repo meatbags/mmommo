@@ -1,5 +1,4 @@
-.overlay-button {
-  pointer-events: all;
+#help-button {
   position: fixed;
   user-select: none;
   bottom: 0;
@@ -10,19 +9,19 @@
   font-size: $fontSize;
   color: $blue;
 
-  .overlay-button__inner {
+  .help-button__inner {
     @include pad(1, 0.5);
     background: $white;
   }
 
   &:hover {
-    .overlay-button__inner {
+    .help-button__inner {
       color: $lightBlue;
     }
   }
 }
 
-.overlay {
+.help-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -34,17 +33,21 @@
   width: 100vw;
   height: 100%;
   pointer-events: none;
+  user-select: none;
+
+  .help-colour, .help-minimap, .help-general, .help-chat, .help-player {
+    padding: $space;
+    position: absolute;
+    border-top: 1px solid $white;
+    line-height: 1.5;
+
+    a {
+      color: $lightBlue;
+    }
+  }
 
   &.active {
     pointer-events: all;
     opacity: 1;
-  }
-
-  .overlay__inner {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 }
