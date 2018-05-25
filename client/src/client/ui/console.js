@@ -22,7 +22,7 @@ class Console {
     // events
     this.el.form.onsubmit = (e) => { this.submitMessage(e); };
   }
-
+  
   submitMessage(e) {
     // send input to server
     e.preventDefault();

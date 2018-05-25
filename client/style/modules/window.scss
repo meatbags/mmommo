@@ -3,16 +3,15 @@
   width: 320px;
   padding: $space * 2;
   z-index: $zWindow;
-  top: 0;
-  left: 0;
-  //top: 50%;
-  //left: 50%;
-  //transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: $white;
+  margin-right: $hudSize;
 
   &.form-window {
     .form-window__title {
-      @include pad(0, 1);
+      padding-bottom: $space;
     }
 
     form {
