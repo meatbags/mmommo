@@ -12,6 +12,11 @@ class NamePicker {
     this.createWindow();
     this.input = this.form.querySelector('input');
     document.body.appendChild(this.form);
+    window.addEventListener('resize', () => {
+      if (document.body.contains(this.form)) {
+        this.centreForm();
+      }
+    });
   }
 
   closeWindow() {
@@ -40,6 +45,11 @@ class NamePicker {
     }
   }
 
+  centreForm() {
+    this.form.style.top = (window.innerHeight / 2 - 120) + 'px';
+    this.form.style.left = ((window.innerWidth - 300) / 2 - 160) + 'px';
+  }
+
   createWindow() {
     this.form = div({className: 'window form-window'});
 
@@ -65,6 +75,9 @@ class NamePicker {
     this.form.appendChild(upper);
     this.form.appendChild(form);
     this.form.appendChild(notice);
+
+    // position
+    this.centreForm();
   }
 }
 

@@ -61,6 +61,11 @@
           align-items: center;
           cursor: pointer;
           margin-left: $space;
+          color: $blue;
+
+          &:hover {
+            color: $lightBlue;
+          }
         }
       }
     }

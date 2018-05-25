@@ -35,6 +35,7 @@ class Player {
     this.diagonalReduction = 1 / (Math.sqrt(2));
     this.autoMove = false;
     this.waypoints = [];
+    this.status = '';
 
     // handle mkb input
     this.keys = {};
@@ -69,12 +70,12 @@ class Player {
       z += this.step / 2;
 
       if (!(x == this.position.x && z == this.position.z) && (last == -1 || !(this.waypoints[last].x == x && this.waypoints[last].z == z))) {
-        this.waypoints.push({x: x, z: z});
+        this.waypoints.push(new THREE.Vector3(x, 0, z));
 
         // limit to 10 waypoints
-        if (last > 8) {
-          this.waypoints.splice(0, 1);
-        }
+        //if (last > 8) {
+        //  this.waypoints.splice(0, 1);
+        //}
       }
     };
     this.canvas.onmousemove = (e) => {

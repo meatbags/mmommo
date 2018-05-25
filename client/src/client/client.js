@@ -8,7 +8,7 @@ import { Config, ACTION, ClientState } from '../../../shared';
 import { PacketUtils, Socket, EventEmitter } from './network';
 import { Player, PeerManager } from './players';
 import { ColourPicker, Console, HUD, NamePicker } from './ui';
-import { averageColours } from '../utils';
+import { averageColours, getStatus } from '../utils';
 
 class Client {
   constructor(url) {
@@ -114,8 +114,8 @@ class Client {
 
         // local preemptive draw
         this.colourGrid.drawPixelArray([{x: cell.x, y: cell.y, colour: mixed}]);
-
         this.state.set({cellsColoured: this.state.get('cellsColoured') + 1});
+        this.player.status = getStatus(this.state.get('cellsColoured'));
       }
     }
   }

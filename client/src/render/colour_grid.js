@@ -1,6 +1,8 @@
 /*
  * ColourGrid
- * -- colour grid handler (2D & 3D)
+ * -- interactive colour grid
+ * -- hook texture to world objects
+ * -- display minimap & full artwork
  */
 
 import { Config } from '../../../shared';
@@ -17,42 +19,61 @@ class ColourGrid {
     this.mapped = false;
     this.cache = [];
 
-    // canvas buffer
-    this.swapBuffer = false;
-    this.buffer = document.createElement('canvas');
-    this.bufferCtx = this.buffer.getContext('2d');
-    this.buffer.width = this.size;
-    this.buffer.height = this.size;
-    this.imageData = this.bufferCtx.getImageData(0, 0, this.size, this.size);
-    this.target = document.querySelector('#map-target');
-
-    // screen displays
+    // buffer & map displays
     this.frameAge = 0;
     this.frameInterval = 1 / 20;
-    this.display = document.createElement('canvas');
-    this.displayCtx = this.display.getContext('2d');
-    const rect = this.target.getBoundingClientRect();
-    this.display.width = Math.floor(rect.width);
-    this.display.height = Math.floor(rect.height);
-    this.displayCtx.mozImageSmoothingEnabled = false;
-    this.displayCtx.webkitImageSmoothingEnabled = false;
-    this.displayCtx.msImageSmoothingEnabled = false;
-    this.displayCtx.imageSmoothingEnabled = false;
-    this.target.appendChild(this.display);
-    this.clear();
+    this.swapBuffer = false;
+    this.buffer = document.createElement('canvas');
+    this.minimap = document.createElement('canvas');
+    this.artwork = document.createElement('canvas');
+    this.bufferCtx = this.buffer.getContext('2d');
+    this.minimapCtx = this.minimap.getContext('2d');
+    this.artworkCtx = this.artwork.getContext('2d');
+    this.buffer.width = this.size;
+    this.buffer.height = this.size;
+    this.artwork.width = this.size;
+    this.artwork.height = this.size;
+    this.imageData = this.bufferCtx.getImageData(0, 0, this.size, this.size);
+    
+    // add to doc
+    this.minimapTarget = document.querySelector('#map-target');
+    this.artworkTarget = document.querySelector('#artwork-target');
+    this.artworkOverlay = document.querySelector('.artwork-overlay');
+    const rect = this.minimapTarget.getBoundingClientRect();
+    this.minimap.width = Math.floor(rect.width);
+    this.minimap.height = Math.floor(rect.height);
+    this.minimapTarget.appendChild(this.minimap);
+    this.artworkTarget.appendChild(this.artwork);
+    this.toggleArtwork = () => {
+      this.artworkOverlay.style.top = (window.innerHeight / 2 - this.size / 2 - 32) + 'px';
+      this.artworkOverlay.style.left = ((window.innerWidth - 300) / 2 - this.size / 2 - 12) + 'px';
+      this.artworkOverlay.classList.toggle('active');
+    };
+    this.minimap.onclick = () => { this.toggleArtwork(); };
+    //this.artworkOverlay.onclick = () => { this.toggleArtwork(); };
+    document.querySelector('#artwork-close').onclick = () => { this.toggleArtwork(); };
 
-    // world objects
-    this.plane = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(this.width, this.height),
-      new THREE.MeshBasicMaterial({})
-    );
+    // disable all smoothing
+    this.minimapCtx.mozImageSmoothingEnabled = false;
+    this.minimapCtx.webkitImageSmoothingEnabled = false;
+    this.minimapCtx.msImageSmoothingEnabled = false;
+    this.minimapCtx.imageSmoothingEnabled = false;
+    this.artworkCtx.mozImageSmoothingEnabled = false;
+    this.artworkCtx.webkitImageSmoothingEnabled = false;
+    this.artworkCtx.msImageSmoothingEnabled = false;
+    this.artworkCtx.imageSmoothingEnabled = false;
+
+    // world object
+    this.plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(this.width, this.height), new THREE.MeshBasicMaterial({}));
     this.plane.material.map = new THREE.Texture(this.buffer);
     this.plane.material.map.magFilter = THREE.NearestFilter;
-    //this.plane.material.map.generateMipmaps = false;
     this.plane.material.map.needsUpdate = true;
     this.plane.rotation.x = -Math.PI / 2;
     this.plane.position.y = 0;
     this.scene.add(this.plane);
+
+    // prep
+    this.clear();
   }
 
   clear() {
@@ -124,7 +145,7 @@ class ColourGrid {
     this.map = new Image();
     this.map.onload = () => {
       // write image, draw cached, reset, get image data, flag for redraw
-      console.log('Map size ~', src.length);
+      //console.log('Map size ~', src.length);
       this.bufferCtx.drawImage(this.map, 0, 0);
       this.history = {};
       this.mapped = true;
@@ -150,21 +171,27 @@ class ColourGrid {
 
     if (this.frameAge >= this.frameInterval) {
       this.frameAge = 0;
-      this.displayCtx.fillStyle = '#000';
-      this.displayCtx.strokeStyle = '#22f';
-      var scale = 7;
-      var cx = this.display.width / 2;
-      var cy = this.display.height / 2;
-      //var x = cx - this.client.player.cell.x * scale;
-      //var y = cy - this.client.player.cell.y * scale;
-      var x = cx - ((this.client.player.position.x + this.client.player.halfBound) / this.step) * scale;
-      var y = cy - ((this.client.player.position.z + this.client.player.halfBound) / this.step) * scale;
-      this.displayCtx.fillRect(0, 0, this.display.width, this.display.height);
-      this.displayCtx.drawImage(this.buffer, x, y, this.buffer.width * scale, this.buffer.height * scale);
-      this.displayCtx.lineWidth = 2;
-      cx += scale / 2;
-      cy += scale / 2;
-      this.displayCtx.strokeRect(cx - scale, cy - scale, scale, scale);
+      if (this.artworkOverlay.classList.contains('active')) {
+        // refresh artwork overlay
+        this.artworkCtx.drawImage(this.buffer, 0, 0);
+      } else {
+        // refresh minimap
+        this.minimapCtx.fillStyle = '#000';
+        this.minimapCtx.strokeStyle = '#22f';
+        var scale = 7;
+        var cx = this.minimap.width / 2;
+        var cy = this.minimap.height / 2;
+        //var x = cx - this.client.player.cell.x * scale;
+        //var y = cy - this.client.player.cell.y * scale;
+        var x = cx - ((this.client.player.position.x + this.client.player.halfBound) / this.step) * scale;
+        var y = cy - ((this.client.player.position.z + this.client.player.halfBound) / this.step) * scale;
+        this.minimapCtx.fillRect(0, 0, this.minimap.width, this.minimap.height);
+        this.minimapCtx.drawImage(this.buffer, x, y, this.buffer.width * scale, this.buffer.height * scale);
+        this.minimapCtx.lineWidth = 2;
+        cx += scale / 2;
+        cy += scale / 2;
+        this.minimapCtx.strokeRect(cx - scale, cy - scale, scale, scale);
+      }
     }
   }
 

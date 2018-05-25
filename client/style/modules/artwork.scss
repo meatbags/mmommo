@@ -1,0 +1,45 @@
+.artwork-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $zArtwork;
+  pointer-events: none;
+  transition: opacity $transition;
+  opacity: 0;
+
+  .artwork-overlay__inner {
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    #artwork-target {
+      background: $white;
+      padding: $space;
+      position: relative;
+      canvas {
+        position: relative;
+      }
+    }
+
+    #artwork-close {
+      @include pad(1, 0.5);
+      margin-top: $space;
+      cursor: pointer;
+      background: $white;
+      color: $blue;
+
+      &:hover {
+        color: $lightBlue;
+      }
+    }
+  }
+
+  &.active {
+    opacity: 1;
+
+    .artwork-overlay__inner {
+      pointer-events: all;
+    }
+  }
+}

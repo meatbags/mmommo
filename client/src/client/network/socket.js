@@ -6,7 +6,7 @@
 class Socket {
   constructor(client) {
     this.client = client;
-    this.reconnect = {count: 0, max: 3, timeout: 3000, lock: false};
+    this.reconnect = {count: 0, max: 5, timeout: 3000, lock: false};
     this.connect();
   }
 
@@ -36,7 +36,7 @@ class Socket {
           this.connect();
         }, this.reconnect.timeout);
       } else {
-        this.client.console.printNotice('Connection failed.');
+        this.client.console.printNotice('Could not connect to server. Try later.');
       }
     }
   }

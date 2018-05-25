@@ -10,6 +10,8 @@ import { Timer } from './utils';
 
 class App {
   constructor() {
+    console.log('This project is open source! https://github.com/meatbags/mmommo');
+
     // start modules
     this.url = `ws://${window.location.host}:1337`;
     this.client = new Client(this.url);

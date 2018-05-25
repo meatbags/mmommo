@@ -4,7 +4,6 @@
  */
 
 import { Config } from '../../../shared';
-import { getStatus } from '../utils';
 
 class Renderer2D {
   constructor(scene, camera, client) {
@@ -90,16 +89,27 @@ class Renderer2D {
     this.ctx.closePath();
     this.ctx.stroke();
 
+    // draw selected path
+    if (this.client.player.autoMove && this.client.player.waypoints.length > 0) {
+      this.ctx.beginPath();
+      var p = this.toScreenPosition(this.client.player.position);
+      this.ctx.moveTo(p.x, p.y);
+      for (var i=0, len=this.client.player.waypoints.length; i<len; ++i) {
+        p = this.toScreenPosition(this.client.player.waypoints[i]);
+        this.ctx.lineTo(p.x, p.y);
+      }
+      this.ctx.stroke();
+    }
+
     // print fun stuff
     this.ctx.font = '12px Karla';
     const n = this.client.state.get('cellsColoured');
-    const status = getStatus(n);
     this.print(
       `ping ${this.client.state.get('ping')}`,
       `pencils in server ${this.client.peerManager.peerCount + 1}`,
       `cell ${this.client.player.cell.x}, ${this.client.player.cell.y}`,
       `cells filled ${n}`,
-      `status: ${status}`
+      `status: ${this.client.player.status}`
     );
 
     // render player & peer namesa

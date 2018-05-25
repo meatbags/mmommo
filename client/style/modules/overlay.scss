@@ -1,19 +1,24 @@
 .overlay-button {
-  @include pad(1, 0.5);
   pointer-events: all;
   position: fixed;
   user-select: none;
   bottom: 0;
   left: 0;
-  margin: $space;
+  padding: $space;
   cursor: pointer;
   z-index: $zOverlay + 1;
   font-size: $fontSize;
   color: $blue;
-  background: $white;
 
-  &.active {
-    color: $colourOverlay;
+  .overlay-button__inner {
+    @include pad(1, 0.5);
+    background: $white;
+  }
+
+  &:hover {
+    .overlay-button__inner {
+      color: $lightBlue;
+    }
   }
 }
 

@@ -3,9 +3,6 @@
   width: 320px;
   padding: $space * 2;
   z-index: $zWindow;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background: $white;
   margin-right: $hudSize;
 
@@ -25,6 +22,11 @@
       input[type='submit'] {
         margin-left: $space;
         cursor: pointer;
+        background: $background;
+
+        &:hover {
+          color: $lightBlue;
+        }
       }
     }
 

@@ -15,8 +15,13 @@
     padding: $space / 2;
     margin: $space / 2;
     margin-bottom: $space * 1.25;
-    background: $background;
     cursor: pointer;
+    color: $blue;
+    background: $white;
+
+    &:hover {
+      color: $lightBlue;
+    }
   }
 
   .colour {
