@@ -63,9 +63,9 @@ class Renderer2D {
     for (var i=0; i<arguments.length; ++i) {
       const x = 20;
       const y = 30 + i * 20;
-      this.ctx.fillStyle = this.textColour;
-      this.ctx.fillText(arguments[i], x + 0.5, y + 0.5);
-      this.ctx.fillStyle = this.textOutlineColour;
+      //this.ctx.fillStyle = this.textColour;
+      //this.ctx.fillText(arguments[i], x + 0.5, y + 0.5);
+      this.ctx.fillStyle = '#11c';//this.textOutlineColour;
       this.ctx.fillText(arguments[i], x, y);
     }
   }
@@ -90,7 +90,7 @@ class Renderer2D {
     this.ctx.stroke();
 
     // draw selected path
-    if (this.client.player.autoMove && this.client.player.waypoints.length > 0) {
+    if (this.client.player.waypoints.length > 0) {
       this.ctx.beginPath();
       var p = this.toScreenPosition(this.client.player.position);
       this.ctx.moveTo(p.x, p.y);

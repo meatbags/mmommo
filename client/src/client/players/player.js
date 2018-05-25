@@ -43,11 +43,13 @@ class Player {
       if (document.body == document.activeElement) {
         this.keys[e.code] = true;
         this.autoMove = false;
+        this.waypoints = [];
       }
     };
     document.onkeyup = (e) => {
       this.keys[e.code] = false;
       this.autoMove = false;
+      this.waypoints = [];
     };
   }
 
@@ -71,11 +73,6 @@ class Player {
 
       if (!(x == this.position.x && z == this.position.z) && (last == -1 || !(this.waypoints[last].x == x && this.waypoints[last].z == z))) {
         this.waypoints.push(new THREE.Vector3(x, 0, z));
-
-        // limit to 10 waypoints
-        //if (last > 8) {
-        //  this.waypoints.splice(0, 1);
-        //}
       }
     };
     this.canvas.onmousemove = (e) => {
@@ -88,15 +85,15 @@ class Player {
 
       // case click & drag
       if (e.which) {
-        this.autoMove = true;
         this.registerWaypoint(this.cursor.cell.x, this.cursor.cell.z);
       }
     };
     this.canvas.onmousedown = () => {
-      this.autoMove = true;
+      this.autoMove = false;
       this.waypoints = [];
       this.registerWaypoint(this.cursor.cell.x, this.cursor.cell.z);
     };
+    this.canvas.onmouseup = () => { this.autoMove = true; }
   }
 
   getGridCell() {

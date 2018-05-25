@@ -45,6 +45,7 @@ class User {
     this.on[ACTION.STATE] = data => {
       this.setName(data);
       this.setPosition(data);
+      this.setColour(data);
     };
     this.on[ACTION.PING] = data => {
       if (data.timestamp) {
