@@ -83,7 +83,7 @@ class Scene {
     this.updatePlayerObjects();
 
     // update colour grid
-    this.colourGrid.update();
+    this.colourGrid.update(delta);
   }
 
   resize() {

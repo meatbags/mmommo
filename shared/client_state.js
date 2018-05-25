@@ -10,6 +10,7 @@ class ClientState {
       v: new Vector(0, 0, 0),
       colour: null,
       ping: '...',
+      cellsColoured: 0
     };
   }
 

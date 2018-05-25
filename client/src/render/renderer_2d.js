@@ -4,6 +4,7 @@
  */
 
 import { Config } from '../../../shared';
+import { getStatus } from '../utils';
 
 class Renderer2D {
   constructor(scene, camera, client) {
@@ -49,14 +50,14 @@ class Renderer2D {
     };
   }
 
-  renderLabel(position, name) {
+  renderWorldLabel(position, label) {
     const p = this.toScreenPosition(position);
     const x = Math.floor(p.x - (name.length * this.offsetPerLetter));
     const y = Math.floor(p.y + this.offsetY);
     this.ctx.fillStyle = this.textColour;
-    this.ctx.fillText(name, x + 0.5, y + 0.5);
+    this.ctx.fillText(label, x + 0.5, y + 0.5);
     this.ctx.fillStyle = this.textOutlineColour;
-    this.ctx.fillText(name, x, y);
+    this.ctx.fillText(label, x, y);
   }
 
   print() {
@@ -89,19 +90,24 @@ class Renderer2D {
     this.ctx.closePath();
     this.ctx.stroke();
 
-    // print useful stuff
+    // print fun stuff
     this.ctx.font = '12px Karla';
+    const n = this.client.state.get('cellsColoured');
+    const status = getStatus(n);
     this.print(
       `ping ${this.client.state.get('ping')}`,
       `pencils in server ${this.client.peerManager.peerCount + 1}`,
-      `cell ${this.client.player.cell.x}, ${this.client.player.cell.y}`
+      `cell ${this.client.player.cell.x}, ${this.client.player.cell.y}`,
+      `cells filled ${n}`,
+      `status: ${status}`
     );
 
-    // render model labels
+    // render player & peer namesa
     this.ctx.font = '20px Karla';
-    this.renderLabel(this.scene.playerModel.group.position, this.scene.playerModel.label);
+    this.renderWorldLabel(this.scene.playerModel.group.position, this.scene.playerModel.label);
+
     for (var i=0, len=this.scene.peerModels.length; i<len; ++i) {
-      this.renderLabel(this.scene.peerModels[i].group.position, this.scene.peerModels[i].label);
+      this.renderWorldLabel(this.scene.peerModels[i].group.position, this.scene.peerModels[i].label);
     }
   }
 }

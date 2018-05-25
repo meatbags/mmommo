@@ -48,6 +48,7 @@ class ColourPicker {
 
   setInitial() {
     this.client.setColour(this.colours[0]);
+    document.querySelector('.colour').classList.add('active');
   }
 }
 

@@ -44,7 +44,7 @@ class NamePicker {
     this.form = div({className: 'window form-window'});
 
     // elements
-    const title = 'Choose a display name.';
+    const title = 'Name your pencil';
     const upper = div({className: 'form-window__title', innerHTML: title});
     const form = document.createElement('form');
     const input = document.createElement('input');

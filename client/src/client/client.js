@@ -56,8 +56,7 @@ class Client {
     this.peerManager.purge();
     this.packet.setSocket(this.socket.getSocket());
 
-    // dev
-    this.namePicker.force('dev');
+    // pick a colour
     this.colourPicker.setInitial();
   }
 
@@ -115,6 +114,8 @@ class Client {
 
         // local preemptive draw
         this.colourGrid.drawPixelArray([{x: cell.x, y: cell.y, colour: mixed}]);
+
+        this.state.set({cellsColoured: this.state.get('cellsColoured') + 1});
       }
     }
   }

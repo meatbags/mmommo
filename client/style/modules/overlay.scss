@@ -1,14 +1,16 @@
 .overlay-button {
+  @include pad(1, 0.5);
+  pointer-events: all;
   position: fixed;
   user-select: none;
   bottom: 0;
-  right: $hudSize;
-  padding: $space;
-  padding-right: $space * 1.5;
+  left: 0;
+  margin: $space;
   cursor: pointer;
   z-index: $zOverlay + 1;
-  font-size: $fontSizeLarge;
+  font-size: $fontSize;
   color: $blue;
+  background: $white;
 
   &.active {
     color: $colourOverlay;

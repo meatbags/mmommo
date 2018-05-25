@@ -64,9 +64,9 @@ class Manager {
 
   onUserAction(action, id, data) {
     // handle valid client actions
-    if (action != ACTION.MOVE && action != ACTION.PAINT && action != ACTION.PING) {
-      console.log(id.substr(0, 8), action, data);
-    }
+    //if (action != ACTION.MOVE && action != ACTION.PAINT && action != ACTION.PING) {
+    //  console.log(id.substr(0, 8), action, data);
+    //}
 
     if (this.on[action]) {
       this.on[action](id, data);

@@ -13,7 +13,8 @@ class ColourGrid {
     this.file = new FileHandler();
     this.changes = {
       count: 0,
-      perSaveBase: 10,
+      perSaveBase: 20,
+      perSaveMax: 500,
       perPlayer: 10
     };
     this.size = Config.global.grid.size;
@@ -44,7 +45,8 @@ class ColourGrid {
       this.imageData[xkey][ykey] = data.colour;
 
       // save image to file
-      if (++this.changes.count >= this.changes.perSaveBase + this.root.clientCount * this.changes.perPlayer) {
+      const changes = Math.min(this.changes.perSaveMax, this.changes.perSaveBase + this.root.clientCount * this.changes.perPlayer);
+      if (++this.changes.count >= changes) {
         this.save();
       }
 

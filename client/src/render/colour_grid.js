@@ -17,7 +17,7 @@ class ColourGrid {
     this.mapped = false;
     this.cache = [];
 
-    // canvas buffer & screen display
+    // canvas buffer
     this.swapBuffer = false;
     this.buffer = document.createElement('canvas');
     this.bufferCtx = this.buffer.getContext('2d');
@@ -25,6 +25,10 @@ class ColourGrid {
     this.buffer.height = this.size;
     this.imageData = this.bufferCtx.getImageData(0, 0, this.size, this.size);
     this.target = document.querySelector('#map-target');
+
+    // screen displays
+    this.frameAge = 0;
+    this.frameInterval = 1 / 20;
     this.display = document.createElement('canvas');
     this.displayCtx = this.display.getContext('2d');
     const rect = this.target.getBoundingClientRect();
@@ -140,31 +144,36 @@ class ColourGrid {
     return (x > -1 && y > -1 && x < this.size && y < this.size);
   }
 
-  renderDisplay() {
+  renderDisplay(delta) {
     // render buffer canvas to 2d screen display
-    this.displayCtx.fillStyle = '#000';
-    this.displayCtx.strokeStyle = '#22f';
-    var scale = 7;
-    var cx = this.display.width / 2;
-    var cy = this.display.height / 2;
-    //var x = cx - this.client.player.cell.x * scale;
-    //var y = cy - this.client.player.cell.y * scale;
-    var x = cx - ((this.client.player.position.x + this.client.player.halfBound) / this.step) * scale;
-    var y = cy - ((this.client.player.position.z + this.client.player.halfBound) / this.step) * scale;
-    this.displayCtx.fillRect(0, 0, this.display.width, this.display.height);
-    this.displayCtx.drawImage(this.buffer, x, y, this.buffer.width * scale, this.buffer.height * scale);
-    this.displayCtx.lineWidth = 2;
-    cx += scale / 2;
-    cy += scale / 2;
-    this.displayCtx.strokeRect(cx - scale, cy - scale, scale, scale);
+    this.frameAge += delta;
+
+    if (this.frameAge >= this.frameInterval) {
+      this.frameAge = 0;
+      this.displayCtx.fillStyle = '#000';
+      this.displayCtx.strokeStyle = '#22f';
+      var scale = 7;
+      var cx = this.display.width / 2;
+      var cy = this.display.height / 2;
+      //var x = cx - this.client.player.cell.x * scale;
+      //var y = cy - this.client.player.cell.y * scale;
+      var x = cx - ((this.client.player.position.x + this.client.player.halfBound) / this.step) * scale;
+      var y = cy - ((this.client.player.position.z + this.client.player.halfBound) / this.step) * scale;
+      this.displayCtx.fillRect(0, 0, this.display.width, this.display.height);
+      this.displayCtx.drawImage(this.buffer, x, y, this.buffer.width * scale, this.buffer.height * scale);
+      this.displayCtx.lineWidth = 2;
+      cx += scale / 2;
+      cy += scale / 2;
+      this.displayCtx.strokeRect(cx - scale, cy - scale, scale, scale);
+    }
   }
 
-  update() {
+  update(delta) {
     if (this.swapBuffer) {
       this.plane.material.map.needsUpdate = true;
       this.swapBuffer = false;
     }
-    this.renderDisplay();
+    this.renderDisplay(delta);
   }
 }
 
