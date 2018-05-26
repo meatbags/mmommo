@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node build/app.min.js"
+    "start": "node build/app.min.js",
+    "forever": "forever start build/app.min.js",
+    "stop": "forever stop 0"
   },
   "author": "",
   "license": "ISC",

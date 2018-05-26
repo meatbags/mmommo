@@ -66,6 +66,7 @@ class Player {
     };
 
     // mouse events
+    this.mouseIsDown = false;
     this.registerWaypoint = (x, z) => {
       const last = this.waypoints.length - 1;
       x += this.step / 2;
@@ -84,16 +85,26 @@ class Player {
       this.cursor.cell.z = Math.floor(this.cursor.position.z / this.step) * this.step;
 
       // case click & drag
-      if (e.which) {
+      if (this.mouseIsDown) {
         this.registerWaypoint(this.cursor.cell.x, this.cursor.cell.z);
       }
     };
     this.canvas.onmousedown = () => {
+      this.mouseIsDown = true;
       this.autoMove = false;
       this.waypoints = [];
       this.registerWaypoint(this.cursor.cell.x, this.cursor.cell.z);
     };
-    this.canvas.onmouseup = () => { this.autoMove = true; }
+    this.canvas.onmouseup = () => {
+      this.mouseIsDown = false;
+      this.autoMove = true;
+    };
+    this.canvas.onmouseleave = () => {
+      if (this.mouseIsDown) {
+        this.mouseIsDown = false;
+        this.waypoints = [];
+      }
+    };
   }
 
   getGridCell() {

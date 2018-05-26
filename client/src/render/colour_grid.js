@@ -34,7 +34,7 @@ class ColourGrid {
     this.artwork.width = this.size;
     this.artwork.height = this.size;
     this.imageData = this.bufferCtx.getImageData(0, 0, this.size, this.size);
-    
+
     // add to doc
     this.minimapTarget = document.querySelector('#map-target');
     this.artworkTarget = document.querySelector('#artwork-target');
@@ -54,11 +54,11 @@ class ColourGrid {
     document.querySelector('#artwork-close').onclick = () => { this.toggleArtwork(); };
 
     // disable all smoothing
-    this.minimapCtx.mozImageSmoothingEnabled = false;
+    //this.minimapCtx.mozImageSmoothingEnabled = false;
     this.minimapCtx.webkitImageSmoothingEnabled = false;
     this.minimapCtx.msImageSmoothingEnabled = false;
     this.minimapCtx.imageSmoothingEnabled = false;
-    this.artworkCtx.mozImageSmoothingEnabled = false;
+    //this.artworkCtx.mozImageSmoothingEnabled = false;
     this.artworkCtx.webkitImageSmoothingEnabled = false;
     this.artworkCtx.msImageSmoothingEnabled = false;
     this.artworkCtx.imageSmoothingEnabled = false;
