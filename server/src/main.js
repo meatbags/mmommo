@@ -5,7 +5,8 @@
 
 import { Manager } from './manager';
 import { server as WebSocketServer } from 'websocket';
-import * as http from 'http';
+//import * as http from 'http';
+import * as https from 'https';
 
 class Server {
   constructor() {
@@ -14,7 +15,7 @@ class Server {
 
     // http & ws server
     this.port = 1337;
-    this.server = http.createServer((req, res) => {});
+    this.server = https.createServer((req, res) => {});
     this.server.listen(this.port, () => {
       console.log((new Date()), `Listening on port: ${this.port}`);
     });
