@@ -4,6 +4,7 @@
   height: 100%;
   overflow: hidden;
   background: $background;
+  user-select: none;
 
   canvas {
     position: absolute;
