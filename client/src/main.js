@@ -13,13 +13,14 @@ class App {
     console.log('This project is open source! https://github.com/meatbags/mmommo');
 
     // start modules
-    this.url = `ws://${window.location.host}:1337`;
+    this.host = window.location.host;
+    this.url = (this.host === 'localhost') ? `ws://${window.location.host}:1337` : `wss://${window.location.host}:1337`;
     this.client = new Client(this.url);
     this.scene = new Scene(this.client);
     this.renderer = new Renderer(this.scene, this.client);
     this.timer = new Timer();
     this.client.init(this.scene, this.renderer);
-
+    
     // resize on window change
     window.onresize = () => {
       this.scene.resize();
