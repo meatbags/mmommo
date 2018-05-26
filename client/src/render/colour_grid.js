@@ -23,6 +23,7 @@ class ColourGrid {
     this.frameAge = 0;
     this.frameInterval = 1 / 20;
     this.swapBuffer = false;
+    this.minimapScale = 6;
     this.buffer = document.createElement('canvas');
     this.minimap = document.createElement('canvas');
     this.artwork = document.createElement('canvas');
@@ -171,26 +172,30 @@ class ColourGrid {
 
     if (this.frameAge >= this.frameInterval) {
       this.frameAge = 0;
+
+      // refresh minimap
+      this.minimapCtx.fillStyle = '#000';
+      this.minimapCtx.strokeStyle = '#22f';
+      var cx = this.minimap.width / 2;
+      var cy = this.minimap.height / 2;
+      var x = cx - ((this.client.player.position.x + this.client.player.halfBound) / this.step) * this.minimapScale;
+      var y = cy - ((this.client.player.position.z + this.client.player.halfBound) / this.step) * this.minimapScale;
+      this.minimapCtx.fillRect(0, 0, this.minimap.width, this.minimap.height);
+      this.minimapCtx.drawImage(this.buffer, x, y, this.buffer.width * this.minimapScale, this.buffer.height * this.minimapScale);
+      this.minimapCtx.lineWidth = 2;
+      cx += this.minimapScale / 2;
+      cy += this.minimapScale / 2;
+      this.minimapCtx.strokeRect(cx - this.minimapScale, cy - this.minimapScale, this.minimapScale, this.minimapScale);
+
+      // refresh artwork overlay
       if (this.artworkOverlay.classList.contains('active')) {
-        // refresh artwork overlay
+        var w = this.minimap.width / this.minimapScale;
+        var h = this.minimap.height / this.minimapScale;
+        x = ((this.client.player.position.x + this.client.player.halfBound) / this.step);
+        y = ((this.client.player.position.z + this.client.player.halfBound) / this.step);
+        this.artworkCtx.strokeStyle = '#22f';
         this.artworkCtx.drawImage(this.buffer, 0, 0);
-      } else {
-        // refresh minimap
-        this.minimapCtx.fillStyle = '#000';
-        this.minimapCtx.strokeStyle = '#22f';
-        var scale = 7;
-        var cx = this.minimap.width / 2;
-        var cy = this.minimap.height / 2;
-        //var x = cx - this.client.player.cell.x * scale;
-        //var y = cy - this.client.player.cell.y * scale;
-        var x = cx - ((this.client.player.position.x + this.client.player.halfBound) / this.step) * scale;
-        var y = cy - ((this.client.player.position.z + this.client.player.halfBound) / this.step) * scale;
-        this.minimapCtx.fillRect(0, 0, this.minimap.width, this.minimap.height);
-        this.minimapCtx.drawImage(this.buffer, x, y, this.buffer.width * scale, this.buffer.height * scale);
-        this.minimapCtx.lineWidth = 2;
-        cx += scale / 2;
-        cy += scale / 2;
-        this.minimapCtx.strokeRect(cx - scale, cy - scale, scale, scale);
+        this.artworkCtx.strokeRect(x - w/2, y - h/2, w, h);
       }
     }
   }

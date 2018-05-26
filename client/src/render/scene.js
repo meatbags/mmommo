@@ -18,11 +18,11 @@ class Scene {
     this.width = window.innerWidth - this.hudSize;
     this.height = window.innerHeight;
     this.ratio = this.width / this.height;
-    this.size = 20;
+    this.size = 24;
     const w = this.size * this.ratio;
     const h = this.size;
     this.camera = new THREE.OrthographicCamera(-w/2, w/2, h/2, -h/2, 0.1, 1000);
-    this.offset = new THREE.Vector3(10, 10, 10);
+    this.offset = new THREE.Vector3(9, 10, 9);
     this.adjust = 8;
 
     // player & peer manager
