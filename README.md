@@ -1,8 +1,7 @@
 # mmommo
 
-Massively multiplayer online art project. Cooperate with other players to mix colours and create images on a giant collective canvas.
+PencilMMO is a massively multiplayer art project. (Play it here!)[http://pencilmmo.com/]
 
-Graphics -- three.js/ webgl + GLSL + Canvas (2d)
-Networking -- websockets + node.js backend
-
-Server up soon :)
+- Graphics / threejs + custom GLSL
+- Overlays & maps / canvas 2d
+- Networking / websockets + node
