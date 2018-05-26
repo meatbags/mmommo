@@ -23,46 +23,54 @@ class ColourGrid {
     this.frameAge = 0;
     this.frameInterval = 1 / 20;
     this.swapBuffer = false;
-    this.minimapScale = 6;
     this.buffer = document.createElement('canvas');
     this.minimap = document.createElement('canvas');
-    this.artwork = document.createElement('canvas');
     this.bufferCtx = this.buffer.getContext('2d');
     this.minimapCtx = this.minimap.getContext('2d');
-    this.artworkCtx = this.artwork.getContext('2d');
     this.buffer.width = this.size;
     this.buffer.height = this.size;
-    this.artwork.width = this.size;
-    this.artwork.height = this.size;
+
     this.imageData = this.bufferCtx.getImageData(0, 0, this.size, this.size);
 
     // add to doc
     this.minimapTarget = document.querySelector('#map-target');
-    this.artworkTarget = document.querySelector('#artwork-target');
-    this.artworkOverlay = document.querySelector('.artwork-overlay');
     const rect = this.minimapTarget.getBoundingClientRect();
     this.minimap.width = Math.floor(rect.width);
     this.minimap.height = Math.floor(rect.height);
     this.minimapTarget.appendChild(this.minimap);
-    this.artworkTarget.appendChild(this.artwork);
-    this.toggleArtwork = () => {
-      this.artworkOverlay.style.top = (window.innerHeight / 2 - this.size / 2 - 32) + 'px';
-      this.artworkOverlay.style.left = ((window.innerWidth - 300) / 2 - this.size / 2 - 12) + 'px';
-      this.artworkOverlay.classList.toggle('active');
-    };
-    this.minimap.onclick = () => { this.toggleArtwork(); };
-    //this.artworkOverlay.onclick = () => { this.toggleArtwork(); };
-    document.querySelector('#artwork-close').onclick = () => { this.toggleArtwork(); };
 
-    // disable all smoothing
-    //this.minimapCtx.mozImageSmoothingEnabled = false;
+    this.minimapScale = 6;
+    this.minimapScales = [12, 6, 2, 1];
+    this.minimap.onclick = () => {
+      // cycle scales
+      for (var i=0, len=this.minimapScales.length; i<len; ++i) {
+        if (this.minimapScale == this.minimapScales[i]) {
+          this.minimapScale = this.minimapScales[(i + 1) % this.minimapScales.length];
+          break;
+        }
+      }
+    };
+
+    //this.artworkTarget = document.querySelector('#artwork-target');
+    //this.artworkOverlay = document.querySelector('.artwork-overlay');
+    //this.artworkCtx = this.artwork.getContext('2d');
+    //this.artwork = document.createElement('canvas');
+    //this.artwork.width = this.size;
+    //this.artwork.height = this.size;
+    //this.artworkTarget.appendChild(this.artwork);
+    //this.toggleArtwork = () => {
+    //  this.artworkOverlay.style.top = (window.innerHeight / 2 - this.size / 2 - 32) + 'px';
+    //  this.artworkOverlay.style.left = ((window.innerWidth - Config.global.hudSize) / 2 - this.size / 2 - 12) + 'px';
+    //  this.artworkOverlay.classList.toggle('active');
+    //};
+    //this.minimap.onclick = () => { this.toggleArtwork(); };
+    //this.artworkOverlay.onclick = () => { this.toggleArtwork(); };
+    //document.querySelector('#artwork-close').onclick = () => { this.toggleArtwork(); };
+
+    // disable smoothing
     this.minimapCtx.webkitImageSmoothingEnabled = false;
     this.minimapCtx.msImageSmoothingEnabled = false;
     this.minimapCtx.imageSmoothingEnabled = false;
-    //this.artworkCtx.mozImageSmoothingEnabled = false;
-    this.artworkCtx.webkitImageSmoothingEnabled = false;
-    this.artworkCtx.msImageSmoothingEnabled = false;
-    this.artworkCtx.imageSmoothingEnabled = false;
 
     // world object
     this.plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(this.width, this.height), new THREE.MeshBasicMaterial({}));
@@ -182,12 +190,15 @@ class ColourGrid {
       var y = cy - ((this.client.player.position.z + this.client.player.halfBound) / this.step) * this.minimapScale;
       this.minimapCtx.fillRect(0, 0, this.minimap.width, this.minimap.height);
       this.minimapCtx.drawImage(this.buffer, x, y, this.buffer.width * this.minimapScale, this.buffer.height * this.minimapScale);
-      this.minimapCtx.lineWidth = 2;
-      cx += this.minimapScale / 2;
-      cy += this.minimapScale / 2;
-      this.minimapCtx.strokeRect(cx - this.minimapScale, cy - this.minimapScale, this.minimapScale, this.minimapScale);
+      if (this.minimapScale > 2) {
+        this.minimapCtx.lineWidth = 1;
+        cx += this.minimapScale / 2;
+        cy += this.minimapScale / 2;
+        this.minimapCtx.strokeRect(cx - this.minimapScale * 1.5, cy - this.minimapScale * 1.5, this.minimapScale * 2, this.minimapScale * 2);
+      }
 
       // refresh artwork overlay
+      /*
       if (this.artworkOverlay.classList.contains('active')) {
         var w = this.minimap.width / this.minimapScale;
         var h = this.minimap.height / this.minimapScale;
@@ -197,6 +208,7 @@ class ColourGrid {
         this.artworkCtx.drawImage(this.buffer, 0, 0);
         this.artworkCtx.strokeRect(x - w/2, y - h/2, w, h);
       }
+      */
     }
   }
 

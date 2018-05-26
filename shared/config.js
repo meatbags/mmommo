@@ -1,5 +1,6 @@
 const Config = {
   global: {
+    hudSize: 360,
     maxDataSize: 400,
     maxMessageSize: 250,
     grid: {

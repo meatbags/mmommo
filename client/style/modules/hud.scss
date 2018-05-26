@@ -19,6 +19,10 @@
       .hud-box__inner {
         width: 100%;
         height: $hudBoxSize;
+
+        &.extra {
+          height: $hudBoxSize + $space * 3;
+        }
       }
     }
 

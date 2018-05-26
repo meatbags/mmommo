@@ -3,6 +3,8 @@
  * -- the help UI
  */
 
+import { Config } from '../../../../shared';
+
 class Help {
   constructor() {
     this.overlay = document.querySelector('.help-overlay');
@@ -45,7 +47,7 @@ class Help {
     if (this.overlay.classList.contains('active')) {
       // general/ controls
       this.position(this.elements.general, 16, 16);
-      this.position(this.elements.player, (window.innerWidth - 300)/2, window.innerHeight/2);
+      this.position(this.elements.player, (window.innerWidth - Config.global.hudSize)/2, window.innerHeight/2);
 
       // toolbar
       this.snapTo(this.elements.colour, this.targets.colour);

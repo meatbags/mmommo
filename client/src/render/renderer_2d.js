@@ -7,7 +7,6 @@ import { Config } from '../../../shared';
 
 class Renderer2D {
   constructor(scene, camera, client) {
-    this.hudSize = document.querySelector('.hud').getBoundingClientRect().width;
     this.cvs = document.createElement('canvas');
     this.ctx = this.cvs.getContext('2d');
     this.resize();
@@ -28,7 +27,7 @@ class Renderer2D {
   }
 
   resize() {
-    this.width = window.innerWidth - this.hudSize;
+    this.width = window.innerWidth - Config.global.hudSize;
     this.height = window.innerHeight;
     this.centre = {x: this.width / 2, y: this.height / 2};
     this.cvs.width = this.width;
