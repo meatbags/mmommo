@@ -1,7 +1,7 @@
-/*
- * PlayerModel
- * -- player model & animation (shared by player & other users)
- */
+/**
+ ** PlayerModel
+ ** Initialises and animates the player model (pencil).
+ **/
 
 import { minAngleTo } from '../utils/maths';
 
@@ -42,10 +42,10 @@ class PlayerModel {
   }
 
   update(target) {
-    // label
+    // set label
     this.label = `${target.name}`;
 
-    // move
+    // move player
     if (!this.isSet) {
       this.isSet = true;
       this.group.position.set(target.position.x, target.position.y, target.position.z);
@@ -70,6 +70,7 @@ class PlayerModel {
   }
 
   remove() {
+    // remove me from scene
     this.scene.remove(this.group);
   }
 }

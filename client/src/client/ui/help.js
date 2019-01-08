@@ -1,7 +1,7 @@
-/*
- * Help
- * -- the help UI
- */
+/**
+ ** Help
+ ** Handle the "help" UI element
+ **/
 
 import { Config } from '../../../../shared';
 

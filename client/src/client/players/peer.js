@@ -1,8 +1,7 @@
-/*
- * Peer
- * -- container for peer users
- * -- smooths motion to compensate for latency
- */
+/**
+ ** Peer
+ ** Peer state container. Set position/etc of peer.
+ **/
 
 import { Config } from './config';
 import { Config as GlobalConfig } from '../../../../shared';

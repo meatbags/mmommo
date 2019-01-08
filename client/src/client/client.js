@@ -1,8 +1,7 @@
-/*
- * Client
- * -- handle connection & server req/ res
- * -- hook UI & player controls to server requests
- */
+/**
+ ** Client
+ ** Create and manage the connection. Handle requests/ responsed. Hook up UI to server request emitter.
+ **/
 
 import { Config, ACTION, ClientState } from '../../../shared';
 import { PacketUtils, Socket, EventEmitter } from './network';

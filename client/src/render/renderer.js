@@ -1,7 +1,7 @@
-/*
- * Renderer
- * -- 3D rendering & post-processing
- */
+/**
+ ** Renderer
+ ** WebGL renderer and post-processing.
+ **/
 
 import { Config } from '../../../shared';
 import { Renderer2D } from './renderer_2d';

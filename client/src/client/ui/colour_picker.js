@@ -1,7 +1,7 @@
-/*
- * ColourPicker
- * -- colour picker UI element
- */
+/**
+ ** ColourPicker
+ ** Handle the colour-picker UI element.
+ **/
 
 import { div } from './div';
 import { getRandomColour, toColourString } from '../../utils/colour';

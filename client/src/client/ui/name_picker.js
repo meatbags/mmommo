@@ -1,7 +1,7 @@
-/*
- * NamePicker
- * -- name picker UI element (window)
- */
+/**
+ ** NamePicker
+ ** Handle the name picker UI element.
+ **/
 
 import { div } from './div';
 

@@ -1,9 +1,7 @@
-/*
- * ColourGrid
- * -- interactive colour grid
- * -- hook texture to world objects
- * -- display minimap & full artwork
- */
+/**
+ ** ColourGrid
+ ** The interactive colour grid. Maps 2d texture to 3d scene. Displays the minimap.
+ **/
 
 import { Config } from '../../../shared';
 import { toColourString } from '../utils';
@@ -29,7 +27,6 @@ class ColourGrid {
     this.minimapCtx = this.minimap.getContext('2d');
     this.buffer.width = this.size;
     this.buffer.height = this.size;
-
     this.imageData = this.bufferCtx.getImageData(0, 0, this.size, this.size);
 
     // add to doc
@@ -50,22 +47,6 @@ class ColourGrid {
         }
       }
     };
-
-    //this.artworkTarget = document.querySelector('#artwork-target');
-    //this.artworkOverlay = document.querySelector('.artwork-overlay');
-    //this.artworkCtx = this.artwork.getContext('2d');
-    //this.artwork = document.createElement('canvas');
-    //this.artwork.width = this.size;
-    //this.artwork.height = this.size;
-    //this.artworkTarget.appendChild(this.artwork);
-    //this.toggleArtwork = () => {
-    //  this.artworkOverlay.style.top = (window.innerHeight / 2 - this.size / 2 - 32) + 'px';
-    //  this.artworkOverlay.style.left = ((window.innerWidth - Config.global.hudSize) / 2 - this.size / 2 - 12) + 'px';
-    //  this.artworkOverlay.classList.toggle('active');
-    //};
-    //this.minimap.onclick = () => { this.toggleArtwork(); };
-    //this.artworkOverlay.onclick = () => { this.toggleArtwork(); };
-    //document.querySelector('#artwork-close').onclick = () => { this.toggleArtwork(); };
 
     // disable smoothing
     this.minimapCtx.webkitImageSmoothingEnabled = false;

@@ -1,7 +1,7 @@
-/*
- * Socket
- * -- handle socket connection, io
- */
+/**
+ ** Socket
+ ** Handle socket connection + IO.
+ **/
 
 class Socket {
   constructor(client) {

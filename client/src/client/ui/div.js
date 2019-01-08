@@ -1,7 +1,7 @@
-/*
- * Div
- * -- create a DOM div with props
- */
+/**
+ ** Div
+ ** Utility for creating dom div with props.
+ **/
 
 function div(props) {
   const d = document.createElement('div');

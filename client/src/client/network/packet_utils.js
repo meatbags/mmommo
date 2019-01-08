@@ -1,7 +1,7 @@
-/*
- * PacketUtils
- * -- util funcs for the socket
- */
+/**
+ ** PacketUtils
+ ** Utility functions for the socket.
+ **/
 
 import { ACTION } from '../../../../shared';
 

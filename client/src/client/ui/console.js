@@ -1,7 +1,7 @@
-/*
- * Console
- * -- console UI element (chat & server messages)
- */
+/**
+ ** Console
+ ** Handle the console UI element (player chat & server messages).
+ **/
 
 import { div } from './div';
 
@@ -22,7 +22,7 @@ class Console {
     // events
     this.el.form.onsubmit = (e) => { this.submitMessage(e); };
   }
-  
+
   submitMessage(e) {
     // send input to server
     e.preventDefault();

@@ -1,7 +1,7 @@
-/*
- * Renderer2D
- * -- 2D renderer for screen-space overlays
- */
+/**
+ ** Renderer2D
+ ** Render the 2d screen-space overlays (over the WebGL canvas)
+ **/
 
 import { Config } from '../../../shared';
 

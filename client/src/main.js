@@ -1,8 +1,7 @@
-/*
- * App
- * -- client entry point
- * -- init sockets, game logic, renderers
- */
+/**
+ ** App
+ ** Application entry point. Initialise sockets, game logic, renderers.
+ **/
 
 import { Client } from './client';
 import { Renderer, Scene } from './render';

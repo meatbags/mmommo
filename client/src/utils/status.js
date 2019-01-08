@@ -1,7 +1,6 @@
-/*
- * Status
- * -- "status" based on number of cells filled
- */
+/**
+ ** Change the players in-game status based on number of cells filled.
+ **/
 
 const status = [
   "Nobody", "Finger Painter", "Doodler", "Scribbler", "Egg Painter", "Bit Wrangler", "Pixel Pusher", "Connoisseur", "Baller",

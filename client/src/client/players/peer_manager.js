@@ -1,8 +1,7 @@
-/*
- * PeerManager
- * -- manage positions/ attributes of peers
- * -- update peers from server instructions
- */
+/**
+ ** PeerManager
+ ** Manage peers, update peers, parse peer state.
+ **/
 
 import { Peer } from './peer';
 

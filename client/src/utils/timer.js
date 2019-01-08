@@ -1,7 +1,7 @@
-/*
- * Timer
- * -- basic timekeeping
- */
+/**
+ ** Timer
+ ** Simple low-precision timer (ms)
+ **/
 
 class Timer {
   constructor() {

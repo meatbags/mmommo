@@ -1,8 +1,7 @@
-/*
- * Player
- * -- handle mouse & keyboard input
- * -- move player & interact with grid
- */
+/**
+ ** Player
+ ** Handle the MKD input, move the player and interact with the grid.
+ **/
 
 import { Config } from './config';
 import { Config as GlobalConfig } from '../../../../shared';

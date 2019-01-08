@@ -1,7 +1,7 @@
-/*
- * EventEmitter
- * -- emits event at regular intervals
- */
+/**
+ ** EventEmitter
+ ** Send events at regular intervals.
+ **/
 
 class EventEmitter {
   constructor(rate, period, event) {

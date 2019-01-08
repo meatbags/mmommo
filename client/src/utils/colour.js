@@ -1,7 +1,6 @@
-/*
- * Colour
- * -- colour conversion & utility functions
- */
+/**
+ ** Colour utility functions.
+ **/
 
 function averageColours(arr) {
   // average array of colours
